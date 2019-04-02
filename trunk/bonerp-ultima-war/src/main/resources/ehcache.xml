@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd">
+
+	<diskStore path="${mvn.ehcache.path}" />
+
+	<defaultCache 
+		timeToLiveSeconds="5"
+		overflowToDisk="true"
+		diskPersistent="true"
+		maxElementsInMemory="10000"
+		maxElementsOnDisk="10000"
+		diskSpoolBufferSizeMB="30"
+		diskExpiryThreadIntervalSeconds="1800"
+		memoryStoreEvictionPolicy="LRU" /> 
+		
+	<cache name="listMaker"		
+		timeToLiveSeconds="5"
+		overflowToDisk="true"
+		diskPersistent="true"
+		maxElementsInMemory="10000"
+		maxElementsOnDisk="10000"
+		diskSpoolBufferSizeMB="30"
+		diskExpiryThreadIntervalSeconds="1800"
+		memoryStoreEvictionPolicy="LRU" />
+		
+	<cache name="methodsCache"
+		timeToLiveSeconds="5"
+		overflowToDisk="true"
+		diskPersistent="true"
+		maxElementsInMemory="10000"
+		maxElementsOnDisk="10000"
+		diskSpoolBufferSizeMB="30"
+		diskExpiryThreadIntervalSeconds="1800"
+		memoryStoreEvictionPolicy="LRU" /> 
+
+	
+
+</ehcache>

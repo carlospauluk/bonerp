@@ -1,0 +1,21 @@
+
+***** Gerar via soapUI *****
+
+Em File >> Preferences >> Tools:
+	Axis 1.X: D:\java\axis-bin-1_4\axis-1_4
+	
+Importar o WSDL
+	(em 25/05/2015 estava em: https://sistema.ocrediario.com.br:443/wsrcs.php?wsdl)
+Salvo em D:\ocabit\bonerp\trunk\servipaws-jar\wsrcs.php.wsdl)
+
+Tools >> Axis 1.X Artifacts
+	Setar em Advanced >> target package: com.bonsucesso.servipa.ws
+	
+Generate
+
+Copiar arquivos gerados para D:\ocabit\bonerp\trunk\servipaws-jar\src\main\java\com\bonsucesso\servipa\ws
+
+Alterar o https://www.ocabit.com/svn/bonerp/trunk/servipaws-jar/src/main/java/com/bonsucesso/servipa/ws/ServerWsrcsLocator.java
+	
+	Linha 25: private java.lang.String ServerWsrcsPort_address; // = "https://sistema.ocrediario.com.br:443/wsrcs.php";
+

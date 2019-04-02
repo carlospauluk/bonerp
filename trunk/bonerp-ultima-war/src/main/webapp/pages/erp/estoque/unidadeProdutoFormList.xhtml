@@ -1,0 +1,154 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	template="/templates/template.xhtml">
+
+	<ui:define name="content">
+	
+		<div id="_slnm_unidadeProdutoForm" />
+
+		<!-- exibição de mensagem caso usuário não tenha permissão de acesso -->
+		<sec:authorize ifNotGranted="ROLE_ESTOQUE_ADMIN">
+			<div class="errorMsg">Usuário sem autorização para acessar este
+				recurso.</div>
+		</sec:authorize>
+
+		<sec:authorize ifAnyGranted="ROLE_ESTOQUE_ADMIN">
+
+			<ui:param name="view" value="#{unidadeProdutoFormView}" />
+
+			<!-- parâmetro passado via GET -->
+			<f:metadata>
+				<f:viewParam id="id" name="id"
+					value="#{unidadeProdutoFormListView.id}" />
+			</f:metadata>
+
+			<h:form id="frm">
+
+				<p:panel id="panel" header="Unidade Produto"
+					style="width: 1000px; margin: 0 auto;">
+
+					<p:toolbar>
+						<f:facet name="left">
+
+							<p:commandButton id="btnNovo" icon="ui-icon-document"
+								actionListener="#{view.novo}" title="Novo registro (N)"
+								oncomplete="PF('dlgForm').show()" update=":frm:opnDlg"
+								process="@this" />
+
+							<p:commandButton id="btnAtualizar" title="Atualizar dados (A)"
+								update=":frm:dtList" process="@this" icon="ui-icon-refresh"
+								actionListener="#{view.limparFiltrosECarregar}" />
+
+						</f:facet>
+					</p:toolbar>
+
+					<p:spacer height="10" />
+
+
+					<p:outputPanel id="opnLoadList">
+						<p:remoteCommand id="rcLoadList"
+							actionListener="#{view.loadList}" autoRun="true"
+							name="loadList" update="opnDtList" process="@this" />
+					</p:outputPanel>
+
+
+
+					<p:outputPanel id="opnDtList">
+
+						<p:dataTable id="dtList" var="_" rowIndexVar="row"
+							emptyMessage="Nenhum registro encontrado." value="#{view.list}">
+
+							<p:column headerText="#" style="width: 20px">
+								<h:outputText value="#{row + 1}" />
+							</p:column>
+
+							<p:column headerText="Label" sortBy="#{_.label}">
+								<h:outputText value="#{_.label}" />
+							</p:column>
+
+							<p:column headerText="Descrição" sortBy="#{_.descricao}">
+								<h:outputText value="#{_.descricao}" />
+							</p:column>
+
+							<p:column headerText="Fator" sortBy="#{_.fator}">
+								<h:outputText value="#{_.fator}" />
+							</p:column>
+
+							<p:column styleClass="noWrapColBtns">
+								<p:commandButton title="Editar registro" icon="ui-icon-build"
+									id="btnEditar" actionListener="#{view.setE(_)}"
+									update=":frm:opnDlg" process="@this"
+									onclick="PF('dlgForm').show();" />
+
+								<p:commandButton title="Excluir registro" icon="ui-icon-trash"
+									id="btnExcluir" actionListener="#{view.deletar(_)}"
+									update=":frm:panel" process="@this" styleClass="red-btn">
+									<p:confirm />
+								</p:commandButton>
+
+							</p:column>
+						</p:dataTable>
+
+					</p:outputPanel>
+
+					<p:spacer height="15" />
+
+				</p:panel>
+
+
+				<p:dialog id="dlgForm" widgetVar="dlgForm" position="top"
+					header="Unidade de Produto" modal="true" width="750"
+					resizable="false" closeOnEscape="true">
+					<p:outputPanel id="opnDlg">
+
+						<p:defaultCommand target="btnSalvar" />
+
+						<p:focus for="iLabel" />
+
+						<fd:labelInput label="Label *:" labelWidth="120px"
+							breakAfter="true">
+							<p:inputText size="10" value="#{view.e.label}" id="iLabel" />
+						</fd:labelInput>
+
+						<fd:labelInput label="Descrição *:" labelWidth="120px"
+							breakAfter="true">
+							<p:inputText size="50" value="#{view.e.descricao}"
+								id="iDescricao" />
+						</fd:labelInput>
+
+						<fd:labelInput label="Fator *:" labelWidth="120px"
+							breakAfter="true">
+							<p:inputText size="10" value="#{view.e.fator}" id="iFator" />
+						</fd:labelInput>
+
+
+						<p:spacer width="20" />
+
+
+						<!-- BUTTONS -->
+						<div style="text-align: right;">
+
+							<p:commandButton title="Salvar o registro atual" id="btnSalvar"
+								update=":frm:panel" icon="ui-icon-save" value="Salvar"
+								style="width: 110px" actionListener="#{view.save}"
+								oncomplete="afterFormSubmit(xhr, status, args);" />
+
+							<p:spacer width="20" />
+
+						</div>
+
+					</p:outputPanel>
+				</p:dialog>
+
+			</h:form>
+
+		</sec:authorize>
+
+	</ui:define>
+
+</ui:composition>

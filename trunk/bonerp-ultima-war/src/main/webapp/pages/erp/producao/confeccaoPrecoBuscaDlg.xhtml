@@ -1,0 +1,107 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags">
+
+	<ui:param name="view" value="#{confeccaoPrecoDlgBuscaView}"></ui:param>
+
+	<h:form id="frmDlgBuscaConfeccaoPreco">
+		<p:dialog id="dlgBuscaConfeccaoPreco" position="top"
+			header="Pesquisar Confecções/Preços"
+			widgetVar="dlgBuscaConfeccaoPreco" resizable="false" width="1000px"
+			modal="true"   closable="true"
+			closeOnEscape="true">
+
+			<p:outputPanel id="opnDlgBuscaConfeccaoPreco">
+
+				<p:defaultCommand target="btnBuscarConfeccaoPreco"
+					scope="frmDlgBuscaConfeccaoPreco" />
+
+				<fd:labelInput noLabel="true">
+					<p:inputText id="iBuscaConfeccaoPreco" size="65"
+						value="#{view.filtros['strPesquisa']}" />
+					<p:watermark value="Pesquisar..." for="iBuscaConfeccaoPreco" />
+				</fd:labelInput>
+
+				<fd:labelInput noLabel="true" breakAfter="true" alignRight="true">
+					<p:commandButton actionListener="#{view.pesquisar}"
+						id="btnBuscarConfeccaoPreco" icon="ui-icon-search"
+						update="opnDlgBuscaConfeccaoPreco" />
+				</fd:labelInput>
+
+				<p:scrollPanel style="height:400px" mode="native">
+					<p:dataTable id="dtListBuscaConfeccaoPreco" var="_"
+						rowIndexVar="row" emptyMessage="Nenhum registro encontrado."
+						value="#{view.list}">
+
+						<p:column headerText="#" style="width: 20px">
+							<h:outputText value="#{row + 1}" />
+						</p:column>
+
+						<p:column headerText="Confecção/Tamanhos" sortBy="#{_.confeccao.descricao}">
+							<h:outputText value="#{_.confeccao.descricao}" />
+							<br />
+							<h:outputText value="#{_.descricao}" />
+						</p:column>
+						
+						<p:column headerText="Custo" style="width: 90px"
+							sortBy="#{_.precoCusto}">
+							<div style="text-align: right;">
+								R$
+								<h:outputText value="#{_.precoCusto}"
+									converter="#{doubleConverterNull}" />
+							</div>
+						</p:column>
+						<p:column headerText="Margem" style="width: 90px">
+							<div style="text-align: right;">
+								<h:outputText value="#{_.margem}"
+									converter="#{doubleConverterNull}" />
+								%
+							</div>
+						</p:column>
+						<p:column headerText="Prazo" style="width: 90px">
+							<div style="text-align: right;">
+								<h:outputText value="#{_.prazo}">
+									<f:convertNumber integerOnly="true" />
+								</h:outputText>
+							</div>
+						</p:column>
+						<p:column headerText="Preço Prazo" style="width: 90px"
+							sortBy="#{_.precoPrazo}">
+							<div style="text-align: right;">
+								R$
+								<h:outputText value="#{_.precoPrazo}"
+									converter="#{doubleConverterNull}" />
+							</div>
+						</p:column>
+						<p:column headerText="Preço Vista" style="width: 90px">
+							<div style="text-align: right;">
+								R$
+								<h:outputText value="#{_.precoVista}"
+									converter="#{doubleConverterNull}" />
+							</div>
+						</p:column>
+						
+						<p:column style="white-space: normal"
+							headerText="Alterado em" sortBy="#{_.iudt.updated}">
+							<h:outputText value="#{_.iudt.updated}">
+								<f:convertDateTime pattern="dd/MM/yy HH:mm" />
+							</h:outputText>
+						</p:column>
+
+						<p:column width="1%">
+							<p:commandButton actionListener="#{viewSelec[action](_)}"
+								icon="ui-icon-check" process="@this" update="#{update}"
+								oncomplete="PF('dlgBuscaConfeccaoPreco').hide()" />
+						</p:column>
+					</p:dataTable>
+				</p:scrollPanel>
+
+			</p:outputPanel>
+		</p:dialog>
+	</h:form>
+
+</ui:composition>

@@ -1,0 +1,92 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:fd="http://ocabit.com.br/facelets">
+
+
+	<ui:include src="movimentacaoForm_global.xhtml" />
+
+	<ui:include src="movimentacaoForm.xhtml">
+		<ui:param name="tipoLancto" value="A_PAGAR_RECEBER" />
+		<ui:param name="tituloDlg" value="Conta a Pagar/Receber" />
+		<ui:param name="exibir_documentoBanco" value="true" />
+	</ui:include>
+
+	<ui:include src="movimentacaoForm.xhtml">
+		<ui:param name="tipoLancto" value="CHEQUE_PROPRIO" />
+		<ui:param name="tituloDlg" value="Movimentação - Cheque Próprio" />
+		<ui:param name="modo_readonly" value="true" />
+		<ui:param name="carteiraValues"
+			value="#{lmFinanc.carteiraChequeValues}" />
+		<ui:param name="exibir_obs-valores" value="true" />
+		<ui:param name="exibir_cheque" value="true" />
+	</ui:include>
+
+	<ui:include src="movimentacaoForm.xhtml">
+		<ui:param name="tipoLancto" value="CHEQUE_TERCEIROS" />
+		<ui:param name="tituloDlg" value="Movimentação - Cheque de Terceiros" />
+		<ui:param name="modo_readonly" value="true" />
+		<ui:param name="carteiraValues"
+			value="#{lmFinanc.carteiraConcretaValues}" />
+		<ui:param name="exibir_obs-valores" value="true" />
+		<ui:param name="exibir_cheque" value="true" />
+	</ui:include>
+
+	<ui:include src="movimentacaoForm.xhtml">
+		<ui:param name="tipoLancto" value="GERAL" />
+		<ui:param name="tituloDlg" value="Movimentação - Geral" />
+		<ui:param name="exibir_obs-valores" value="true" />
+		<ui:param name="exibir_cheque" value="true" />
+		<ui:param name="exibir_dtPagto" value="true" />
+		<ui:param name="exibir_documentoBanco" value="true" />
+	</ui:include>
+
+	<ui:include src="movimentacaoForm.xhtml">
+		<ui:param name="tipoLancto" value="REALIZADA" />
+		<ui:param name="tituloDlg" value="Movimentação - Realizada" />
+		<ui:param name="exibir_obs-valores" value="true" />
+		<ui:param name="exibir_cheque" value="true" />
+		<ui:param name="exibir_dtPagto" value="true" />
+		<ui:param name="exibir_documentoBanco" value="true" />
+	</ui:include>
+
+	<ui:include src="movimentacaoForm.xhtml">
+		<ui:param name="tipoLancto" value="TRANSF_CAIXA" />
+		<ui:param name="tituloDlg" value="Transferência/Recolhimento de Caixa" />
+	</ui:include>
+
+	<ui:include src="movimentacaoForm.xhtml">
+		<ui:param name="tipoLancto" value="TRANSF_PROPRIA" />
+		<ui:param name="tituloDlg" value="Transferência Própria" />
+	</ui:include>
+	
+	<ui:include src="movimentacaoForm.xhtml">
+		<ui:param name="tipoLancto" value="ESTORNO_CORRECAO" />
+		<ui:param name="tituloDlg" value="Estorno/Correção" />
+	</ui:include>
+
+	<ui:include src="movimentacaoForm.xhtml">
+		<ui:param name="tipoLancto" value="PAGTO" />
+		<ui:param name="tituloDlg" value="Pagamento - Movimentação Realizada" />
+		<ui:param name="exibir_cheque" value="true" />
+	</ui:include>
+
+	
+	<ui:include src="movimentacaoForm.xhtml">
+		<ui:param name="tipoLancto" value="PARCELA" />
+		<ui:param name="tituloDlg" value="Parcela" />
+		<ui:param name="exibir_obs-valores" value="true" />
+		<ui:param name="exibir_cheque" value="true" />
+		<ui:param name="exibir_dtPagto" value="true" />
+		<ui:param name="exibir_documentoBanco" value="true" />
+		<ui:param name="exibir_parcelamento" value="false" />
+		<ui:param name="exibir_recorrencia" value="false" />
+	</ui:include>
+
+
+
+
+</ui:composition>

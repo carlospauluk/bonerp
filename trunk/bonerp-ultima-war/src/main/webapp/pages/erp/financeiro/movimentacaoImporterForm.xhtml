@@ -1,0 +1,352 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:p="http://primefaces.org/ui" template="/templates/template.xhtml">
+
+
+
+	<ui:define name="headFirst">
+		<script src="#{resource['js/helpers.js']}" type="text/javascript"></script>
+	</ui:define>
+
+	<ui:param name="viewForm" value="#{movimentacaoImporterFormView}" />
+
+	<ui:define name="content">
+
+		<div id="_slnm_movimentacaoImporterForm" />
+
+		<style type="text/css">
+
+.movimentEntrada {
+	color: blue;
+}
+
+.movimentSaida {
+	color: red;
+}
+
+.movimentSaida:hover {
+	background: #ff9999 !important;
+}
+
+.movimentEntrada:hover {
+	background: #99ccff !important;
+}
+</style>
+
+		<!-- exibição de mensagem caso usuário não tenha permissão de acesso -->
+		<sec:authorize ifNotGranted="ROLE_FINANCEIRO">
+			<div class="errorMsg">Usuário sem autorização para acessar este
+				recurso.</div>
+		</sec:authorize>
+
+		<sec:authorize ifAnyGranted="ROLE_FINANCEIRO_ADMIN,ROLE_FINANCEIRO_LANCTOS">
+
+
+			<h:form id="frm">
+
+				<p:panel id="panel" header="Importação de Movimentações">
+
+					<p:outputPanel id="opnCampos">
+
+						<table style="width: 100%">
+							<tr>
+								<td style="width: 62%"><p:fieldset legend="Linhas">
+										<p:inputTextarea id="iLinhas" rows="10" autoResize="false"
+											cols="80" value="#{viewForm.linhas}"
+											style="width: 98%; font-family: 'Lucida Console', 'Courier New', Courier, monospace" />
+									</p:fieldset> <fd:labelInput noLabel="true">
+										<p:commandButton icon="ui-icon-play-circle-outline"
+											rendered="#{viewForm.importadas ne null and viewForm.importadas.size() > 0}"
+											oncomplete="openDlg(xhr, status, args);"
+											id="btnIniAlterarEmLote"
+											actionListener="#{viewForm.iniAlterarEmLote}"
+											process="@this :frm:opnDtList" value="Alterar em Lote"
+											update=":frmMovimentacao_lote:opnDlgMovimentacaoLote" />
+
+										<p:spacer width="10" />
+
+										<p:commandButton icon="ui-icon-trash"
+											id="btnRemoverExistentes" styleClass="red-btn"
+											rendered="#{viewForm.importadas ne null and viewForm.importadas.size() > 0}"
+											actionListener="#{viewForm.removerExistentes}"
+											process="@this :frm:opnDtList" value="Remover existentes"
+											title="Remove todas as movimentações existentes e mantém somente as 'Novas'"
+											update="opnDtList opnCampos">
+											<p:confirm />
+										</p:commandButton>
+
+										<p:commandButton icon="ui-icon-trash"
+											id="btnRemoverNovas" styleClass="red-btn"
+											rendered="#{viewForm.importadas ne null and viewForm.importadas.size() > 0}"
+											actionListener="#{viewForm.removerNovas}"
+											process="@this :frm:opnDtList" value="Remover novas"
+											title="Remove todas as movimentações novas e mantém somente as existentes ('Editando')"
+											update="opnDtList opnCampos">
+											<p:confirm />
+										</p:commandButton>
+
+										<p:spacer width="10" />
+
+										<p:commandButton icon="ui-icon-trash"
+											id="btnRemoverSelecionadas" styleClass="red-btn"
+											rendered="#{viewForm.importadas ne null and viewForm.importadas.size() > 0}"
+											actionListener="#{viewForm.removerSelecionadas}"
+											process="@this :frm:opnDtList" value="Remover selecionadas"
+											title="Remove todas as movimentações selecionadas"
+											update="opnDtList opnCampos">
+											<p:confirm />
+										</p:commandButton>
+
+										<p:spacer width="10" />
+
+										<p:commandButton icon="ui-icon-check" immediate="true"
+											btn="btnVerificacoes"
+											rendered="#{viewForm.importadas ne null and viewForm.importadas.size() > 0}"
+											process="@this" value="Verificações"
+											oncomplete="PF('dlgVerif').show()" />
+
+
+
+									</fd:labelInput></td>
+
+								<td valign="top" style="width: 38%"><fd:labelInput
+										label="Tipo Extrato:" labelWidth="120px" breakAfter="true">
+										<p:selectOneMenu id="iTipoExtrato"
+											value="#{viewForm.tipoExtrato}">
+											<f:selectItem itemLabel="" itemValue="" />
+											<f:selectItems value="#{lmFinanc.tiposExtrato}" var="c"
+												itemLabel="#{c.label}" itemValue="#{c}" />
+											<p:ajax process="@this" update="opnCamposImport"
+												partialSubmit="true"
+												listener="#{viewForm.updateTipoExtrato}" />
+										</p:selectOneMenu>
+									</fd:labelInput> <p:outputPanel id="opnCamposImport">
+
+										<!-- CAMPOS PARA EXTRATO DO TIPO 'COMPRA BNDES BB' -->
+										<p:outputPanel
+											rendered="#{viewForm.tipoExtrato eq 'EXTRATO_COMPRA_BNDES_BB'}">
+										</p:outputPanel>
+
+										<!-- CAMPOS PARA EXTRATO DE MOVIMENTAÇÕES DE GRUPO (FATURA) -->
+										<p:outputPanel id="opnCamposExtratoGrupo"
+											rendered="#{viewForm.tipoExtrato eq 'EXTRATO_GRUPO_MOVIMENTACOES'}">
+
+											<fd:labelInput label="Grupo Moviment :" labelWidth="120px"
+												breakAfter="true">
+
+												<p:selectOneMenu id="iGrupo" value="#{lmFinanc.grupo}"
+													converter="#{entityIdConverter}">
+													<f:selectItem itemValue="" itemLabel="" />
+													<f:selectItems value="#{lmFinanc.grupoValues}" var="gm"
+														itemLabel="#{gm.descricao}" itemValue="#{gm}" />
+													<p:ajax event="change" process="@this"
+														update="opnCamposExtratoGrupo" partialSubmit="true" />
+												</p:selectOneMenu>
+
+												<p:spacer width="20px" />
+
+
+												<p:selectOneMenu id="iGrupoItem"
+													value="#{viewForm.grupoItem}"
+													rendered="#{lmFinanc.grupo ne null}"
+													converter="#{entityIdConverter}">
+													<f:selectItem itemValue="" itemLabel="" />
+													<f:selectItems value="#{lmFinanc.getGrupoItemAbertosBy()}"
+														var="gi" itemLabel="#{gi.descricao}" itemValue="#{gi}" />
+												</p:selectOneMenu>
+
+											</fd:labelInput>
+
+										</p:outputPanel>
+
+										<!-- CAMPOS PARA DEMAIS EXTRATOS -->
+										<p:outputPanel
+											rendered="#{viewForm.tipoExtrato ne 'EXTRATO_COMPRA_BNDES_BB' and viewForm.tipoExtrato ne 'EXTRATO_GRUPO_MOVIMENTACOES'}">
+
+											<fd:labelInput label="Carteira Extrato:" labelWidth="120px"
+												breakAfter="true">
+												<p:selectOneMenu id="iCarteiraExtrato"
+													value="#{viewForm.carteiraExtrato}"
+													converter="#{entityIdConverter}">
+													<f:selectItem itemLabel="" itemValue="" />
+													<f:selectItems value="#{viewForm.carteirasExtratos}"
+														var="c" itemLabel="#{c.codigo} - #{c.descricao}"
+														itemValue="#{c}" />
+												</p:selectOneMenu>
+											</fd:labelInput>
+
+											<p:outputPanel
+												rendered="#{fn:containsIgnoreCase(viewForm.tipoExtrato.name(), 'DEBITO')}">
+
+												<fd:labelInput label="Carteira Destino :" labelWidth="120px"
+													breakAfter="true">
+													<p:selectOneMenu id="iCarteiraDestino"
+														value="#{viewForm.carteiraDestino}"
+														converter="#{entityIdConverter}">
+														<f:selectItem itemLabel="" itemValue="" />
+														<f:selectItems value="#{lmFinanc.carteiraConcretaValues}"
+															var="c" itemLabel="#{c.codigo} - #{c.descricao}"
+															itemValue="#{c}" />
+													</p:selectOneMenu>
+												</fd:labelInput>
+
+											</p:outputPanel>
+
+											<fd:labelInput label="Gerar :" labelWidth="120px"
+												breakAfter="true">
+												<p:selectBooleanCheckbox id="iGerarSemRegras"
+													value="#{viewForm.gerarSemRegras}" />
+											</fd:labelInput>
+
+										</p:outputPanel>
+
+
+									</p:outputPanel> <fd:labelInput noLabel="true" alignRight="true">
+
+										<p:commandButton actionListener="#{viewForm.importar}"
+											id="btnImportar"
+											value="Importar" process="opnCampos"
+											update="opnDtList opnCampos" />
+
+										<p:commandButton actionListener="#{viewForm.salvarTodos}"
+											id="btnSalvarTodos"
+											rendered="#{viewForm.importadas ne null and viewForm.importadas.size() > 0}"
+											style="width: 300px; font-weight: bold" value="Salvar Todos"
+											process=":frm" update=":frm">
+											<p:confirm />
+										</p:commandButton>
+
+									</fd:labelInput></td>
+							</tr>
+						</table>
+
+
+
+
+					</p:outputPanel>
+
+					<p:remoteCommand update="opnDtList" autoRun="false"
+						ignoreAutoUpdate="true" name="reLoadList" process="@this"
+						global="false" />
+
+					<p:outputPanel id="opnDtList">
+
+						<p:outputPanel
+							rendered="#{viewForm.tipoExtrato ne 'EXTRATO_COMPRA_BNDES_BB'}">
+							<ui:include src="movimentacaoImporterForm_dtList.xhtml" />
+						</p:outputPanel>
+
+						<p:outputPanel
+							rendered="#{viewForm.tipoExtrato eq 'EXTRATO_COMPRA_BNDES_BB'}">
+							<ui:include src="movimentacaoImporterForm_dtListAgrupadas.xhtml" />
+						</p:outputPanel>
+
+					</p:outputPanel>
+
+
+
+				</p:panel>
+
+
+
+				<p:dialog id="dlgVerif" header="Verificar Movimentações"
+					dynamic="true" widgetVar="dlgVerif" resizable="false" width="700"
+					modal="true">
+
+					<p:outputPanel id="opnVerif">
+
+
+						<p:outputPanel id="opnCategoria">
+							<fd:labelInput labelWidth="120px" label="Categoria :"
+								breakAfter="true">
+
+								<p:inputText converter="#{categoriaCodigoConverter}"
+									value="#{viewForm.verifs['categoria'].codigo}" size="10"
+									readonly="true" />
+
+								<h:outputText value="-" />
+
+								<p:autoComplete id="iCategoria" size="60"
+									value="#{viewForm.verifs['categoria']}" var="cat"
+									itemLabel="#{cat.descricao}" itemValue="#{cat}"
+									forceSelection="false"
+									completeMethod="#{categoriaFinder.findFolhasBy}"
+									minQueryLength="3" widgetVar="acCategoria"
+									converter="#{entityIdConverter}">
+									<p:ajax event="itemSelect" process="@this"
+										update="opnCategoria" />
+								</p:autoComplete>
+
+
+							</fd:labelInput>
+
+							<fd:labelInput noLabel="true" breakAfter="true" />
+
+						</p:outputPanel>
+
+						<fd:labelInput label="Período :" labelWidth="120px">
+
+							<p:calendar styleClass="maskData"
+								value="#{viewForm.verifs['dtIni']}" id="iDtIni" locale="pt"
+								onfocus="atualizaCampos()" pattern="dd/MM/yyyy"
+								selectOtherMonths="true" showOtherMonths="true" size="12" />
+					-
+
+					<p:calendar styleClass="maskData"
+								value="#{viewForm.verifs['dtFim']}" id="iDtFim" locale="pt"
+								onfocus="atualizaCampos()" pattern="dd/MM/yyyy"
+								selectOtherMonths="true" showOtherMonths="true" size="12" />
+
+						</fd:labelInput>
+
+						<fd:labelInput alignRight="true">
+
+							<p:commandButton icon="ui-icon-play-circle-outline"
+								actionListener="#{viewForm.verificar}" process="opnVerif"
+								value="Verificar" update=":frm" />
+
+						</fd:labelInput>
+
+					</p:outputPanel>
+
+
+				</p:dialog>
+
+
+
+
+			</h:form>
+
+
+			<ui:include src="movimentacaoDlgBusca.xhtml">
+				<ui:param name="viewAction" value="#{movimentacaoImporterFormView}" />
+				<ui:param name="action" value="selecMovimentacaoExistente" />
+				<ui:param name="update" value=":frm:opnDtList" />
+			</ui:include>
+
+			<ui:include src="movimentacaoForm_alterarEmLote.xhtml">
+				<ui:param name="viewForm" value="#{movimentacaoImporterFormView}" />
+			</ui:include>
+
+			<ui:include src="movimentacaoList_includes_forms.xhtml">
+				<ui:param name="view" value="#{view}" />
+				<ui:param name="viewForm" value="#{viewForm}" />
+			</ui:include>
+
+
+
+
+		</sec:authorize>
+
+	</ui:define>
+
+
+
+
+
+</ui:composition>

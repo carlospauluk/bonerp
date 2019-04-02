@@ -1,0 +1,84 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:param name="view" value="#{confeccaoListView}" />
+
+	<div id="_slnm_confeccaoList" />
+
+	<ui:decorate template="/templates/list.xhtml">
+
+		<ui:param name="role" value="PRODUCAO" />
+
+		<ui:param name="titulo" value="Confeccoes" />
+
+		<ui:param name="formOutcome"
+			value="/pages/erp/producao/confeccaoBuilderView.jsf" />
+
+		<ui:param name="exibirColuna_btnsEditarDeletar" value="false" />
+
+
+		<ui:define name="cols">
+
+			<p:column headerText="Descrição" sortBy="#{_.descricao}"
+				style="width: 1px ; white-space: normal">
+				<h:outputText value="#{_.descricao}" styleClass="noWrap" />
+			</p:column>
+
+			<p:column headerText="Instituição" sortBy="#{_.instituicao.nome}"
+				style="white-space: normal">
+				<h:outputText value="#{_.instituicao.nome}" />
+			</p:column>
+
+			<p:column headerText="Tipo de Artigo"
+				sortBy="#{_.tipoArtigo.descricao}" style="white-space: normal">
+				<h:outputText value="#{_.tipoArtigo.descricao}" />
+			</p:column>
+
+			<p:column style="white-space: normal" headerText="Alterado em"
+				sortBy="#{_.iudt.updated}">
+				<h:outputText value="#{_.iudt.updated}">
+					<f:convertDateTime pattern="dd/MM/yy HH:mm" />
+				</h:outputText>
+			</p:column>
+
+			<p:column headerText="" styleClass="noWrapColBtns">
+
+				<p:commandButton icon="ui-icon-note"
+					update=":frmDlgConfeccaoLotesConfeccaoRef:opnDlgConfeccaoLotesConfeccaoRef"
+					process="@this"
+					oncomplete="PF('dlgConfeccaoLotesConfeccaoRef').show()"
+					partialSubmit="true" actionListener="#{view.setE(_)}"
+					title="Listar lotes que referenciam esta confecção" />
+
+			</p:column>
+
+			<p:column styleClass="noWrapColBtns">
+				<p:button id="btnEditarO" outcome="confeccaoBuilderView.jsf"
+					icon="ui-icon-build" title="Novo registro (N)">
+					<f:param name="confeccaoId" value="#{_.id}" />
+				</p:button>
+
+				<sec:authorize ifAnyGranted="ROLE_ADMIN,ROLE_#{role}_ADMIN">
+					<p:commandButton action="#{view.deletar(_)}"
+						title="Deletar registro" process="@this" icon="ui-icon-trash"
+						update=":frm" id="btnDeletarConfeccao" styleClass="red-btn">
+						<p:confirm />
+					</p:commandButton>
+				</sec:authorize>
+
+			</p:column>
+
+
+		</ui:define>
+	</ui:decorate>
+
+	<ui:include src="confeccaoList_dlgPesquisa.xhtml" />
+
+	<ui:include src="confeccaoList_lotesConfeccaoRef.xhtml" />
+
+</ui:composition>

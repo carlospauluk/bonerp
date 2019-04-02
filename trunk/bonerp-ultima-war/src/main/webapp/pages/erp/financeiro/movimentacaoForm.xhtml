@@ -1,0 +1,130 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:sec="http://www.springframework.org/security/tags">
+
+
+	<!-- 
+	
+		Este é um arquivo de template. Deve ser "decorado" pelos vários tipos de arquivos de movimentações 
+		que constam no enum <<MovimentacaoBusiness.TipoLancto>>
+	
+		PARAMS:
+			tipoLancto: utilizado como sufixo
+			tituloDlg: título do dialog
+	-->
+
+	<sec:authorize ifAnyGranted="ROLE_FINANCEIRO">
+
+		<c:if test="#{empty viewForm}">
+			<ui:param name="viewForm" value="#{movimentacaoFormView}" />
+		</c:if>
+
+		<ui:include src="/pages/erp/base/pessoaDlgBusca.xhtml">
+			<ui:param name="sufix" value="Movimentacao_#{tipoLancto}" />
+			<ui:param name="viewSelec" value="#{movimentacaoFormView}" />
+			<ui:param name="update"
+				value=":frmMovimentacao_#{tipoLancto}:opnPessoa" />
+		</ui:include>
+
+
+		<h:form id="frmMovimentacao_#{tipoLancto}">
+
+			<p:dialog id="dlgMovimentacao_#{tipoLancto}" width="1000"
+				dynamic="true" widgetVar="dlgMovimentacao_#{tipoLancto}"
+				position="top" fitViewport="true"
+				header="#{tituloDlg} #{viewForm.e ne null and viewForm.e.id ne null ? '- ' + viewForm.e.id : ''}"
+				modal="true" resizable="false" closeOnEscape="true"
+				onShow="ajustarAlturas()">
+
+				<p:scrollPanel style="border-width: 0px" mode="native"
+					id="spMovimentacao">
+
+					<p:outputPanel id="opnDlgMovimentacao">
+
+						<p:defaultCommand target="btnSalvar" />
+
+						<c:choose>
+
+							<c:when test="#{tipoLancto eq 'TRANSF_CAIXA'}">
+								<ui:include src="movimentacaoForm_TRANSF_CAIXA.xhtml" />
+							</c:when>
+
+							<c:when test="#{tipoLancto eq 'TRANSF_PROPRIA'}">
+								<ui:include src="movimentacaoForm_TRANSF_PROPRIA.xhtml" />
+							</c:when>
+
+							<c:when test="#{tipoLancto eq 'PAGTO'}">
+								<ui:include src="movimentacaoForm_PAGTO.xhtml" />
+							</c:when>
+
+							<c:when test="#{tipoLancto eq 'MOVIMENTACAO_AGRUPADA'}">
+								<ui:include src="movimentacaoForm_MOVIMENTACAO_AGRUPADA.xhtml" />
+							</c:when>
+
+							<c:when test="#{tipoLancto eq 'ESTORNO_CORRECAO'}">
+								<ui:include src="movimentacaoForm_ESTORNO_CORRECAO.xhtml" />
+							</c:when>
+
+
+
+							<c:otherwise>
+								<ui:include src="movimentacaoForm_campos.xhtml" />
+							</c:otherwise>
+
+						</c:choose>
+
+						<!-- utilizado quando seleciona uma categoria no dlgBuscaCateg -->
+						<p:remoteCommand name="updateOpnCategoria_#{tipoLancto}"
+							update="opnCategoria" process="@none" />
+
+
+
+						<fd:labelInput breakAfter="true" alignRight="true">
+							<p:commandButton value="Salvar" style="width: 180px"
+								actionListener="#{viewForm.checkSave}" icon="ui-icon-save"
+								id="btnSalvar" oncomplete="afterFormSubmit(xhr, status, args);" />
+						</fd:labelInput>
+
+					</p:outputPanel>
+
+
+				</p:scrollPanel>
+
+
+			</p:dialog>
+
+
+			<p:confirmDialog global="false"
+				widgetVar="cdlgConfirmSave_#{tipoLancto}" header="Atenção"
+				message="Confirmar operação?">
+
+				<p:commandButton value="Sim" actionListener="#{viewForm.save}"
+					partialSubmit="true" process="@this opnDlgMovimentacao"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
+					oncomplete="PF('cdlgConfirmSave_#{tipoLancto}').hide(); afterFormSubmit(xhr, status, args);" />
+
+				<p:commandButton type="button" value="Não"
+					onclick="PF('cdlgConfirmSave_#{tipoLancto}').hide()"
+					process="@this" styleClass="ui-confirmdialog-no"
+					icon="ui-icon-close" />
+
+			</p:confirmDialog>
+
+
+		</h:form>
+
+
+
+
+
+
+	</sec:authorize>
+
+
+
+</ui:composition>

@@ -1,0 +1,169 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	template="/templates/template.xhtml">
+
+	<ui:define name="headFirst">
+		<script src="#{resource['js/helpers.js']}" type="text/javascript"></script>
+	</ui:define>
+
+	<ui:define name="content">
+	
+		<div id="_slnm_utilizarCupom" />
+
+		<sec:authorize ifNotGranted="ROLE_CRM_ADMIN">
+			<div class="errorMsg">Usuário sem autorização para acessar este
+				recurso.</div>
+		</sec:authorize>
+
+		<sec:authorize ifAnyGranted="ROLE_CRM_ADMIN">
+
+			<ui:param name="view" value="#{cupomFormListView}" />
+
+			<h:form id="frm">
+
+				<p:panel id="panel" header="Marcar Utilização do Cupom"
+					style="width: 1000px">
+
+					<p:focus for="iCupomCodigo" />
+
+
+					<p:outputPanel id="opnDlgCupom">
+					
+						<p:messages severity="warn,error" />
+
+						<fd:labelInput label="Cupom :" labelWidth="100px"
+							breakAfter="true">
+							<p:inputText size="50" value="#{view.e.codigo}" id="iCupomCodigo">
+								<p:ajax process="@this" update="opnDlgCupom"
+									listener="#{view.updateCupomUtilizar}" />
+							</p:inputText>
+							<p:commandButton actionListener="#{view.novo}" update=":frm"
+								value="Limpar" process="@this" />
+						</fd:labelInput>
+
+
+
+						<p:spacer height="50px" />
+
+						<fd:labelInput labelWidth="100px" label="Campanha :"
+							breakAfter="true">
+							<p:inputText size="80" id="iCampanha"
+								value="#{view.e.loteCupom.campanhaPromo.descricao}"
+								readonly="true" />
+						</fd:labelInput>
+
+						<fd:labelInput labelWidth="100px" label="Lote :" breakAfter="true">
+							<p:inputText size="50" value="#{view.e.loteCupom.numLote}"
+								readonly="true" />
+						</fd:labelInput>
+
+						<fd:labelInput label="Emitido por :" labelWidth="100px">
+							<p:inputText size="30" value="#{view.e.loteCupom.emitidoPor}"
+								readonly="true" />
+						</fd:labelInput>
+
+						<fd:labelInput label="Dt Emissão :" breakAfter="true">
+							<p:inputText value="#{view.e.loteCupom.dtEmissao}"
+								id="iDtEmissao" widgetVar="iDtEmissao" readonly="true">
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</p:inputText>
+						</fd:labelInput>
+
+						<fd:labelInput label="Dt Início :" labelWidth="100px">
+							<p:calendar styleClass="maskData"
+								value="#{view.e.loteCupom.campanhaPromo.dtInicio}"
+								locale="pt_BR" showOn="button" pattern="dd/MM/yyyy" size="12"
+								selectOtherMonths="true" showOtherMonths="true" />
+						</fd:labelInput>
+
+						<fd:labelInput label="Dt Validade :" breakAfter="true">
+							<p:calendar styleClass="maskData"
+								value="#{view.e.loteCupom.campanhaPromo.dtFim}" locale="pt_BR"
+								pages="2" pattern="dd/MM/yyyy" size="12"
+								selectOtherMonths="true" showOtherMonths="true" />
+						</fd:labelInput>
+
+						<fd:labelInput label="Status :" labelWidth="100px">
+							<p:inputText size="30" value="#{view.e.status.label}"
+								readonly="true" />
+						</fd:labelInput>
+
+						<fd:labelInput label="Dt Vinculação :">
+							<p:calendar styleClass="maskData" value="#{view.e.dtVinculacao}"
+								readonly="true" locale="pt_BR" showOn="button" pattern="dd/MM/yyyy"
+								size="12" selectOtherMonths="true" showOtherMonths="true" />
+						</fd:labelInput>
+
+						<fd:labelInput label="Dt Utilização :" breakAfter="true">
+							<p:calendar styleClass="maskData" value="#{view.e.dtUtilizacao}"
+								readonly="true" locale="pt_BR" showOn="button" pattern="dd/MM/yyyy"
+								size="12" selectOtherMonths="true" showOtherMonths="true" />
+						</fd:labelInput>
+
+						<p:outputPanel id="opnCliente">
+							<fd:labelInput labelWidth="100px" label="Cliente :"
+								breakAfter="true">
+								<p:inputText value="#{view.e.cliente.pessoa.documento}" readonly="true"
+									converter="#{docConverter}" size="30" />
+								<p:inputText value="#{view.e.cliente.pessoa.nome}"
+									readonly="true" size="50" />
+
+								<p:spacer width="4" />
+
+							</fd:labelInput>
+						</p:outputPanel>
+
+						<fd:labelInput label="Obs. :" labelWidth="100px" breakAfter="true">
+							<p:inputTextarea id="iObs" rows="4" cols="160" readonly="true"
+								value="#{view.e.obs}" />
+						</fd:labelInput>
+
+
+						<p:spacer width="20" />
+
+
+						<fd:labelInput noLabel="true" alignRight="true">
+							<p:commandButton title="Marcar cupom como utilizado"
+								widgetVar="btnUtilizar"
+								rendered="#{view.e ne null and view.e.id ne null}"
+								id="btnUtilizar" update=":frm" icon="ui-icon-save"
+								value="Marcar como utilizado" style="width: 250px"
+								actionListener="#{view.utilizar}">
+								<p:confirm />
+							</p:commandButton>
+							
+							<p:focus for="btnUtilizar" />
+
+							<p:commandButton title="Cancelar cupom"
+								rendered="#{view.e ne null and view.e.id ne null}"
+								id="btnCancelar" update=":frm" icon="ui-icon-save"
+								value="Cancelar" style="width: 110px"
+								actionListener="#{view.cancelar}">
+								<p:confirm />
+							</p:commandButton>
+
+							<p:defaultCommand target="btnUtilizar" scope=":frm" />
+
+						</fd:labelInput>
+
+						
+					</p:outputPanel>
+
+				</p:panel>
+
+			</h:form>
+
+
+
+		</sec:authorize>
+
+	</ui:define>
+
+
+</ui:composition>

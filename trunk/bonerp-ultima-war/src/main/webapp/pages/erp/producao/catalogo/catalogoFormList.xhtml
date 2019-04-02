@@ -1,0 +1,208 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	template="/templates/template.xhtml">
+
+	<ui:define name="content">
+
+		<div id="_slnm_catalogoFormList" />
+
+
+		<f:metadata>
+			<ui:param name="view" value="#{catalogoFormListView}" />
+		</f:metadata>
+
+		<style>
+.ui-orderlist .ui-orderlist-list {
+	width: 99%
+}
+</style>
+
+
+		<h:form id="frm">
+
+			<p:remoteCommand actionListener="#{view.restoreViewInfo}"
+				process="@this" update=":frm:panel" partialSubmit="true"
+				autoRun="true" ignoreAutoUpdate="true" />
+
+			<p:panel id="panel" header="Catálogos"
+				style="width: 1000px; margin: 0 auto;">
+
+
+				<fd:labelInput label="Catálogo:">
+					<p:selectOneMenu id="iCatalogo" value="#{view.e}"
+						converter="#{entityIdConverter}">
+						<f:selectItem />
+						<f:selectItems value="#{lmCatalogo.catalogos}" var="c"
+							itemLabel="#{c.descricao}" itemValue="#{c}" />
+						<p:ajax process="@this" update="fsItens" />
+					</p:selectOneMenu>
+
+				</fd:labelInput>
+
+
+				<fd:labelInput noLabel="true" breakAfter="true" alignRight="true">
+
+					<p:commandButton id="btnImprimirCatalogo"
+						value="Imprimir Catálogo"
+						oncomplete="PF('dlgRelCatalogo').show()" icon="ui-icon-print"
+						process="@this" style="width: 120px ; font-weight: bold" />
+
+				</fd:labelInput>
+
+
+				<p:fieldset legend="Itens" id="fsItens">
+
+					<p:selectOneListbox value="#{view.item}"
+						converter="#{entityIdConverter}" var="_" style="width: 100%">
+						<f:selectItems value="#{view.e.itens}" />
+						<p:column>
+							<h:outputText value="- #{_.descricao} (#{_.instituicao.codigo})" />
+							<p:spacer height="20px" width="20px" />
+						</p:column>
+						<p:ajax process="@this" update=":frm:opnItem" partialSubmit="true"
+							listener="#{view.updateItem()}" />
+					</p:selectOneListbox>
+
+
+
+				</p:fieldset>
+
+				<p:spacer height="30px" />
+
+				<p:outputPanel id="opnItem">
+					<p:panel header="Item do Catálogo: #{view.item.descricao}"
+						rendered="#{view.item ne null}">
+
+						<p:fieldset legend="Artigos">
+
+							<p:toolbar>
+								<f:facet name="left">
+
+									<p:commandButton id="btnNovo"
+										action="#{view.updateTiposArtigosSel}" value="Novo"
+										oncomplete="PF('dlgSelArtigos').show()"
+										update=":frmDlgSelArtigos:opnDlg" icon="ui-icon-document"
+										title="Selecionar novo artigo" process="@this"
+										style="width: 120px ; font-weight: bold" />
+
+								</f:facet>
+							</p:toolbar>
+
+							<p:dataTable id="dtListArtigos" var="_" rowIndexVar="row"
+								emptyMessage="Nenhum registro encontrado."
+								value="#{view.item.artigos}" editable="true">
+
+								<p:ajax event="rowEdit" process="@this" partialSubmit="true"
+									listener="#{view.saveArtigo(_)}" />
+
+
+								<p:column styleClass="noWrapSmall" headerText="#">
+									<h:outputText value="#{row + 1}" id="otRowNum" />
+								</p:column>
+
+								<p:column headerText="Artigo">
+
+									<p:cellEditor>
+										<f:facet name="output">
+											<h:outputText value="#{_.descricao}"
+												style="text-transform: uppercase" />
+										</f:facet>
+										<f:facet name="input">
+											<p:inputText id="iDescricao" size="65" value="#{_.descricao}" />
+										</f:facet>
+									</p:cellEditor>
+
+								</p:column>
+
+								<p:column headerText="Obs">
+
+									<p:cellEditor>
+										<f:facet name="output">
+											<h:outputText value="#{_.obs}"
+												style="text-transform: uppercase; white-space: pre;" />
+										</f:facet>
+										<f:facet name="input">
+											<p:inputTextarea id="iObs" value="#{_.obs}"
+												style="text-transform: uppercase;" />
+										</f:facet>
+									</p:cellEditor>
+
+								</p:column>
+
+								<p:column style="width:32px">
+									<p:rowEditor />
+								</p:column>
+
+
+								<p:column headerText="" styleClass="noWrapColBtns">
+
+									<p:commandButton action="#{view.deletarArtigo(_)}" styleClass="red-btn"
+										title="Deletar registro" process="@this" icon="ui-icon-trash"
+										update=":frm">
+										<p:confirm />
+									</p:commandButton>
+								</p:column>
+
+								<f:facet name="footer"> Total de Registros: #{fn:length(view.list)}</f:facet>
+
+							</p:dataTable>
+
+						</p:fieldset>
+
+						<p:spacer height="30px" />
+
+						<p:fieldset legend="Fotos">
+
+							<ui:include src="catalogoFotoForm.xhtml" />
+
+						</p:fieldset>
+
+					</p:panel>
+				</p:outputPanel>
+
+
+			</p:panel>
+
+
+		</h:form>
+
+
+		<h:form id="frmDlg">
+			<p:dialog id="dlgForm" widgetVar="dlgForm" position="top"
+				header="Categoria" modal="true" resizable="false"
+				closeOnEscape="true">
+				<p:outputPanel id="opnDlg">
+
+					<p:defaultCommand target="btnSalvar" />
+
+
+					<fd:labelInput noLabel="true" alignRight="true">
+						<p:commandButton title="Salvar o registro atual" id="btnSalvar"
+							icon="ui-icon-save" value="Salvar" style="width: 110px"
+							actionListener="#{view.save}" update=":frmDlgSelArtigos:opnDlg"
+							oncomplete="afterFormSubmit(xhr, status, args);" />
+					</fd:labelInput>
+
+
+
+				</p:outputPanel>
+			</p:dialog>
+		</h:form>
+
+		<ui:include src="catalogoFormList_dlg.xhtml" />
+
+		<ui:include src="/templates/dlgRelatorio.xhtml">
+			<ui:param name="sufix" value="Catalogo" />
+			<ui:param name="titulo" value="Catálogo" />
+		</ui:include>
+
+
+	</ui:define>
+
+</ui:composition>

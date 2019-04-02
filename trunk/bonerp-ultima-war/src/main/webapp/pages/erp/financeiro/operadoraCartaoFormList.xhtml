@@ -1,0 +1,62 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:p="http://primefaces.org/ui">
+
+
+	<div id="_slnm_operadoraCartaoFormList" />
+
+	<ui:decorate template="/templates/formList.xhtml">
+
+
+		<ui:param name="role" value="FINANCEIRO" />
+
+		<ui:param name="view" value="#{operadoraCartaoFormListView}" />
+		<ui:param name="titulo" value="Operadoras de Cartões" />
+		<ui:param name="tituloDlg" value="Operadora de Cartão" />
+
+
+		<ui:define name="cols">
+			<p:column sortBy="#{_.descricao}" headerText="Descrição">
+				<h:outputText value="#{_.descricao}" />
+			</p:column>
+			<p:column sortBy="#{_.carteira.descricao}" headerText="Descrição">
+				<h:outputText value="#{_.carteira.codigo} - #{_.carteira.descricao}" />
+			</p:column>
+
+		</ui:define>
+
+
+
+		<ui:define name="campos">
+
+			<fd:labelInput label="Descrição *:" breakAfter="true"
+				labelWidth="120px">
+				<p:inputText size="50" value="#{view.e.descricao}" id="iDescricao" />
+				<div style="float: right;">
+					<p:message for="iDescricao" display="icon" />
+				</div>
+			</fd:labelInput>
+
+			<fd:labelInput label="Carteira *:" labelWidth="120px">
+				<p:selectOneMenu id="iCarteira" value="#{view.e.carteira}"
+					converter="#{entityIdConverter}">
+					<f:selectItem itemLabel="" itemValue="" />
+					<f:selectItems value="#{lmFinanc.carteiraValues}" var="c"
+						itemLabel="#{c.codigo} - #{c.descricao}" itemValue="#{c}" />
+
+				</p:selectOneMenu>
+			</fd:labelInput>
+
+
+		</ui:define>
+
+	</ui:decorate>
+
+
+
+</ui:composition>

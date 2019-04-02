@@ -1,0 +1,141 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:param name="view" value="#{artigoCortinaListView}" />
+
+	<div id="_slnm_artigoCortinaList" />
+
+	<ui:decorate template="/templates/list.xhtml">
+
+		<ui:param name="titulo" value="Artigos de Cortinas" />
+		<ui:param name="viewForm" value="#{artigoCortinaFormView}" />
+		<ui:param name="widgetDlgForm" value="dlgArtigoCortina" />
+		<ui:param name="updateDlg" value=":frmArtigoCortina:opnDlg" />
+
+		<ui:param name="alterarEmLote" value="true" />
+		<ui:param name="exibirColuna_btnsEditarDeletar" value="false" />
+		<ui:param name="exibirColuna_IudtUpdated" value="false" />
+
+
+
+		<ui:define name="cols">
+
+			<p:column headerText="Reduzido" sortBy="#{_.produto.reduzido}"
+				styleClass="noWrapSmall">
+				<h:outputText value="#{_.produto.reduzido}"
+					converter="#{reduzidoConverter}" />
+			</p:column>
+
+			<p:column headerText="Descrição" sortBy="#{_.produto.descricao}"
+				style="white-space: normal">
+				<div style="float: left">
+					<h:outputText value="#{_.produto.descricao}" />
+				</div>
+				<p:outputPanel rendered="#{_.tipoArtigoCortina eq 'TECIDO'}"
+					style="float: right">
+					<h:outputText value="Largura: " style="font-weight: bold" />
+					<h:outputText value="#{_.tecido.largura}">
+						<f:convertNumber maxFractionDigits="3" minFractionDigits="2" />
+					</h:outputText>
+				</p:outputPanel>
+				<div style="float: right; padding: 0px 5px 0px 5px">
+					<h:outputText value="(#{_.tipoArtigoCortina.label})" />
+				</div>
+			</p:column>
+
+			<p:column headerText="Fornecedor"
+				sortBy="#{_.produto.fornecedor.pessoa.nomeFantasia}"
+				style="white-space: normal">
+				<h:outputText value="#{_.produto.fornecedor.pessoa.nomeFantasia}" />
+			</p:column>
+
+			<p:column sortBy="#{_.produto.subdepto.nome}"
+				style="white-space: normal">
+				<f:facet name="header">Depto<br />Subdepto</f:facet>
+				<h:outputText
+					value="#{_.produto.subdepto.depto.codigo} - #{_.produto.subdepto.depto.nome}" />
+				<br />
+				<h:outputText
+					value="#{_.produto.subdepto.codigo} - #{_.produto.subdepto.nome}" />
+			</p:column>
+
+			<p:column headerText="Preço"
+				sortBy="#{_.produto.precoAtual.precoVigente}"
+				styleClass="noWrapSmall">
+				<div style="text-align: right;">
+					<h:outputText rendered="#{_.produto.precoAtual.precoPromo gt 0}"
+						value="(P)" />
+					R$
+					<h:outputText value="#{_.produto.precoAtual.precoVigente}"
+						converter="#{doubleConverterNull}" />
+				</div>
+			</p:column>
+
+			<p:column headerText="Alterado em" sortBy="#{_.iudt.updated}"
+				styleClass="noWrapColBtns">
+
+				<p:commandButton actionListener="#{artigoCortinaFormView.setE(_)}"
+					update=":frmArtigoCortina:opnDlg"
+					oncomplete="PF('dlgArtigoCortina').show()" title="Editar registro"
+					icon="ui-icon-build" />
+
+				<p:commandButton actionListener="#{artigoCortinaFormView.setE(_)}"
+					update=":frmDlgArtigoCortinaPrecos:opnDlgArtigoCortinaPrecos"
+					oncomplete="PF('dlgArtigoCortinaPrecos').show()"
+					title="Lista de preços" icon="ui-icon-script" />
+
+				<p:commandButton actionListener="#{view.deletar(_)}"
+					title="Deletar registro" update=":frm:opnLoadList"
+					icon="ui-icon-trash" styleClass="red-btn">
+					<p:confirm />
+				</p:commandButton>
+
+				<div
+					style="width: 100%; padding-top: 5px; color: #CCCCCC; text-align: center">
+					<h:outputText value="#{_.iudt.updated}">
+						<f:convertDateTime pattern="dd/MM/yy HH:mm" />
+					</h:outputText>
+				</div>
+
+			</p:column>
+
+
+		</ui:define>
+	</ui:decorate>
+
+
+	<ui:include src="artigoCortinaDlg.xhtml">
+		<ui:param name="e" value="#{artigoCortinaFormView.e}" />
+		<ui:param name="ePreco" value="#{artigoCortinaFormView.preco}" />
+		<ui:param name="action" value="save" />
+		<ui:param name="update" value=":frm:opnDtList :frm:opnLoadList" />
+	</ui:include>
+
+	<ui:include src="artigoCortinaLoteDlg.xhtml">
+		<ui:param name="loteE" value="#{artigoCortinaFormView.loteE}" />
+		<ui:param name="ePreco" value="#{artigoCortinaFormView.preco}" />
+		<ui:param name="saveLote" value="true" />
+		<ui:param name="viewForm" value="#{artigoCortinaFormView}" />
+		<ui:param name="action" value="saveLote" />
+		<ui:param name="update" value=" :frm:opnDtList :frm:opnLoadList" />
+	</ui:include>
+
+	<ui:include src="/pages/erp/estoque/fornecedorDlgBusca.xhtml">
+		<ui:param name="sufix" value="ArtigoCortinaLote" />
+		<ui:param name="update" value=":frmAlterarEmLote:opnFornecedor" />
+		<ui:param name="viewSelec" value="#{artigoCortinaFormView}" />
+	</ui:include>
+
+	<ui:include src="artigoCortinaList_dlgPesquisa.xhtml" />
+
+	<ui:include src="artigoCortinaPrecosDlg.xhtml">
+		<ui:param name="e" value="#{artigoCortinaFormView.e}" />
+	</ui:include>
+
+
+</ui:composition>

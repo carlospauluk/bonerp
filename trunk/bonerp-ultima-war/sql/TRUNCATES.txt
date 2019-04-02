@@ -1,0 +1,14 @@
+SET FOREIGN_KEY_CHECKS = 0;
+TRUNCATE TABLE lc_depto;
+TRUNCATE TABLE lc_fornecedor;
+TRUNCATE TABLE lc_licit_item_cotacao;
+TRUNCATE TABLE lc_licitacao;
+TRUNCATE TABLE lc_licitacao_arquivo;
+TRUNCATE TABLE lc_licitacao_historico;
+TRUNCATE TABLE lc_licitacao_item;
+TRUNCATE TABLE lc_produto;
+TRUNCATE TABLE lc_produto_custo;
+TRUNCATE TABLE lc_sistema_licit;
+TRUNCATE TABLE lc_subdepto;
+COMMIT;
+SET FOREIGN_KEY_CHECKS = 1;

@@ -1,0 +1,73 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags">
+
+
+	<h:form id="frmDlgSelArtigos">
+	
+		<p:dialog id="dlgSelArtigos" widgetVar="dlgSelArtigos" position="top"
+			header="Selecionar Artigos" modal="true" resizable="false"
+			closeOnEscape="true" width="800px">
+
+			<p:outputPanel id="opnDlg">
+
+				<p:fieldset legend="Artigos">
+
+					<p:selectManyMenu id="iTiposArtigosItem" value="#{view.tiposArtigosItem}"
+						style="width: 100%" converter="#{entityIdConverter}"
+						showCheckbox="true">
+						<f:selectItems value="#{view.tiposArtigosSel}" var="_"
+							itemLabel="#{_.descricao}" itemValue="#{_}" />
+					</p:selectManyMenu>
+
+				</p:fieldset>
+
+				<p:spacer height="30px"></p:spacer>
+
+				<fd:labelInput noLabel="true" alignRight="true" breakAfter="true">
+					<p:commandButton actionListener="#{view.saveArtigosItem}"						
+						value="Salvar artigos para o item" process="@this iTiposArtigosItem"
+						update=":frm:opnItem" oncomplete="afterFormSubmit(xhr, status, args)" />
+				</fd:labelInput>
+				
+			</p:outputPanel>
+		</p:dialog>
+		
+	</h:form>
+
+	<h:form id="frmDlgSelArtigosFoto">
+		<p:dialog id="dlgSelArtigosFoto" widgetVar="dlgSelArtigosFoto"
+			position="top" header="Selecionar Artigos para Foto" modal="true"
+			resizable="false" closeOnEscape="true">
+
+			<p:outputPanel id="opnDlg">
+
+				<p:fieldset legend="Artigos">
+
+					<p:selectManyMenu id="iSelArtigoFoto"
+						value="#{catalogoItemFotoFormView.artigos}" style="width: 100%"
+						converter="#{entityIdConverter}" showCheckbox="true">
+						<f:selectItems value="#{catalogoFormListView.item.artigos}" var="_"
+							itemLabel=" - #{_.descricao}" itemValue="#{_}" />
+					</p:selectManyMenu>
+
+				</p:fieldset>
+				
+				<p:spacer height="30px"></p:spacer>
+
+				<fd:labelInput noLabel="true" alignRight="true" breakAfter="true">
+					<p:commandButton actionListener="#{catalogoItemFotoFormView.saveArtigosFoto}"						
+						value="Salvar artigos para a foto" process="@this iSelArtigoFoto"
+						update=":frm:opnCatalogoFoto" oncomplete="afterFormSubmit(xhr, status, args)" />
+				</fd:labelInput>
+
+			</p:outputPanel>
+		</p:dialog>
+	</h:form>
+
+
+</ui:composition>

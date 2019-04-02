@@ -1,0 +1,111 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:p="http://primefaces.org/ui">
+
+
+
+	<sec:authorize ifNotGranted="ROLE_PRODUCAO">
+		<div class="errorMsg">Usuário sem autorização para acessar este
+			recurso.</div>
+	</sec:authorize>
+
+	<sec:authorize ifAnyGranted="ROLE_PRODUCAO">
+
+		<div id="_slnm_instituicaoFormList" />
+
+
+		<ui:decorate template="/templates/formList.xhtml">
+
+			<ui:param name="role" value="PRODUCAO" />
+
+			<ui:param name="view" value="#{instituicaoFormView}" />
+			<ui:param name="titulo" value="Instituições" />
+			<ui:param name="tituloDlg" value="Instituição" />
+
+			<ui:define name="cols">
+
+				<p:column style="width: 50px" headerText="Código"
+					sortBy="#{_.codigo}">
+					<h:outputText value="#{stringUtils.zerofill(_.codigo,6)}" />
+				</p:column>
+
+				<p:column headerText="Nome" sortBy="#{_.nome}">
+					<h:outputText value="#{_.nome}" />
+				</p:column>
+
+			</ui:define>
+
+
+
+			<ui:define name="campos">
+
+				<f:validateBean disabled="true">
+					<fd:labelInput label="Código :" labelWidth="90px" breakAfter="true">
+						<p:inputText size="15" value="#{view.e.codigo}"
+							styleClass="maskInt" id="iCodigo">
+							<f:convertNumber integerOnly="true" />
+						</p:inputText> * Em branco para preenchimento automático.
+							</fd:labelInput>
+				</f:validateBean>
+
+				<fd:labelInput label="Nome :" labelWidth="90px" breakAfter="true">
+					<p:inputText size="60" value="#{view.e.nome}" />
+				</fd:labelInput>
+
+				<!-- se já foi preenchido o Cliente -->
+				<p:outputPanel rendered="#{view.e.id ne null}">
+
+					<p:spacer height="30px" />
+
+					<p:fieldset legend="Vinculações">
+
+						<fd:labelInput labelWidth="90px" label="Cliente :"
+							breakAfter="true">
+							<p:autoComplete id="iCliente" global="false" size="50"
+								value="#{view.e.cliente}" var="cliente"
+								itemLabel="#{cliente.pessoa.nome}" itemValue="#{cliente}"
+								forceSelection="false" maxResults="99999"
+								completeMethod="#{instituicaoFinder.findVinculosClientesPossiveis}"
+								minQueryLength="0" converter="#{entityIdConverter}" />
+
+							<p:selectBooleanButton value="#{view.criarVincularCliente}"
+								onLabel="Vincular" offLabel="Não vincular" />
+						</fd:labelInput>
+
+						<fd:labelInput labelWidth="90px" label="Fornecedor :"
+							breakAfter="true">
+							<p:autoComplete id="iFornecedor" global="false" size="50"
+								rendered="#{view.e.id ne null}" value="#{view.e.fornecedor}"
+								var="fornecedor" itemLabel="#{fornecedor.codigo} - #{fornecedor.pessoa.nomeFantasia}"
+								itemValue="#{fornecedor}" forceSelection="false"
+								maxResults="99999"
+								completeMethod="#{instituicaoFinder.findVinculosFornecedoresPossiveis}"
+								minQueryLength="0" converter="#{entityIdConverter}" />
+
+							<p:selectBooleanButton value="#{view.criarVincularFornecedor}"
+								onLabel="Vincular" offLabel="Não vincular" />
+						</fd:labelInput>
+
+					</p:fieldset>
+
+					<p:spacer height="30px" />
+
+
+				</p:outputPanel>
+
+
+
+
+			</ui:define>
+
+		</ui:decorate>
+
+
+	</sec:authorize>
+
+</ui:composition>

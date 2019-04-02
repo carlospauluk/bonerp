@@ -1,0 +1,72 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags">
+
+
+	<ui:param name="viewForm"
+		value="#{empty viewForm ? movimentacaoFormView : viewForm}" />
+
+
+
+	<h:form id="frmDlgBuscaCateg">
+
+		<p:dialog id="dlgBuscaCateg" header="Pesquisar Categorias"
+			dynamic="true" widgetVar="dlgBuscaCateg" resizable="false"
+			width="750" modal="true">
+
+
+			<p:scrollPanel id="opnDlgBuscaCateg" style="height:600px"
+				mode="native">
+
+
+
+				<p:outputPanel id="opnLoadTree">
+					<p:remoteCommand id="rcLoadTree" name="loadTree"
+						actionListener="#{categoriaFormListView.carregarArvore}"
+						autoRun="true" update="opnTree" process="@this opnTree" />
+				</p:outputPanel>
+
+
+				<p:outputPanel id="opnTree">
+
+					<p:treeTable value="#{categoriaFormListView.arvoreCategorias}"
+						var="_">
+						<p:column headerText="Código" styleClass="noWrap"
+							style="width: 140px">
+							<h:outputText value="#{_.codigo}"
+								converter="#{categoriaCodigoConverter}" />
+						</p:column>
+						<p:column headerText="Descrição">
+							<h:outputText value="#{_.descricao}" />
+						</p:column>
+						<p:column styleClass="noWrapColBtns" style="width: 35px">
+							<div style="text-align: center">
+								<p:commandButton action="#{viewForm['updateCategoria'](_)}"
+									rendered="#{_.subCategs eq null or _.subCategs.size() eq 0}"
+									title="Selecionar registro" process="@this"
+									icon="ui-icon-arrowrefresh-1-n"
+									oncomplete="PF('dlgBuscaCateg').hide()" />
+							</div>
+						</p:column>
+					</p:treeTable>
+
+				</p:outputPanel>
+
+				<div style="clear: both" />
+				<p:spacer height="20px" />
+				<div style="clear: both" />
+
+
+			</p:scrollPanel>
+		</p:dialog>
+
+
+	</h:form>
+
+
+
+</ui:composition>

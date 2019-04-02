@@ -1,0 +1,93 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets">
+
+	<h:form id="#{formId}">
+
+		<p:dialog id="dlgEndereco" header="Cadastro de Endereço"
+			position="top" widgetVar="dlgEndereco" resizable="false" width="800"
+			modal="true" closable="true" closeOnEscape="true">
+
+			<p:defaultCommand target="btnSalvarEndereco" />
+
+			<p:outputPanel id="opnDados">
+
+				<fd:labelInput label="Tipo :" labelWidth="90px" breakAfter="true">
+
+					<h:selectOneRadio value="#{view.endereco.tipoEndereco}"
+						id="selTipoEndereco"
+						style="font-family: Tahoma, Verdana, sans-serif; font-size: 12px; font-weight: bold;">
+						<p:ajax event="change" update="opnDados" process="selTipoEndereco" />
+						<f:selectItems value="#{lmBase.tipoEnderecoValues}" var="_"
+							itemLabel="#{_.label}" itemValue="#{_}" />
+					</h:selectOneRadio>
+
+				</fd:labelInput>
+
+				<fd:labelInput label="CEP :" labelWidth="90px" breakAfter="true">
+					<p:inputMask mask="99999-999" size="10" id="cep"
+						value="#{view.endereco.cep}" />
+				</fd:labelInput>
+
+				<div style="clear: both;" />
+
+				<fd:labelInput label="Logradouro :" labelWidth="90px">
+					<p:inputText size="50" value="#{view.endereco.logradouro}"
+						id="logradouro" />
+				</fd:labelInput>
+
+				<fd:labelInput label="Número :">
+					<p:inputText size="5" value="#{view.endereco.numero}" id="numero" />
+				</fd:labelInput>
+
+				<fd:labelInput label="Complemento :" alignRight="true"
+					breakAfter="true">
+					<p:inputText size="13" value="#{view.endereco.complemento}"
+						id="complemento" />
+				</fd:labelInput>
+
+				<fd:labelInput label="Bairro :" labelWidth="90px" breakAfter="true">
+					<p:inputText size="40" value="#{view.endereco.bairro}" id="bairro" />
+				</fd:labelInput>
+
+				<fd:labelInput label="Cidade :" labelWidth="90px">
+					<p:inputText size="40" value="#{view.endereco.cidade}" id="cidade" />
+				</fd:labelInput>
+
+				<fd:labelInput label="Estado :">
+					<p:selectOneMenu value="#{view.endereco.estado}" id="uf"
+						style="width: 180px">
+						<f:selectItem itemValue="" itemLabel="Selecione" />
+						<f:selectItems value="#{lmBase.ufValues}" var="uf"
+							itemLabel="#{uf.sigla}" itemValue="#{uf}" />
+					</p:selectOneMenu>
+				</fd:labelInput>
+
+
+				<div style="clear: both" />
+
+				<!-- BOTÃO SALVAR -->
+				<div style="float: right">
+					<p:commandButton title="Salvar o registro atual"
+						id="btnSalvarEndereco" update=" #{update}" icon="ui-icon-save"
+						value="Salvar" style="width: 110px"
+						actionListener="#{view.saveEndereco}"
+						oncomplete="afterFormSubmit(xhr, status, args);" />
+
+				</div>
+
+				<div style="clear: both;" />
+
+			</p:outputPanel>
+
+		</p:dialog>
+
+	</h:form>
+
+
+
+
+</ui:composition>

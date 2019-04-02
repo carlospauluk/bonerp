@@ -1,0 +1,53 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:param name="view" value="#{loteConfeccaoFormListView}" />
+
+	<div id="_slnm_loteConfeccaoList" />
+
+	<ui:decorate template="/templates/list.xhtml">
+	
+		<ui:param name="role" value="PRODUCAO" />
+
+		<ui:param name="titulo" value="Lotes de Confecções" />
+		<ui:param name="viewForm" value="#{loteConfeccaoFormListView}" />
+
+		<ui:define name="cols">
+
+			
+			<p:column headerText="Código" sortBy="#{_.codigo}"
+				styleClass="noWrap">
+				<h:outputText value="#{_.codigo}" />
+			</p:column>
+
+			<p:column sortBy="#{_.descricao}" headerText="Descrição">
+				<h:outputText value="#{_.descricao}" />
+			</p:column>
+			
+			<p:column sortBy="#{_.dtLote}" headerText="Dt Lote"
+				style="width: 1px">
+				<div style="text-align: center;">
+					<h:outputText value="#{_.dtLote}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</div>
+			</p:column>
+
+			
+
+		</ui:define>
+	</ui:decorate>
+
+	<ui:include src="loteConfeccaoDlg.xhtml">
+		<ui:param name="update" value=":frm:opnLoadList" />
+	</ui:include>
+
+	<ui:include src="loteConfeccaoList_dlgPesquisa.xhtml" />
+
+
+</ui:composition>

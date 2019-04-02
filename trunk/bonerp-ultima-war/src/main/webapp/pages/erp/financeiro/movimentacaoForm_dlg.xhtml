@@ -1,0 +1,324 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:fd="http://ocabit.com.br/facelets">
+
+	<ui:param name="view" value="#{movimentacaoFormView}" />
+
+	<!-- DIALOG PARA CADEIA -->
+	<h:form id="frmDlgCadeia">
+
+		<p:dialog id="dlgCadeia" header="Cadeia de Movimentações"
+			dynamic="true" widgetVar="dlgCadeia" resizable="false" width="950"
+			modal="true" position="top">
+
+			<p:outputPanel id="opnDlg">
+				<p:scrollPanel style="height:330px" mode="native">
+
+					<fd:labelInput label="Dt Moviment :">
+						<p:inputText styleClass="maskData" value="#{view.e.dtMoviment}"
+							id="iDtMoviment" size="10">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</p:inputText>
+					</fd:labelInput>
+
+					<fd:labelInput noLabel="true" breakAfter="true" alignRight="true">
+
+						<p:commandButton icon="ui-icon-trash" process="@this" styleClass="red-btn"
+							title="Excluir todas as movimentações desta cadeia"
+							actionListener="#{view.deletarCadeia(view.e.cadeia)}"
+							value="Deletar Cadeia" oncomplete="PF('dlgCadeia').hide()">
+							<p:confirm />
+						</p:commandButton>
+
+						<p:commandButton icon="ui-icon-print" process="@this"
+							value="Imprimir Planilha" actionListener="#{view.setParamsRel(null)}"
+							oncomplete="PF('dlgRelPlanilhaRecorrente').show()" />
+
+					</fd:labelInput>
+
+					<p:spacer height="20px" />
+
+					<p:dataTable id="dtList" var="_" rowIndexVar="row" rowKey="#{_}"
+						emptyMessage="Nenhum registro encontrado."
+						value="#{view.e.cadeia.movimentacoes}"
+						rowStyleClass="#{movimentacaoListagemListView.getRowStyleClass(_)}">
+
+						<p:column style="width: 1px" headerText="#">
+							<h:outputText value="#{row + 1}" />
+						</p:column>
+
+						<p:column styleClass="noWrap" headerText="Código" sortBy="#{_.id}">
+							<h:outputText value="#{_.id}" />
+						</p:column>
+
+						<p:column styleClass="noWrap" headerText="Ordem"
+							sortBy="#{_.cadeiaOrdem}">
+							<h:outputText value="#{_.cadeiaOrdem}" />
+						</p:column>
+
+						<p:column>
+							<f:facet name="header">Categoria<br />Carteira</f:facet>
+							<h:outputText
+								value="#{_.categoria.codigoM} - #{_.categoria.descricao}" />
+							<br />
+							<h:outputText
+								value="#{_.carteira.codigo} - #{_.carteira.descricao}" />
+						</p:column>
+
+
+						<p:column styleClass="noWrap">
+							<f:facet name="header">Vencto<br />Vencto Efet<br />Pagto</f:facet>
+							<h:outputText value="#{_.dtVencto}">
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</h:outputText>
+							<br />
+							<h:outputText value="#{_.dtVenctoEfetiva}">
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</h:outputText>
+							<br />
+							<h:outputText value="#{_.dtPagto}">
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</h:outputText>
+						</p:column>
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Descrição" />
+								<br />
+								<h:outputText value="Sacado/Cedente" />
+							</f:facet>
+							<div style="float: left">
+								<b> <h:outputText value="#{_.descricaoMontada}"
+										escape="false" style="white-space: pre-wrap;" /></b>
+								<p:outputPanel rendered="#{_.pessoa.nomeExibicao ne null}">
+									<br />
+									<h:outputText value="#{_.pessoa.nomeExibicao}" />
+								</p:outputPanel>
+							</div>
+						</p:column>
+
+						<p:column styleClass="noWrap" headerText="Valor">
+							<div style="text-align: right">
+								<h:outputText value="#{_.valorTotal}"
+									converter="#{doubleConverter}" />
+							</div>
+						</p:column>
+
+					</p:dataTable>
+
+
+
+				</p:scrollPanel>
+			</p:outputPanel>
+		</p:dialog>
+	</h:form>
+
+
+	<!-- DIALOG PARA PARCELAMENTO -->
+	<h:form id="frmDlgParcelamento">
+
+		<p:dialog id="dlgParcelamento" header="Parcelamento" dynamic="true"
+			widgetVar="dlgParcelamento" resizable="false" width="1050"
+			modal="true">
+
+			<p:outputPanel id="opnDlg">
+				<p:scrollPanel style="height:530px" mode="native">
+
+					<fd:labelInput label="Valor Total:">
+						<p:inputText size="10" value="#{view.e.parcelamento.valorTotal}"
+							id="iValorTotalParcelamento" styleClass="maskMoney"
+							style="text-align: right;" readonly="true">
+							<fd:bigDecimalConverter onlyAbs="true" />
+						</p:inputText>
+					</fd:labelInput>
+
+					<fd:labelInput label="Dt Moviment :">
+						<p:inputText styleClass="maskData" value="#{view.e.dtMoviment}"
+							id="iDtMoviment" size="10">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</p:inputText>
+					</fd:labelInput>
+
+					<fd:labelInput noLabel="true" breakAfter="true" alignRight="true">
+
+						<!-- só exibe se NÃO for parcelamento de grupo de movimentação -->
+
+						<p:commandButton rendered="#{view.e.grupoItem.id ne null}"
+							icon="ui-icon-document" process="@this"
+							title="Inserir nova parcela"
+							actionListener="#{movimentacaoFormView.novo('PARCELA')}"
+							value="Nova Parcela"
+							oncomplete="PF('dlgMovimentacao_MOVIMENTACAO_AGRUPADA').show()"
+							update=":frmMovimentacao_MOVIMENTACAO_AGRUPADA:opnDlgMovimentacao" />
+
+						<p:commandButton icon="ui-icon-trash" process="@this" styleClass="red-btn"
+							title="Excluir todas as movimentações do parcelamento"
+							actionListener="#{view.deletarParcelamento(view.e.parcelamento)}"
+							value="Deletar Parcelamento"
+							oncomplete="PF('dlgParcelamento').hide()">
+							<p:confirm />
+						</p:commandButton>
+
+						<!-- só exibe se NÃO for parcelamento de grupo de movimentação -->
+
+						<p:commandButton icon="ui-icon-print" process="@this"
+							value="Imprimir Planilha"
+							oncomplete="PF('dlgRelPlanilhaParcelamento').show()" />
+
+						<p:commandButton id="btnAtualizar" title="Atualizar dados (A)"
+							update="opnDlg" process="@this" icon="ui-icon-refresh"
+							actionListener="#{view.refreshE()}" />
+
+					</fd:labelInput>
+
+					<p:spacer height="20px" />
+
+					<p:dataTable id="dtList" var="_" rowIndexVar="row" rowKey="#{_}"
+						emptyMessage="Nenhum registro encontrado."
+						value="#{view.e.parcelamento.parcelas}"
+						rowStyleClass="#{movimentacaoListagemListView.getRowStyleClass(_)}">
+
+						<p:column style="width: 15px" headerText="#">
+							<h:outputText value="#{row + 1}" />
+						</p:column>
+
+						<p:column styleClass="noWrap" style="width: 30px"
+							headerText="Código" sortBy="#{_.id}">
+							<h:outputText value="#{_.id}" />
+						</p:column>
+
+						<p:column rendered="#{true}">
+							<f:facet name="header">
+								<h:outputText value="Status" />
+								<br />
+								<h:outputText value="Categoria" />
+								<br />
+								<h:outputText value="Carteira" />
+							</f:facet>
+
+							<h:outputText value="#{_.status.sigla}" title="#{_.status.label}" />
+							<br />
+							<h:outputText
+								value="#{_.categoria.codigoM} - #{_.categoria.descricao}" />
+							<br />
+							<h:outputText
+								value="#{_.carteira.codigo} - #{_.carteira.descricao}" />
+						</p:column>
+
+						<p:column styleClass="noWrap" style="width: 60px">
+							<f:facet name="header">Vencto<br />Vencto Efet</f:facet>
+							<h:outputText value="#{_.dtVencto}">
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</h:outputText>
+							<br />
+							<h:outputText value="#{_.dtVenctoEfetiva}">
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</h:outputText>
+						</p:column>
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Descrição" />
+								<br />
+								<h:outputText value="Sacado/Cedente" />
+							</f:facet>
+							<div style="float: left">
+								<b> <h:outputText value="#{_.descricaoMontada}"
+										escape="false" style="white-space: pre-wrap;" /></b>
+								<p:outputPanel rendered="#{_.pessoa.nomeExibicao ne null}">
+									<br />
+									<h:outputText value="#{_.pessoa.nomeExibicao}" />
+								</p:outputPanel>
+							</div>
+						</p:column>
+
+						<p:column styleClass="noWrap" headerText="Valor"
+							style="width: 60px">
+							<div style="text-align: right">
+								<h:outputText value="#{_.valorTotal}"
+									converter="#{doubleConverter}" />
+							</div>
+						</p:column>
+
+
+						<p:column styleClass="noWrapColBtns" style="width: 80px">
+
+							<p:commandButton
+								action="#{movimentacaoFormView.deslocarVencto(_,-1)}"
+								process="@this" update=":frmDlgParcelamento:opnDlg"
+								title="Voltar vencimento (voltar em 1 mês todas as parcelas a partir desta)"
+								icon="ui-icon-arrowrefresh-1-n">
+								<p:confirm />
+							</p:commandButton>
+
+							<p:commandButton
+								action="#{movimentacaoFormView.deslocarVencto(_,1)}"
+								process="@this" update=":frmDlgParcelamento:opnDlg"
+								title="Pular vencimento (avançar em 1 mês todas as parcelas a partir desta)"
+								icon="ui-icon-refresh">
+								<p:confirm />
+							</p:commandButton>
+
+							<ui:param name="dlgSufix"
+								value="#{_.status eq 'ABERTA' ? 'A_PAGAR_RECEBER' : 'GERAL'}" />
+
+							<p:commandButton
+								rendered="#{movimentacaoSecurityCheck.podeEditar(_)}"
+								action="#{movimentacaoFormView.iniEdit(_)}" process="@this"
+								update=":frmMovimentacao_#{movimentacaoFormView.tipoLancto}:opnDlgMovimentacao"
+								oncomplete="PF('dlgMovimentacao_#{movimentacaoFormView.tipoLancto}').show()"
+								title="Editar registro" icon="ui-icon-build" />
+
+							<p:commandButton action="#{view.deletarParcela(_)}"
+								rendered="#{movimentacaoSecurityCheck.podeDeletar(_)}"
+								disabled="#{view.isUltimaParcela(_) eq false}"
+								title="Deletar registro" process="@this" icon="ui-icon-trash"
+								update=":frmDlgParcelamento:opnDlg" styleClass="red-btn">
+								<p:confirm />
+							</p:commandButton>
+						</p:column>
+
+					</p:dataTable>
+
+
+
+				</p:scrollPanel>
+			</p:outputPanel>
+		</p:dialog>
+	</h:form>
+
+
+	<ui:decorate template="/templates/dlgRelatorio.xhtml">
+		<ui:param name="sufix" value="PlanilhaRecorrente" />
+		<ui:param name="titulo" value="Planilha de Recorrentes" />
+		
+		<ui:define name="customContent">
+			<fd:labelInput noLabel="true" breakAfter="true">
+				<h:outputText value="Entre " />
+
+				<p:calendar styleClass="maskData" value="#{view.paramsRel['dtIni']}"
+					id="iDtIni" locale="pt" showOn="button"
+					pattern="dd/MM/yyyy" size="12" selectOtherMonths="true"
+					showOtherMonths="true" />
+				<h:outputText value=" e " />
+				<p:calendar styleClass="maskData" value="#{view.paramsRel['dtFim']}"
+					id="iDtFim" locale="pt" showOn="button"
+					pattern="dd/MM/yyyy" size="12" selectOtherMonths="true"
+					showOtherMonths="true" />
+			</fd:labelInput>
+		</ui:define>
+		
+	</ui:decorate>
+
+	<ui:include src="/templates/dlgRelatorio.xhtml">
+		<ui:param name="sufix" value="PlanilhaParcelamento" />
+		<ui:param name="titulo" value="Planilha de Parcelamento" />
+	</ui:include>
+
+
+
+</ui:composition>

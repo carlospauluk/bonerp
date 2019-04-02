@@ -1,0 +1,319 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:fd="http://ocabit.com.br/facelets">
+
+
+	<!-- 
+		modo_readonly
+		exibir_dtPagto
+		carteiraValues
+		exibir_documentoBanco
+		exibir_grupo
+		exibir_obs_valores
+		exibir_cheque
+		exibir_recorrencia
+		exibir_parcelamento
+	-->
+
+	<c:if test="#{empty viewForm}">
+		<ui:param name="viewForm" value="#{movimentacaoFormView}" />
+	</c:if>
+
+	<c:if test="#{empty carteiraValues}">
+		<ui:param name="carteiraValues" value="#{lmFinanc.carteiraValues}" />
+	</c:if>
+
+	<c:if test="#{empty exibir_obs_valores}">
+		<ui:param name="exibir_obs_valores" value="true" />
+	</c:if>
+
+	<c:if test="#{empty exibir_recorrencia}">
+		<ui:param name="exibir_recorrencia" value="true" />
+	</c:if>
+
+	<c:if test="#{empty exibir_parcelamento}">
+		<ui:param name="exibir_parcelamento" value="true" />
+	</c:if>
+
+	<p:focus for="iCarteira" />
+
+	
+
+	<fd:labelInput label="Carteira :" labelWidth="130px">
+		<p:selectOneMenu id="iCarteira" value="#{viewForm.e.carteira}"
+			converter="#{entityIdConverter}">
+			<f:selectItem itemLabel="" itemValue="" />
+			<f:selectItems value="#{carteiraValues}" var="c"
+				itemLabel="#{c.codigo} - #{c.descricao}" itemValue="#{c}" />
+
+			<p:ajax event="change" listener="#{viewForm.updateChequeByCarteira}"
+				process="@this" partialSubmit="true" update="opnCheque" />
+		</p:selectOneMenu>
+	</fd:labelInput>
+
+
+	<!-- se Modo for readonly -->
+	<c:if test="#{modo_readonly}">
+		<fd:labelInput label="Modo Moviment :" alignRight="true"
+			breakAfter="true">
+			<p:inputText id="iModoMoviment" value="#{viewForm.e.modo.descricao}"
+				readonly="true" size="30" />
+		</fd:labelInput>
+	</c:if>
+	<!-- se Modo NÃO for readonly -->
+	<c:if test="#{!modo_readonly}">
+		<fd:labelInput label="Modo Moviment :" breakAfter="true"
+			alignRight="true">
+			<p:selectOneMenu id="iModoMoviment" value="#{viewForm.e.modo}"
+				converter="#{entityIdConverter}">
+				<f:selectItem />
+				<f:selectItems value="#{lmFinanc.modoValues}" var="mm"
+					itemLabel="#{mm.codigo} - #{mm.descricao}" itemValue="#{mm}" />
+				<p:ajax event="change" process="@this" partialSubmit="true"
+					update="opnCheque" />
+			</p:selectOneMenu>
+		</fd:labelInput>
+	</c:if>
+
+	<p:outputPanel id="opnCategoria">
+		<fd:labelInput labelWidth="130px" label="Categoria :">
+
+			<p:inputText converter="#{categoriaCodigoConverter}" id="iCategoriaCodigo"
+				value="#{viewForm.e.categoria.codigo}" size="10" readonly="true" />
+
+			<h:outputText value="-" />
+
+			<p:autoComplete id="iCategoria" size="60"
+				value="#{viewForm.e.categoria}" var="cat"
+				itemLabel="#{cat.descricao}" itemValue="#{cat}"
+				forceSelection="false"
+				completeMethod="#{categoriaFinder.findFolhasBy}" minQueryLength="3"
+				widgetVar="acCategoria" converter="#{entityIdConverter}">
+				<p:ajax event="itemSelect" process="@this" update="opnCategoria"
+					oncomplete="_$('iModoMoviment').focus()" />
+			</p:autoComplete>
+
+			<p:spacer width="4" />
+
+			<p:commandButton id="btnBuscaCateg" title="Buscar Categoria"
+				actionListener="#{categoriaFormListView.categoriaFormListView}"
+				oncomplete="PF('dlgBuscaCateg').show()"
+				update=":frmDlgBuscaCateg:opnTree" partialSubmit="true"
+				process="@none" icon="ui-icon-search" />
+
+
+		</fd:labelInput>
+
+		<!-- SÓ EXIBE NOS CASOS DE PRO-LABORE -->
+		<p:outputPanel
+			rendered="#{viewForm.e.categoria.centroCustoDif eq true}">
+			<fd:labelInput label="Centro Custo:" breakAfter="true"
+				alignRight="true">
+				<p:selectOneMenu id="iCentroCusto" value="#{viewForm.e.centroCusto}"
+					converter="#{entityIdConverter}">
+					<f:selectItem />
+					<f:selectItems value="#{lmFinanc.centroCustoValues}" var="cc"
+						itemLabel="#{cc.codigo} - #{cc.descricao}" itemValue="#{cc}" />
+				</p:selectOneMenu>
+			</fd:labelInput>
+		</p:outputPanel>
+
+		<fd:labelInput noLabel="true" breakAfter="true" />
+
+	</p:outputPanel>
+
+
+	<p:outputPanel id="opnDatas">
+	
+		<p:remoteCommand name="limparDatas"
+			actionListener="#{viewForm.limparDatas}" process="opnDatas" update="opnDatas" />
+			
+		<script>			
+			$(document).bind('keydown', 'ctrl+shift+l', limparDatas);
+		</script>
+
+		<fd:labelInput labelWidth="130px" label="Dt Moviment :">
+
+			<p:calendar styleClass="maskData" value="#{viewForm.e.dtMoviment}"
+				id="iDtMoviment" locale="pt" pages="1" pattern="dd/MM/yyyy"
+				showOn="button" widgetVar="iDtMoviment" size="12"
+				selectOtherMonths="true" showOtherMonths="true"
+				onfocus="$(''#frmMovimentacao_{#tipoLancto}\\:iDtMoviment_input').select()">
+
+				<p:ajax event="blur" process="@none" partialSubmit="true"
+					immediate="true"
+					oncomplete="atualizaDatas('#{tipoLancto}', 'iDtMoviment')" />
+
+			</p:calendar>
+
+		</fd:labelInput>
+
+		<p:outputPanel id="opnDtVencto">
+			<fd:labelInput label="Vencto :">
+				<p:calendar styleClass="maskData" value="#{viewForm.e.dtVencto}"
+					id="iDtVencto" locale="pt" showOn="button" pattern="dd/MM/yyyy"
+					size="12" selectOtherMonths="true" showOtherMonths="true"
+					widgetVar="iDtVencto">
+					<p:ajax event="focus" process="@none" partialSubmit="true"
+						oncomplete="atualizaDatas('#{tipoLancto}', 'iDtVencto')" />
+				</p:calendar>
+			</fd:labelInput>
+		</p:outputPanel>
+
+		<p:outputPanel id="opnDtVenctoEfetiva">
+			<f:validateBean disabled="true">
+				<fd:labelInput label="Vcto Efet :">
+					<p:calendar styleClass="maskData"
+						value="#{viewForm.e.dtVenctoEfetiva}" id="iDtVenctoEfetiva"
+						locale="pt" showOn="button" pattern="dd/MM/yyyy" size="12"
+						selectOtherMonths="true" showOtherMonths="true"
+						widgetVar="iDtVenctoEfetiva">
+						<p:ajax event="focus" process="@this iDtVencto"
+							update="opnDtVenctoEfetiva"
+							onstart="return triggerListener('#{tipoLancto}', 'iDtVenctoEfetiva')"
+							partialSubmit="true" listener="#{viewForm.updateDtVenctoEfetiva}" />
+					</p:calendar>
+				</fd:labelInput>
+			</f:validateBean>
+		</p:outputPanel>
+
+
+		<p:outputPanel rendered="#{exibir_dtPagto}">
+			<fd:labelInput label="Pagto :" alignRight="true">
+				<p:calendar styleClass="maskData" value="#{viewForm.e.dtPagto}"
+					id="iDtPagto" locale="pt"
+					onfocus="atualizaDatas('#{tipoLancto}', 'iDtPagto');"
+					widgetVar="iDtPagto" showOn="button" pattern="dd/MM/yyyy" size="12"
+					selectOtherMonths="true" showOtherMonths="true">
+					<p:ajax event="focus" process="@none" partialSubmit="true"
+						oncomplete="atualizaDatas('#{tipoLancto}', 'iDtPagto')" />
+				</p:calendar>
+			</fd:labelInput>
+		</p:outputPanel>
+
+	</p:outputPanel>
+
+	<fd:labelInput noLabel="true" breakAfter="true" />
+
+	<p:outputPanel id="opnPessoa">
+
+		<fd:labelInput labelWidth="130px" label="Sacado/Cedente :">
+
+			<p:autoComplete id="iPessoa" size="50" value="#{viewForm.e.pessoa}"
+				var="pessoa" itemLabel="#{pessoa.nomeExibicao}"
+				itemValue="#{pessoa}" forceSelection="false" maxResults="50"
+				completeMethod="#{viewForm.acPessoa}" minQueryLength="1"
+				widgetVar="acPessoa" converter="#{entityIdConverter}">
+				<p:ajax event="itemSelect" process="@this" update="opnPessoa" />
+			</p:autoComplete>
+
+			<p:tooltip id="ttPessoa" for="iPessoa"
+				value="#{viewForm.e.pessoa.nomeExibicao}" trackMouse="true" />
+
+			<div style="float: right">
+				<p:selectOneRadio value="#{viewForm.pessoaCadastro}" id="iPessoaCadastro">
+					<f:selectItems value="#{lmBase.pessoaCadastroValues}" var="_"
+						itemLabel="#{_.label}" itemValue="#{_}" />
+					<p:ajax event="change" process="@this" />
+				</p:selectOneRadio>
+			</div>
+
+
+			<p:spacer width="4" />
+			<p:commandButton id="btnBuscaPessoa"
+				title="Buscar Pessoa Sacado/Cedente"
+				oncomplete="PF('dlgBuscaPessoaMovimentacao_#{tipoLancto}').show()"
+				update=":frmDlgBuscaPessoaMovimentacao_#{tipoLancto}:opnDlg"
+				process="@this" icon="ui-icon-search" />
+
+
+
+		</fd:labelInput>
+	</p:outputPanel>
+
+
+
+	<fd:labelInput labelWidth="130px" label="Descrição :" breakAfter="true">
+		<p:inputText id="iDescricao" size="65" value="#{viewForm.e.descricao}"
+			onkeydown="if (event.keyCode == 118) gerarDescricao()" />
+
+		<p:remoteCommand name="gerarDescricao"
+			actionListener="#{viewForm.gerarDescricao}" update="iDescricao"
+			process="@this iCategoria iModoMoviment" />
+
+		<p:contextMenu for="iDescricao">
+			<p:menuitem value="Gerar automaticamente"
+				process="@this iCategoria opnPessoa iModoMoviment"
+				actionListener="#{viewForm.gerarDescricao}" update="iDescricao"
+				icon="ui-icon-refresh" />
+		</p:contextMenu>
+	</fd:labelInput>
+
+
+	<p:outputPanel id="opnBanco" rendered="#{exibir_documentoBanco}">
+		<fd:labelInput labelWidth="130px" label="Banco (origem) :"
+			breakAfter="true">
+
+			<p:inputText tabindex="-1"
+				value="#{viewForm.e.documentoBanco.codigoBanco}" size="10"
+				readonly="true" />
+
+			<h:outputText value=" - " />
+
+			<p:autoComplete id="iDocumentoBanco" size="50"
+				value="#{viewForm.e.documentoBanco}" var="_" itemLabel="#{_.nome}"
+				itemValue="#{_}" forceSelection="false" dropdown="true"
+				completeMethod="#{lmFinanc.acBanco}" minQueryLength="1"
+				widgetVar="acDocumentoBanco" converter="#{entityIdConverter}">
+
+				<p:ajax event="itemSelect" process="@this" update="opnBanco"
+					oncomplete="_$('iDocumentoNum').focus()" />
+
+			</p:autoComplete>
+
+			<p:spacer width="4" />
+
+		</fd:labelInput>
+
+	</p:outputPanel>
+
+	<fd:labelInput labelWidth="130px" label="Núm. Doc :">
+		<p:inputText id="iDocumentoNum" size="10"
+			title="Número do boleto, etc" value="#{viewForm.e.documentoNum}" />
+	</fd:labelInput>
+
+	<fd:labelInput label="Documento (Fiscal) :">
+		<p:inputText id="iDocumentoFiscal" size="12" styleClass="maskInt"
+			title="Número da Nota Fiscal, etc"
+			value="#{viewForm.e.documentoFiscal}" />
+	</fd:labelInput>
+
+	<fd:labelInput label="Código Pedido :" alignRight="true"
+		breakAfter="true">
+		<p:inputText id="iCodigoPedido" size="12"
+			value="#{viewForm.e.codigoPedido}" />
+	</fd:labelInput>
+
+	<div style="clear: both" />
+
+
+
+	<fd:labelInput noLabel="true" breakAfter="true" />
+
+
+	<ui:include src="movimentacaoForm_campos_parc_recorr.xhtml" />
+
+	<ui:include src="movimentacaoForm_campos_obs-valores.xhtml" />
+
+
+
+	<p:outputPanel id="opnCheque">
+		<ui:include src="movimentacaoForm_campos_cheque.xhtml" />
+	</p:outputPanel>
+
+
+</ui:composition>

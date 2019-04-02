@@ -1,0 +1,146 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags">
+
+
+	<!-- 
+		PARAMS:
+		
+		sufix
+	
+	 -->
+
+
+	<p:outputPanel id="opnProduto">
+
+		<f:validateBean disabled="true">
+			<fd:labelInput label="Reduzido :" labelWidth="100px">
+				<p:inputText size="15" value="#{p.reduzido}" styleClass="maskInt"
+					id="iReduzido"
+					onkeydown="if (event.keyCode == 34) { irParaProximo(); } else if (event.keyCode == 33) { irParaAnterior(); }">
+
+					<p:remoteCommand name="irParaProximo"
+						actionListener="#{view.irParaProximo}" update="opnDlg"
+						process="@this" />
+					<p:remoteCommand name="irParaAnterior"
+						actionListener="#{view.irParaAnterior}" update="opnDlg"
+						process="@this" />
+
+					<p:ajax event="blur" listener="#{view.updateReduzido}"
+						process="@this" onstart="return checkUpdateReduzido() " />
+
+					<f:convertNumber integerOnly="true" />
+				</p:inputText>
+			</fd:labelInput>
+		</f:validateBean>
+
+		<fd:labelInput label="Descrição :">
+			<p:inputText size="65" value="#{p.descricao}" />
+		</fd:labelInput>
+
+		<fd:labelInput label="Unidade :" alignRight="true" breakAfter="true">
+			<p:selectOneMenu id="iUnidade" value="#{p.unidadeProduto}"
+				converter="#{entityIdConverter}">
+				<f:selectItem itemLabel="" itemValue="" />
+				<f:selectItems value="#{lmEstoque.unidadesProduto}" var="u"
+					itemLabel="#{u.label}" itemValue="#{u}"
+					itemDescription="#{u.descricao}" />
+			</p:selectOneMenu>
+		</fd:labelInput>
+
+
+		<f:validateBean disabled="true">
+			<p:outputPanel id="opnFornecedor">
+				<fd:labelInput labelWidth="100px" label="Fornecedor :">
+
+					<p:inputText size="8" value="#{view.fornecedorCodigo}"
+						styleClass="maskInt" id="iFornecedorCodigo">
+						<f:convertNumber integerOnly="true" />
+
+						<p:ajax event="blur" listener="#{view.updateFornecedorByCodigo}"
+							update="opnFornecedor" process="opnFornecedor"
+							onstart="return checkUpdateFornecedor() " />
+
+					</p:inputText>
+					<p:autoComplete id="acFornecedor" value="#{p.fornecedor}" var="f"
+						itemLabel="#{f.pessoa.nomeFantasia}" itemValue="#{f}"
+						maxResults="50" size="70" forceSelection="true"
+						completeMethod="#{lmEstoque.acFornecedoresPorNome}"
+						minQueryLength="3" converter="#{entityIdConverter}">
+						<p:ajax event="itemSelect" listener="#{view.updateFornecedor}"
+							update="opnFornecedor" process="@this" />
+					</p:autoComplete>
+
+					<p:spacer width="4" />
+
+					<p:commandButton title="Buscar Fornecedores"
+						onclick="PF('dlgBuscaFornecedor#{sufix}').show()"
+						actionListener="#{fornecedorDlgBuscaView.resetBusca}"
+						update=":frmDlgBuscaFornecedor#{sufix}:opnDlg"
+						process="@this" icon="ui-icon-search" />
+
+					<p:commandButton title="Inserir novo Fornecedor"
+						onclick="PF('dlgFornecedor').show()"
+						actionListener="#{fornecedorFormListView.novo}"
+						update=":frmFornecedor#{sufix}:opnDlg" process="@this"
+						icon="ui-icon-document" />
+
+				</fd:labelInput>
+			</p:outputPanel>
+		</f:validateBean>
+
+		<fd:labelInput label="Grade :" alignRight="true" breakAfter="true">
+			<p:selectOneMenu id="iGrade" value="#{p.grade}"
+				converter="#{entityIdConverter}">
+				<f:selectItem itemLabel="" itemValue="" />
+				<f:selectItems value="#{lmEstoque.grades}" var="g"
+					itemLabel="#{g.codigo}" itemValue="#{g}" itemDescription="#{g.obs}" />
+				<p:ajax event="change" listener="#{view.updateGrade}"
+					process="@this iGrade" update="iUnidade" />
+			</p:selectOneMenu>
+		</fd:labelInput>
+
+
+		<fd:labelInput label="Depto :" labelWidth="100px">
+			<p:selectOneMenu id="iDepto" value="#{lmEstoque.depto}"
+				converter="#{entityIdConverter}">
+				<f:selectItem itemLabel="" itemValue="" />
+				<f:selectItems value="#{lmEstoque.deptos}" var="d"
+					itemLabel="#{d.nome} - #{d.codigo}" itemValue="#{d}" />
+				<p:ajax event="change" update="opnSubdepto" process="@this" />
+			</p:selectOneMenu>
+		</fd:labelInput>
+
+		<p:outputPanel id="opnSubdepto">
+			<fd:labelInput label="Subdepto :">
+				<p:selectOneMenu id="iSubdepto" value="#{p.subdepto}"
+					converter="#{entityIdConverter}">
+					<f:selectItem itemLabel="" itemValue="" />
+					<f:selectItems value="#{lmEstoque.depto.subdeptos}" var="sd"
+						itemLabel="#{sd.nome} - #{sd.codigo}" itemValue="#{sd}" />
+				</p:selectOneMenu>
+			</fd:labelInput>
+		</p:outputPanel>
+
+		<f:validateBean disabled="true">
+
+			<fd:labelInput label="Referência :" labelWidth="100px">
+				<p:inputText size="15" value="#{p.referencia}" id="iReferencia"
+					 />
+			</fd:labelInput>
+
+		</f:validateBean>
+
+		<fd:labelInput label="Dt Últ Venda :" alignRight="true" breakAfter="true">
+			<p:calendar styleClass="maskData" value="#{p.dtUltVenda}"
+				locale="pt_BR" showOn="button" pattern="dd/MM/yyyy" size="12"
+				selectOtherMonths="true" showOtherMonths="true" />
+		</fd:labelInput>
+
+	</p:outputPanel>
+
+</ui:composition>

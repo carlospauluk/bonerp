@@ -1,0 +1,200 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:param name="__TOTAL_ABERTAS" value="TOTAL_ABERTAS_#{sufixo}" />
+
+	<ui:param name="__TOTAL_CHEQUES" value="TOTAL_CHEQUES_#{sufixo}" />
+
+	<ui:param name="__TOTAL_GERAL" value="TOTAL_GERAL_#{sufixo}" />
+
+	<ui:param name="sumarizar"
+		value="#{empty sumarizar ? true : sumarizar}" />
+
+
+
+	<p:dataTable var="_" rowIndexVar="row" sortBy="#{_.dtVenctoEfetiva}"
+		rowKey="#{_}" emptyMessage="Nenhum registro encontrado."
+		value="#{list}" rowStyleClass="#{view.getRowStyleClass(_)}">
+
+
+		<p:columnGroup type="header">
+			<p:row>
+				<p:column headerText="Código"
+					styleClass="extrato_col extrato_col_codigo" />
+				<p:column headerText="Carteira"
+					styleClass="extrato_col extrato_col_carteira" />
+				<p:column styleClass="extrato_col extrato_col_categoria">
+					<f:facet name="header">
+						<h:outputText value="Categoria" />
+					</f:facet>
+				</p:column>
+				<p:column styleClass="extrato_col extrato_col_descricao">
+					<f:facet name="header">
+						<h:outputText value="Descrição" />
+						<br />
+						<h:outputText value="Sacado/Cedente" />
+					</f:facet>
+				</p:column>
+				<p:column headerText="Dt Vencto"
+					styleClass="extrato_col extrato_col_dt_vencto" />
+				<p:column headerText="Valor Total"
+					styleClass="extrato_col extrato_col_valor_total" />
+				<p:column headerText="Alterado em"
+					styleClass="extrato_col extrato_col_alterado_em" />
+				<p:column styleClass="noWrap" style="width: 115px" />
+			</p:row>
+		</p:columnGroup>
+
+
+		<p:column>
+			<h:outputText value="#{_.id}" id="otId" />
+		</p:column>
+
+		<p:column>
+			<h:outputText value="#{_.carteira.descricao}"
+				title="#{_.carteira.descricao}" />
+		</p:column>
+
+		<p:column rendered="#{true}">
+			<h:outputText
+				value="#{_.categoria.codigoM} - #{_.categoria.descricao}" />
+			<br />
+			<h:outputText value="#{_.modo.codigo} - #{_.modo.descricao}" />
+		</p:column>
+
+		<p:column>
+			<div style="float: left">
+				<b> <h:outputText value="#{_.descricaoMontada}" escape="false"
+						style="white-space: pre-wrap;" /></b>
+				<p:outputPanel rendered="#{_.pessoa.nomeExibicao ne null}">
+					<br />
+					<h:outputText value="#{_.pessoa.nomeExibicao}" />
+				</p:outputPanel>
+			</div>
+			<p:outputPanel rendered="#{_.cadeia ne null}" style="float: right">
+				<p:commandButton action="#{movimentacaoFormView.iniEdit(_)}"
+					process="@this" update=":frmDlgCadeia:opnDlg"
+					oncomplete="PF('dlgCadeia').show()"
+					title="Exibir cadeia de movimentações" icon="ui-icon-list" />
+			</p:outputPanel>
+			<!-- é de um parcelamento -->
+			<p:outputPanel rendered="#{_.parcelamento ne null}"
+				style="float: right">
+				<p:commandButton action="#{movimentacaoFormView.iniEdit(_, 'MOVIMENTACAO_AGRUPADA')}"
+					process="@this" update=":frmDlgParcelamento:opnDlg"
+					oncomplete="PF('dlgParcelamento').show()"
+					title="Exibir parcelamento" icon="ui-icon-list" />
+			</p:outputPanel>
+		</p:column>
+
+		<p:column>
+			<h:outputText value="#{_.dtVenctoEfetiva}">
+				<f:convertDateTime pattern="dd/MM/yy" />
+			</h:outputText>
+		</p:column>
+
+		<p:column>
+			<div style="text-align: right">
+				<h:outputText value="#{_.valorTotal}" id="otValorTotal"
+					converter="#{doubleConverter}" />
+			</div>
+		</p:column>
+
+		<p:column>
+			<h:outputText value="#{_.iudt.updated}">
+				<f:convertDateTime pattern="dd/MM/yy HH:mm" />
+			</h:outputText>
+		</p:column>
+
+
+		<p:column>
+			<ui:include src="movimentacaoList_btns.xhtml" />
+		</p:column>
+
+		<p:summaryRow listener="#{view.calcularTotaisSumario(_.dtUtil)}"
+			rendered="#{sumarizar}">
+
+			<p:column colspan="5"
+				style="text-align: right; font-weight: bold; height: 50px">
+
+				<p:outputPanel style="text-align: right">
+					<p:outputPanel>
+						<h:outputText value="Total em " />
+						<h:outputText value="#{_.dtUtil}">
+							<f:convertDateTime pattern="dd/MM/yy (EEEE)" />
+						</h:outputText>
+						<h:outputText value=" (R$) :" />
+					</p:outputPanel>
+				</p:outputPanel>
+
+			</p:column>
+
+			<p:column style="text-align: right; font-weight: bold">
+
+
+				<p:outputPanel>
+					<h:outputText value="#{view.totalizacoes['SUMARIO_TOTAL_DIA']}"
+						converter="#{doubleConverter}" />
+				</p:outputPanel>
+
+			</p:column>
+			<p:column />
+			<p:column />
+		</p:summaryRow>
+
+
+		<p:columnGroup type="footer">
+			<p:row>
+				<p:column colspan="5" style="text-align:right; font-weight: bold"
+					footerText="Total (abertas): " />
+
+				<p:column style="font-weight: bold; text-align:right; ">
+					<f:facet name="footer">
+						<h:outputText value="#{view.totalizacoes[__TOTAL_ABERTAS]}"
+							converter="#{doubleConverter}" />
+					</f:facet>
+				</p:column>
+
+				<p:column />
+				<p:column />
+			</p:row>
+			<p:row>
+				<p:column colspan="5" style="text-align:right; font-weight: bold"
+					footerText="Total (cheques): " />
+
+				<p:column style="font-weight: bold; text-align:right;">
+					<f:facet name="footer">
+						<h:outputText value="#{view.totalizacoes[__TOTAL_CHEQUES]}"
+							converter="#{doubleConverter}" />
+					</f:facet>
+				</p:column>
+
+				<p:column />
+				<p:column />
+			</p:row>
+			<p:row>
+				<p:column colspan="5" style="text-align:right; font-weight: bold"
+					footerText="Total :" />
+
+				<p:column style="font-weight: bold; text-align:right;">
+					<f:facet name="footer">
+						<h:outputText value="#{view.totalizacoes[__TOTAL_GERAL]}"
+							converter="#{doubleConverter}" />
+					</f:facet>
+				</p:column>
+
+				<p:column />
+				<p:column />
+			</p:row>
+		</p:columnGroup>
+
+	</p:dataTable>
+
+
+</ui:composition>

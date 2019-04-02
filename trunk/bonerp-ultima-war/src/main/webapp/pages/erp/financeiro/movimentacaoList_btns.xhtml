@@ -1,0 +1,49 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:p="http://primefaces.org/ui">
+
+	<!-- define qual dlg abrir dependendo do status da movimentação -->
+	<ui:param name="dlgSufix"
+		value="#{_.status eq 'ABERTA' ? 'A_PAGAR_RECEBER' : 'GERAL'}" />
+
+	<p:outputPanel>
+
+		<div style="text-align: center">
+
+			<p:commandButton icon="ui-icon-help" styleClass="teal-btn"
+				update=":frmEntityId:opnEntityId" process="@this"
+				oncomplete="PF('dlgEntityId').show()" partialSubmit="true"
+				actionListener="#{entityIdView.setE(_)}"
+				title="Informações sobre o registro" />
+
+			<p:commandButton
+				rendered="#{movimentacaoSecurityCheck.podeEditar(_)}"
+				action="#{movimentacaoFormView.iniEdit(_)}" process="@this"
+				update=":frmMovimentacao_#{dlgSufix}:opnDlgMovimentacao"
+				oncomplete="PF('dlgMovimentacao_#{dlgSufix}').show()"
+				title="Editar registro" icon="ui-icon-build" partialSubmit="true" />
+
+			<p:commandButton
+				rendered="#{movimentacaoSecurityCheck.podeDeletar(_)}"
+				action="#{view.deletar(_)}" title="Deletar registro" process="@this"
+				icon="ui-icon-trash" styleClass="red-btn">
+				<p:confirm />
+			</p:commandButton>
+
+			<p:commandButton rendered="#{movimentacaoSecurityCheck.podePagar(_)}"
+				action="#{movimentacaoFormView.iniPagto(_)}" process="@this"
+				update=":frmMovimentacao_PAGTO:opnDlgMovimentacao"
+				oncomplete="PF('dlgMovimentacao_PAGTO').show()"
+				title="'Pagar' movimentação (marcar como 'Realizada')"
+				icon="ui-icon-attach-money" />
+
+		</div>
+
+	</p:outputPanel>
+
+</ui:composition>

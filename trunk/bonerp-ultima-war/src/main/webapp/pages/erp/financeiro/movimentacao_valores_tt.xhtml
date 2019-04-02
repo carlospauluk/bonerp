@@ -1,0 +1,49 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:p="http://primefaces.org/ui">
+
+	<!-- 
+		Parâmetros:
+		
+		- for : componente que receberá o tooltip
+		- _ : objeto movimentacao
+	-->
+
+	<p:outputPanel deferred="true" rendered="false">
+
+		<p:tooltip for="#{forId}">
+
+
+			<fd:labelInput label="Valor :" labelWidth="80px" breakAfter="true">
+				<h:outputText size="10" value="#{_.valor}" converter="#{doubleConverter}" />
+			</fd:labelInput>
+
+			<fd:labelInput label="Descontos :" labelWidth="80px"
+				breakAfter="true">
+				<h:outputText size="10" value="#{_.descontos}" converter="#{doubleConverter}" />
+			</fd:labelInput>
+
+			<fd:labelInput label="Acréscimos :" labelWidth="80px"
+				breakAfter="true">
+				<h:outputText size="10" value="#{_.acrescimos}" converter="#{doubleConverter}" />
+			</fd:labelInput>
+
+			<f:validateBean readonly="true">
+				<fd:labelInput label="Total :" labelWidth="80px" breakAfter="true">
+					<h:outputText size="10" value="#{_.valorTotal}" converter="#{doubleConverter}" />
+				</fd:labelInput>
+			</f:validateBean>
+
+
+
+		</p:tooltip>
+
+	</p:outputPanel>
+
+
+</ui:composition>

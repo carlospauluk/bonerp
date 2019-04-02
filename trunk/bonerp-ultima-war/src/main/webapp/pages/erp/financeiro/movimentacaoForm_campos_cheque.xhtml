@@ -1,0 +1,87 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:fd="http://ocabit.com.br/facelets">
+
+	<c:if test="#{empty viewForm}">
+		<ui:param name="viewForm" value="#{movimentacaoFormView}" />
+	</c:if>
+
+	<c:if test="#{empty exibir_numCheque}">
+		<ui:param name="exibir_numCheque" value="true" />
+	</c:if>
+
+	<p:outputPanel
+		rendered="#{viewForm.e.modo.descricao eq 'CHEQUE PRÓPRIO' or viewForm.e.modo.descricao eq 'CHEQUE TERCEIROS'}">
+
+
+		<p:fieldset legend="Dados Cheque" style="width: 480px"
+			rendered="#{viewForm.e.modo.descricao eq 'CHEQUE PRÓPRIO' or viewForm.e.modo.descricao eq 'CHEQUE TERCEIROS'}">
+
+			<p:outputPanel
+				rendered="#{viewForm.e.modo.descricao eq 'CHEQUE PRÓPRIO'}">
+				<fd:labelInput labelWidth="110px" label="Banco :" breakAfter="true">
+					<p:inputText size="30" readonly="true" id="iDescricaoMontada"
+						value="#{viewForm.e.cheque.banco.descricaoMontada}" />
+				</fd:labelInput>
+			</p:outputPanel>
+
+			<p:outputPanel
+				rendered="#{viewForm.e.modo.descricao eq 'CHEQUE TERCEIROS'}"
+				id="opnCamposBanco">
+
+				<fd:labelInput labelWidth="110px" label="Banco :" breakAfter="true">
+
+					<p:inputText value="#{viewForm.e.cheque.banco.codigoBanco}"
+						size="8" id="iCodigoBanco" readonly="true" />
+
+					<h:outputText value="-" />
+
+					<p:autoComplete size="30" value="#{viewForm.e.cheque.banco}"
+						var="_" id="iBanco" itemLabel="#{_.nome}" itemValue="#{_}"
+						forceSelection="false" dropdown="true"
+						completeMethod="#{lmFinanc.acBanco}" minQueryLength="1"
+						widgetVar="acDocumentoBanco" converter="#{entityIdConverter}">
+						<p:ajax event="itemSelect" update="opnCamposBanco"
+							partialSubmit="true" process="opnCamposBanco" />
+					</p:autoComplete>
+
+					<p:spacer width="4" />
+
+				</fd:labelInput>
+			</p:outputPanel>
+
+			<fd:labelInput label="Agência :" labelWidth="110px">
+				<p:inputText id="iAgencia" size="8"
+					readonly="#{viewForm.e.modo.descricao eq 'CHEQUE PRÓPRIO' ? 'true' : 'false'}"
+					value="#{viewForm.e.cheque.agencia}" />
+			</fd:labelInput>
+
+			<fd:labelInput label="Conta :" breakAfter="true">
+				<p:inputText id="iConta" size="10"
+					readonly="#{viewForm.e.modo.descricao eq 'CHEQUE PRÓPRIO' ? 'true' : 'false'}"
+					value="#{viewForm.e.cheque.conta}" />
+			</fd:labelInput>
+
+			<c:if test="#{exibir_numCheque}">
+				<p:outputPanel rendered="#{viewForm.parcelamento eq false}">
+					<fd:labelInput label="Núm Cheque :" labelWidth="110px">
+						<p:inputText id="iNumCheque" size="10"
+							value="#{viewForm.e.cheque.numCheque}" />
+					</fd:labelInput>
+				</p:outputPanel>
+			</c:if>
+
+		</p:fieldset>
+		<div style="clear: both" />
+
+		<p:spacer height="20px" />
+
+		<div style="clear: both" />
+
+	</p:outputPanel>
+
+</ui:composition>

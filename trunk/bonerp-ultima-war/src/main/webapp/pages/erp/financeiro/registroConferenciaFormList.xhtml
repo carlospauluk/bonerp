@@ -1,0 +1,129 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:p="http://primefaces.org/ui">
+
+
+	<div id="_slnm_registroConferenciaFormList" />
+
+	<ui:decorate template="/templates/formList.xhtml">
+
+
+		<ui:param name="role" value="FINANCEIRO" />
+
+		<ui:param name="view" value="#{registroConferenciaFormListView}" />
+		<ui:param name="titulo" value="Registros para Conferência" />
+		<ui:param name="tituloDlg" value="Registro para Conferência" />
+		<ui:param name="exibirPesquisar" value="false" />
+
+		<ui:param name="widthDlg" value="800" />
+
+		<ui:define name="outrosPesquisar">
+			<p:outputPanel layout="inline">
+
+				<p:selectOneMenu value="#{view.filtros['strPesquisa']}">
+					<f:selectItem itemLabel="" itemValue="" />
+					<f:selectItems value="#{registroConferenciaFinder.findDistincts()}" var="_"
+						itemLabel="#{_}" itemValue="#{_}" />
+					<p:ajax listener="#{view.pesquisar}" process="@this" update="opnDtList opnToolbar" />
+				</p:selectOneMenu>
+
+			</p:outputPanel>
+		</ui:define>
+
+
+		<ui:define name="cols">
+
+			<p:column sortBy="#{_.carteira.descricao}" headerText="Carteira">
+				<h:outputText value="#{_.carteira.descricao}" />
+			</p:column>
+
+			<p:column sortBy="#{_.descricao}" headerText="Descrição">
+				<h:outputText value="#{_.descricao}" />
+			</p:column>
+
+			<p:column sortBy="#{_.dtRegistro}" headerText="Dt Registro">
+				<h:outputText value="#{_.dtRegistro}">
+					<f:convertDateTime pattern="dd/MM/yyyy" />
+				</h:outputText>
+			</p:column>
+
+
+			<p:column sortBy="#{_.valor}" headerText="Valor">
+				<div style="text-align: right">
+					<h:outputText value="#{_.valor}" converter="#{doubleConverter}" />
+				</div>
+			</p:column>
+
+			<p:column headerText="">
+				<div style="text-align: center">
+					<p:commandButton id="btnGerarProximo"
+						title="Gerar para próximo mês"
+						actionListener="#{view.gerarProximo(_)}" icon="ui-icon-document"
+						process="@this">
+						<p:confirm />
+					</p:commandButton>
+				</div>
+			</p:column>
+
+
+		</ui:define>
+
+
+
+		<ui:define name="campos">
+
+			<fd:labelInput label="Carteira :" labelWidth="110px"
+				breakAfter="true">
+				<p:selectOneMenu id="iCarteira" value="#{view.e.carteira}"
+					converter="#{entityIdConverter}">
+					<f:selectItem itemLabel="" itemValue="" />
+					<f:selectItems value="#{lmFinanc.carteiraValues}" var="c"
+						itemLabel="#{c.codigo} - #{c.descricao}" itemValue="#{c}" />
+				</p:selectOneMenu>
+			</fd:labelInput>
+
+
+
+			<fd:labelInput label="Descrição *:" labelWidth="110px"
+				breakAfter="true">
+				<p:autoComplete id="iDescricao" scrollHeight="230"
+					value="#{view.e.descricao}" size="50" dropdown="true"
+					completeMethod="#{view.acDescricao}" />
+				<div style="float: right;">
+					<p:message for="iDescricao" display="icon" />
+				</div>
+			</fd:labelInput>
+
+			<fd:labelInput label="Dt Registro :" labelWidth="110px">
+
+				<p:calendar styleClass="maskData" value="#{view.e.dtRegistro}"
+					locale="pt" pages="1" pattern="dd/MM/yyyy" showOn="button"
+					size="12" selectOtherMonths="true" showOtherMonths="true" />
+
+			</fd:labelInput>
+
+			<fd:labelInput label="Valor :" alignRight="true" breakAfter="true">
+				<p:inputText size="10" value="#{view.e.valor}" id="iValor"
+					styleClass="maskMoney" style="text-align: right;">
+					<fd:bigDecimalConverter onlyAbs="true" />
+				</p:inputText>
+			</fd:labelInput>
+
+			<fd:labelInput label="Obs. :" labelWidth="110px" breakAfter="true">
+				<p:inputTextarea id="iObs" rows="4" cols="60" value="#{view.e.obs}" />
+			</fd:labelInput>
+
+
+
+		</ui:define>
+
+	</ui:decorate>
+
+
+
+</ui:composition>

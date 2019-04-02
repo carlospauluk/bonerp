@@ -1,0 +1,166 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags">
+
+	<!-- 
+		Parâmetros:
+		view (produtoImportView)
+		e (view.produto)
+		action (view.save)
+		update ( :frm:opnDtListProduto)
+		
+		A efetivação do "salvar em lote" é chamada através de um botão que chama o método que salva todas
+		as alterações feitas.
+	 -->
+
+
+
+	<!-- FORM ALTERAR EM LOTE -->
+	<h:form id="frmAlterarEmLote">
+
+		<p:dialog id="dlgAlterarEmLote" header="Alterar em Lote"
+			position="top" widgetVar="dlgAlterarEmLote" resizable="false"
+			width="850" modal="true" closable="true" closeOnEscape="true">
+
+			<p:outputPanel id="opnDlgAlterarEmLote">
+
+				<f:validateBean disabled="true">
+
+					<p:outputPanel id="opnFornecedor">
+						<fd:labelInput labelWidth="100px" label="Fornecedor :">
+							<p:autoComplete global="false" size="50" value="#{e.fornecedor}"
+								var="f" itemLabel="#{f.pessoa.nomeFantasia}" itemValue="#{f}"
+								forceSelection="false" maxResults="99999"
+								completeMethod="#{lmCortinas.findFornecedorByNomesOrRepresentante}"
+								minQueryLength="3" converter="#{entityIdConverter}">
+								<p:ajax event="itemSelect" update="opnFornecedor" />
+							</p:autoComplete>
+
+							<p:spacer width="4" />
+
+							<p:commandButton title="Buscar Fornecedores"
+								onclick="PF('dlgBuscaFornecedorProdutoLote').show()"
+								actionListener="#{fornecedorFormListView.resetBusca}"
+								update=":frmDlgBuscaFornecedorProdutoLote:opnDlg"
+								process="@this" icon="ui-icon-search" />
+
+							<p:commandButton title="Inserir novo Fornecedor"
+								onclick="PF('dlgFornecedor').show()"
+								actionListener="#{fornecedorFormListView.novo}"
+								update=":frmFornecedor#{sufix}:opnDlg" process="@this"
+								icon="ui-icon-document" />
+							<br />
+							<p:outputLabel
+								value="#{e.fornecedor.pessoa.nome} - #{e.fornecedor.representante}" />
+
+						</fd:labelInput>
+					</p:outputPanel>
+
+					<fd:labelInput label="Criar Artigos de Cortina :" breakAfter="true"
+						alignRight="true">
+						<p:selectBooleanCheckbox
+							value="#{produtoFormView.criarArtigosCortina}" />
+					</fd:labelInput>
+
+
+					<fd:labelInput label="Custo :" labelWidth="100px">
+							R$ <p:inputText styleClass="maskMoney" size="15"
+							value="#{ePreco.precoCusto}" style="text-align: right;"
+							converter="#{doubleConverterAbsNull}">
+						</p:inputText>
+					</fd:labelInput>
+
+					<fd:labelInput label="Dt Custo :" breakAfter="true">
+						<p:calendar styleClass="maskData" value="#{ePreco.dtCusto}"
+							locale="pt_BR" showOn="button" pattern="dd/MM/yyyy" size="12"
+							selectOtherMonths="true" showOtherMonths="true" />
+					</fd:labelInput>
+
+					<fd:labelInput label="Margem :" labelWidth="100px">
+						<p:inputText size="10" value="#{ePreco.margem}"
+							styleClass="maskMoney" converter="#{doubleConverterNull}" />%
+						</fd:labelInput>
+
+					<fd:labelInput label="Coef :" paddingLeft="30px">
+						<p:inputText size="10" value="#{ePreco.coeficiente}"
+							styleClass="maskQtde">
+							<f:convertNumber maxFractionDigits="3" minFractionDigits="3" />
+						</p:inputText>%
+						</fd:labelInput>
+
+					<fd:labelInput label="Custo Operac :">
+						<p:inputText size="15" value="#{ePreco.custoOperacional}"
+							styleClass="maskMoney" converter="#{doubleConverterNull}" />%
+						</fd:labelInput>
+
+					<fd:labelInput label="Prazo :" breakAfter="true">
+						<p:inputText size="10" value="#{ePreco.prazo}"
+							styleClass="maskInt">
+							<f:convertNumber integerOnly="true" />
+						</p:inputText> dias
+						</fd:labelInput>
+
+					<fd:labelInput label="Preço Prazo :" labelWidth="100px">
+							R$ <p:inputText styleClass="maskMoney" size="15"
+							value="#{ePreco.precoPrazo}" style="text-align: right;"
+							converter="#{doubleConverterAbsNull}">
+						</p:inputText>
+					</fd:labelInput>
+
+					<fd:labelInput label="Preço Promo :">
+							R$ <p:inputText styleClass="maskMoney" size="15"
+							value="#{ePreco.precoPromo}" style="text-align: right;"
+							converter="#{doubleConverterAbsNull}">
+						</p:inputText>
+					</fd:labelInput>
+
+
+					<div style="text-align: right;">
+
+						<!-- neste caso irá abrir um confirmDialog antes de executar a ação -->
+						<p:outputPanel rendered="#{saveLote eq true}">
+
+							<p:defaultCommand target="btnSaveLote" scope="frmAlterarEmLote" />
+
+							<p:commandButton id="btnSaveLote" icon="ui-icon-save"
+								value="Salvar Lote" actionListener="#{viewForm[action]}"
+								process="@this" update="#{update}"
+								oncomplete="PF('dlgAlterarEmLote').hide();">
+								<p:confirm />
+							</p:commandButton>
+
+						</p:outputPanel>
+
+						<!-- neste irá irá executar a ação diretamente
+							(útil nos casos em que está alterando em lote para depois salvar, como numa importação -->
+						<p:outputPanel rendered="#{saveLote eq false}">
+							<p:defaultCommand target="btnAlterarEmLote"
+								scope="frmAlterarEmLote" />
+							<p:commandButton id="btnAlterarEmLote" icon="ui-icon-save"
+								value="Salvar" actionListener="#{viewForm[action]}"
+								update="#{update}"
+								oncomplete="afterFormSubmit(xhr, status, args);" />
+						</p:outputPanel>
+
+					</div>
+
+				</f:validateBean>
+
+
+			</p:outputPanel>
+
+			<p:spacer height="10px" />
+
+			<div style="clear: both;" />
+
+		</p:dialog>
+
+	</h:form>
+
+
+
+</ui:composition>

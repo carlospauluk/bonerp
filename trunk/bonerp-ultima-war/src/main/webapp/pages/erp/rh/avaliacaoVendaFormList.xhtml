@@ -1,0 +1,141 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:p="http://primefaces.org/ui">
+
+	<div id="_slnm_avaliacaoVendaFormList" />
+
+
+	<ui:decorate template="/templates/formList.xhtml">
+
+
+		<ui:param name="role" value="RH" />
+
+		<ui:param name="view" value="#{avaliacaoVendaFormListView}" />
+		<ui:param name="titulo" value="Avaliações de Vendas" />
+		<ui:param name="tituloDlg" value="Avaliação de Venda" />
+		<ui:param name="widthDlg" value="850" />
+		<ui:param name="exibirColuna_rownum" value="false" />
+
+		<ui:define name="cols">
+
+			<p:column style="width: 20px" headerText="#">
+				<h:outputText value="#{row + 1}" />
+			</p:column>
+
+			<p:column sortBy="#{_.descricao}" headerText="Descrição">
+				<f:facet name="header">Descrição</f:facet>
+				<h:outputText value="#{_.descricao}" />
+			</p:column>
+
+		</ui:define>
+
+
+
+		<ui:define name="campos">
+
+
+
+			<fd:labelInput label="Descrição *:" labelWidth="110px">
+				<p:inputText size="50" value="#{view.e.descricao}" id="iDescricao" />
+			</fd:labelInput>
+
+
+			<div style="clear: both;" />
+
+			<p:spacer height="20px" />
+
+
+
+			<p:outputPanel rendered="#{view.e.id ne null}">
+
+				<ui:decorate template="/templates/subListForm.xhtml">
+
+					<ui:param name="listValue" value="#{view.e.questoes}" />
+
+					<ui:param name="dlgId" value="dlgQuestao" />
+
+					<ui:param name="tituloPanel" value="Questões" />
+
+					<ui:param name="tituloDlg" value="Questão" />
+
+					<ui:param name="widgetDlgForm" value="dlgQuestao" />
+
+					<ui:param name="actionNovo" value="novoQuestao" />
+					<ui:param name="actionEditar" value="setQuestao" />
+					<ui:param name="actionDeletar" value="deleteQuestao" />
+					<ui:param name="actionSalvar" value="saveQuestao" />
+
+					<ui:param name="widthSubDlg" value="750" />
+
+
+					<ui:define name="cols">
+
+						<p:column headerText="Ordem" width="30">
+							<h:outputText value="#{_.ordem}" />
+						</p:column>
+
+						<p:column headerText="Questão">
+							<h:outputText value="#{_.questao}" />
+						</p:column>
+
+						<p:column headerText="Tipo de Resposta" width="100">
+							<div style="text-align: center">
+								<h:outputText value="#{_.tipoResposta.label}" />
+							</div>
+						</p:column>
+
+
+					</ui:define>
+
+
+
+					<ui:define name="campos">
+
+
+						<fd:labelInput label="Ordem :" labelWidth="130px"
+							breakAfter="true">
+							<p:inputText size="10" value="#{view.questao.ordem}"
+								styleClass="maskInt">
+								<f:convertNumber integerOnly="true" />
+							</p:inputText>
+						</fd:labelInput>
+
+						<fd:labelInput label="Questão :" labelWidth="130px"
+							breakAfter="true">
+							<p:inputTextarea id="iQuestao" rows="3" cols="55"
+								value="#{view.questao.questao}" />
+						</fd:labelInput>
+
+						<fd:labelInput label="Tipo de Resposta :" labelWidth="130px"
+							breakAfter="true">
+							<p:selectOneMenu id="iTipoResposta"
+								value="#{view.questao.tipoResposta}">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems value="#{lmRH.avaliacaoTipoRespostaValues}"
+									var="c" itemLabel="#{c.label}" itemValue="#{c}" />
+							</p:selectOneMenu>
+						</fd:labelInput>
+
+
+
+					</ui:define>
+
+				</ui:decorate>
+
+			</p:outputPanel>
+
+
+
+
+		</ui:define>
+
+	</ui:decorate>
+
+
+
+</ui:composition>

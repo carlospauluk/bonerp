@@ -1,0 +1,193 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	template="/templates/template.xhtml">
+
+	<ui:define name="content">
+
+		<div id="_slnm_previsaoCompra" />
+
+		<!-- exibição de mensagem caso usuário não tenha permissão de acesso -->
+		<sec:authorize ifNotGranted="ROLE_ESTOQUE_ADMIN">
+			<div class="errorMsg">Usuário sem autorização para acessar este
+				recurso.</div>
+		</sec:authorize>
+
+		<sec:authorize ifAnyGranted="ROLE_ESTOQUE_ADMIN">
+
+			<ui:param name="view" value="#{previsaoCompraView}" />
+
+			<h:form id="frm">
+
+				<p:panel id="panel" header="Previsão de Compras"
+					style="width: 99%; margin: 0 auto;">
+
+
+					<fd:labelInput label="Dt Entrega :" labelWidth="130px">
+						<p:calendar styleClass="maskData" value="#{view.dtEntrega}"
+							id="iDtEntrega" locale="pt" pages="1" pattern="dd/MM/yyyy"
+							showOn="button" widgetVar="iDtEntrega" size="12"
+							selectOtherMonths="true" showOtherMonths="true" />
+					</fd:labelInput>
+
+					<fd:labelInput label="Qtde Meses Prever :">
+						<p:inputText value="#{view.qtdeMesesPrever}"
+							converter="#{integerConverter}" size="5" />
+					</fd:labelInput>
+
+					<fd:labelInput label="Anos Considerar :">
+						<p:selectManyCheckbox layout="lineDirection"
+							value="#{view.anosAnterioresConsiderar}">
+							<f:selectItems value="#{view.anosAnterioresParaSelecionar}" var="d" itemValue="#{d}" itemLabel="#{d}" />
+							<f:converter converterId="javax.faces.Integer" />							
+						</p:selectManyCheckbox>
+					</fd:labelInput>
+
+					<fd:labelInput label="Detalhado :" alignRight="true"
+						breakAfter="true">
+						<p:selectBooleanCheckbox value="#{view.detalhado}" />
+					</fd:labelInput>
+
+
+					<fd:labelInput label="Ordenar por:" alignRight="true">
+						<p:selectOneMenu value="#{view.ordenarPor}" style="width:125px">
+							<f:selectItem itemLabel="Chave" itemValue="Chave" />
+							<p:ajax listener="#{view.ordenarEBuildMapList()}" process=":frm"
+								update=":frm" />
+						</p:selectOneMenu>
+					</fd:labelInput>
+
+					<fd:labelInput label="Ordenar apenas internamente:"
+						alignRight="true">
+						<p:selectBooleanCheckbox value="#{view.ordenarApenasIntern}">
+							<p:ajax listener="#{view.ordenarEBuildMapList()}" process=":frm"
+								update=":frm" />
+						</p:selectBooleanCheckbox>
+					</fd:labelInput>
+
+
+
+					<fd:labelInput label="Chave:" breakAfter="true" alignRight="true">
+						<p:selectOneRadio id="iTipoRel" value="#{view.tipoRel}">
+							<f:selectItem itemLabel="Por Fornecedor" itemValue="F" />
+							<f:selectItem itemLabel="Por Subdepto" itemValue="S" />
+						</p:selectOneRadio>
+					</fd:labelInput>
+
+
+					<fd:labelInput label="Fornecedores :" labelWidth="130px">
+						<p:commandButton value="Todos"
+							actionListener="#{view.selecionarFornecedores(true)}"
+							process="@this iFornecedores" update="iFornecedores" />
+						<p:commandButton value="Nenhum"
+							actionListener="#{view.selecionarFornecedores(false)}"
+							process="@this iFornecedores" update="iFornecedores" />
+
+						<p:selectManyMenu id="iFornecedores" style="width: 400px"
+							value="#{view.fornecedoresSel}" converter="#{entityIdConverter}"
+							filter="true" filterMatchMode="contains" showCheckbox="true">
+							<f:selectItems value="#{view.fornecedores}" var="f"
+								itemLabel="#{stringUtils.zerofill(f.codigo,3)} - #{f.pessoa.nomeFantasia}"
+								itemValue="#{f}" />
+						</p:selectManyMenu>
+					</fd:labelInput>
+
+					<fd:labelInput label="Subdepartamentos :" alignRight="true"
+						breakAfter="true">
+						<p:commandButton value="Todos"
+							actionListener="#{view.selecionarSubdeptos(true)}"
+							process="@this iSubdepartamentos" update="iSubdepartamentos" />
+						<p:commandButton value="Nenhum"
+							actionListener="#{view.selecionarSubdeptos(false)}"
+							process="@this iSubdepartamentos" update="iSubdepartamentos" />
+
+						<p:selectManyMenu id="iSubdepartamentos"
+							value="#{view.subdeptosSel}" filter="true"
+							converter="#{entityIdConverter}" style="width: 300px"
+							filterMatchMode="contains" showCheckbox="true">
+							<f:selectItems value="#{view.subdeptos}" var="sd"
+								itemLabel="#{stringUtils.zerofill(sd.codigo,3)} - #{sd.nome}"
+								itemValue="#{sd}" />
+						</p:selectManyMenu>
+					</fd:labelInput>
+
+					<p:spacer height="10" />
+
+					<div style="clear: both;" />
+
+					<p:defaultCommand target="btnGerar" />
+
+
+					<!-- BUTTONS -->
+					<fd:labelInput noLabel="true" alignRight="true" breakAfter="true">
+
+						<p:commandButton id="btnGerar" update=":frm:panel" icon="ui-icon-save"
+							global="false" value="Gerar" style="width: 115px"
+							actionListener="#{view.gerar}" process=":frm"
+							onclick="PF('dlgStatus').show(); PF('pbAjax').start()">
+						</p:commandButton>
+
+						<p:spacer width="20" />
+
+						<p:commandButton id="btnLimpar" update=":frm" icon="ui-icon-save"
+							value="Limpar" style="width: 115px"
+							actionListener="#{view.limpar}" />
+							
+						<p:commandButton id="btnRegerar" update=":frm" icon="ui-icon-gear"
+							value="Regerar Registros" styleClass="amber-btn"
+							actionListener="#{view.regerarTabelaHPC}">
+							<p:confirm />
+						</p:commandButton>
+					</fd:labelInput>
+
+					<hr />
+
+					<p:spacer height="15" />
+
+					<div style="clear: both;" />
+
+					<p:scrollPanel style="height: 500px" mode="native">
+
+						<!-- por FORNECEDOR resumido -->
+						<p:outputPanel>
+							<ui:include src="previsaoCompra2_porFornecedor.xhtml" />
+						</p:outputPanel>
+
+
+
+					</p:scrollPanel>
+
+
+					<p:spacer height="10" style="" />
+					<div style="clear: both;" />
+
+				</p:panel>
+
+
+
+				<p:dialog modal="true" widgetVar="dlgStatus" id="dlgStatus"
+					resizable="false" width="250" header="Carregando..."
+					draggable="false" closable="false" showHeader="false">
+
+					<h3>Processando...</h3>
+
+					<p:progressBar widgetVar="pbAjax" ajax="true"
+						value="#{view.progress}" labelTemplate="{value}%" interval="500"
+						styleClass="animated" global="false">
+						<p:ajax event="complete" oncomplete="PF('dlgStatus').hide()" />
+					</p:progressBar>
+
+				</p:dialog>
+
+			</h:form>
+
+
+		</sec:authorize>
+
+	</ui:define>
+
+</ui:composition>

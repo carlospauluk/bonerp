@@ -1,0 +1,770 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:p="http://primefaces.org/ui" template="/templates/template.xhtml">
+
+
+
+	<ui:define name="headFirst">
+		<script src="#{resource['js/helpers.js']}" type="text/javascript"></script>
+	</ui:define>
+
+	<ui:param name="view" value="#{movimentacaoExtratoListView}" />
+
+	<ui:define name="content">
+	
+	<div id="_slnm_movimentacaoList_extrato" />
+
+		<style type="text/css">
+
+.movimentEntrada {
+	color: blue;
+}
+
+.movimentSaida {
+	color: red;
+}
+
+.movimentSaida:hover {
+	background: #ff9999 !important;
+}
+
+.movimentEntrada:hover {
+	background: #99ccff !important;
+}
+
+.ui-datatable table {
+	table-layout: fixed !important;
+}
+
+.extrato_col {
+	padding: 4px !important;
+}
+
+.extrato_col_sel {
+	width: 25px;
+}
+
+.extrato_col_codigo {
+	width: 40px;
+}
+
+.extrato_col_status {
+	width: 45px;
+}
+
+.extrato_col_categoria {
+	wwidth: 270px;
+}
+
+.extrato_col_descricao {
+	min-width: 180px;
+}
+
+.extrato_col_dt_vencto {
+	width: 65px;
+}
+
+.extrato_col_dt_util {
+	width: 65px;
+}
+
+.extrato_col_valor_total {
+	width: 80px;
+}
+
+.extrato_col_alterado_em {
+	width: 110px;
+}
+
+.extrato_col_btns {
+	width: 150px;
+	white-space: nowrap;
+}
+</style>
+
+		<!-- exibição de mensagem caso usuário não tenha permissão de acesso -->
+		<sec:authorize ifNotGranted="ROLE_FINANCEIRO">
+			<div class="errorMsg">Usuário sem autorização para acessar este
+				recurso.</div>
+		</sec:authorize>
+
+		<sec:authorize ifAnyGranted="ROLE_FINANCEIRO">
+
+
+			<h:form id="frm">
+
+				<p:panel id="panel" header="Extrato - Movimentações Financeiras">
+
+					<p:spacer height="8" />
+
+					<p:outputPanel id="opnToolbar">
+						<p:toolbar>
+							<f:facet name="left">
+
+
+								<p:splitButton value="Lançar Conta a Pagar/Receber"
+									actionListener="#{movimentacaoFormView.novo('A_PAGAR_RECEBER')}"
+									title="Lançar uma movimentação 'a pagar' ou 'a receber'"
+									oncomplete="PF('dlgMovimentacao_A_PAGAR_RECEBER').show()"
+									process="@this"
+									update=":frmMovimentacao_A_PAGAR_RECEBER:opnDlgMovimentacao"
+									icon="ui-icon-document" id="splitButtonMovimentacao">
+
+									<p:menuitem value="Lançar Movimentação 'Realizada'"
+										style="width: 300px"
+										actionListener="#{movimentacaoFormView.novo('REALIZADA')}"
+										title="Lançar uma movimentação já 'realizada'"
+										oncomplete="PF('dlgMovimentacao_REALIZADA').show()"
+										process="@this"
+										update=":frmMovimentacao_REALIZADA:opnDlgMovimentacao"
+										icon="ui-icon-document" />
+
+									<p:menuitem value="Lançar Cheque Próprio"
+										actionListener="#{movimentacaoFormView.novo('CHEQUE_PROPRIO')}"
+										title="Lançar uma movimentação realizada com cheque próprio"
+										oncomplete="PF('dlgMovimentacao_CHEQUE_PROPRIO').show()"
+										process="@this"
+										update=":frmMovimentacao_CHEQUE_PROPRIO:opnDlgMovimentacao"
+										icon="ui-icon-document" />
+
+									<p:menuitem value="Lançar Cheque de Terceiro"
+										actionListener="#{movimentacaoFormView.novo('CHEQUE_TERCEIROS')}"
+										title="Lançar uma movimentação realizada com cheque de terceiros"
+										oncomplete="PF('dlgMovimentacao_CHEQUE_TERCEIROS').show()"
+										process="@this"
+										update=":frmMovimentacao_CHEQUE_TERCEIROS:opnDlgMovimentacao"
+										icon="ui-icon-document" />
+
+									<p:menuitem value="Lançar Transferência Própria"
+										actionListener="#{movimentacaoFormView.novo('TRANSF_PROPRIA')}"
+										title="Lançar uma transferência entre carteiras próprias"
+										oncomplete="PF('dlgMovimentacao_TRANSF_PROPRIA').show()"
+										process="@this"
+										update=":frmMovimentacao_TRANSF_PROPRIA:opnDlgMovimentacao"
+										icon="ui-icon-document" />
+
+									<p:menuitem value="Lançar Transf./Recolhimento de Caixa"
+										actionListener="#{movimentacaoFormView.novo('TRANSF_CAIXA')}"
+										title="Lançar uma movimentação de tranferência/recolhimento de caixa"
+										oncomplete="PF('dlgMovimentacao_TRANSF_CAIXA').show()"
+										process="@this"
+										update=":frmMovimentacao_TRANSF_CAIXA:opnDlgMovimentacao"
+										icon="ui-icon-document" />
+
+								</p:splitButton>
+
+								<p:spacer width="10px" />
+
+								<p:commandButton icon="ui-icon-play-circle-outline" value="Alterar em Lote"
+									oncomplete="openDlg(xhr, status, args);"
+									actionListener="#{movimentacaoFormView.iniAlterarEmLote}"
+									process="@this :frm:opnDtList" title="Alterar em Lote"
+									update=":frmMovimentacao_lote:opnDlgMovimentacaoLote" />
+
+								<p:spacer width="10px" />
+
+								<p:menuButton value="Imprimir">
+
+									<p:menuitem value="Ficha de Movimentação"
+										actionListener="#{view.checkRelFichaMovimentacao}"
+										icon="ui-icon-print" oncomplete="openDlg(xhr, status, args)"
+										process="opnToolbar opnDtList" />
+
+								</p:menuButton>
+
+
+							</f:facet>
+
+							<f:facet name="right">
+
+
+								<p:outputPanel id="opnPesquisaRapida">
+
+									<p:commandButton icon="ui-icon-triangle-1-w"
+										actionListener="#{view.incPeriodo(false)}" process="@this"
+										update=":frm" partialSubmit="true" />
+									<p:commandButton icon="ui-icon-triangle-1-e"
+										actionListener="#{view.incPeriodo(true)}" process="@this"
+										update=":frm" partialSubmit="true" />
+
+									<p:spacer width="20px" />
+
+									<h:outputText value="Entre: " />
+
+									<p:calendar styleClass="maskData" showOn="button"
+										value="#{view.filtros['dtIni']}" id="iDtIni" locale="pt"
+										mask="true" pattern="dd/MM/yyyy" size="12"
+										selectOtherMonths="true" showOtherMonths="true" />
+									<h:outputText value=" e " />
+									<p:calendar styleClass="maskData" showOn="button"
+										value="#{view.filtros['dtFim']}" id="iDtFim" locale="pt"
+										mask="true" pattern="dd/MM/yyyy" size="12"
+										selectOtherMonths="true" showOtherMonths="true" />
+
+
+									<p:spacer width="10px" />
+
+									<p:commandButton action="#{view.pesquisarHoje}" value="Hoje"
+										process="opnPesquisaRapida" update="opnDtList opnToolbar"
+										icon="ui-icon-search" />
+
+									<p:spacer width="20px" />
+
+									<p:selectOneMenu value="#{view.filtros['carteira']}"
+										converter="#{entityIdConverter}" style="bottom: -7px">
+										<f:selectItems value="#{lmFinanc.carteiraConcretaValues}"
+											var="c" itemLabel="#{c.codigo} - #{c.descricao}"
+											itemValue="#{c}" />
+										<p:ajax event="change" process="@form:opnPesquisaRapida"
+											partialSubmit="true" listener="#{view.pesquisar}"
+											update=":frm:opnDtList" />
+									</p:selectOneMenu>
+
+									<p:commandButton action="#{view.pesquisar}"
+										process="opnPesquisaRapida" update="opnDtList opnToolbar"
+										id="btnStrPesquisa" icon="ui-icon-search" />
+									<p:defaultCommand scope=":frm:panel"
+										target=":frm:btnStrPesquisa" />
+
+								</p:outputPanel>
+
+							</f:facet>
+						</p:toolbar>
+					</p:outputPanel>
+
+					<p:spacer height="10" />
+
+
+					<p:outputPanel id="opnLoadList">
+						<p:remoteCommand id="rcLoadList" name="loadList"
+							actionListener="#{view.loadList}" autoRun="true"
+							update="opnDtList opnToolbar" process="@this dtList" />
+					</p:outputPanel>
+
+					<p:outputPanel id="opnDtList">
+
+
+
+						<p:dataTable id="dtListAnteriores" var="_" rowIndexVar="row"
+							rendered="#{view.anteriores ne null and view.anteriores.size() gt 0}"
+							rowKey="#{_}" emptyMessage="Nenhum registro encontrado."
+							value="#{view.anteriores}" sortBy="#{_.dtUtil}"
+							rowStyleClass="#{view.getRowStyleClass(_)}">
+
+
+							<p:column selectionMode="multiple" style="width:2%" />
+
+							<p:columnGroup type="header">
+								<p:row>
+									<p:column headerText="#"
+										styleClass="extrato_col extrato_col_sel" />
+									<p:column headerText="Código"
+										styleClass="extrato_col extrato_col_codigo" />
+									<p:column headerText="Status"
+										styleClass="extrato_col extrato_col_status" />
+									<p:column styleClass="extrato_col extrato_col_categoria">
+										<f:facet name="header">
+											<h:outputText value="Categoria" />
+											<br />
+											<h:outputText value="Modo" />
+										</f:facet>
+									</p:column>
+									<p:column styleClass="extrato_col extrato_col_descricao">
+										<f:facet name="header">
+											<h:outputText value="Descrição" />
+											<br />
+											<h:outputText value="Sacado/Cedente" />
+										</f:facet>
+									</p:column>
+									<p:column headerText="Dt Vencto"
+										styleClass="extrato_col extrato_col_dt_vencto" />
+									<p:column headerText="Dt Pagto"
+										styleClass="extrato_col extrato_col_dt_util" />
+									<p:column headerText="Valor Total"
+										styleClass="extrato_col extrato_col_valor_total" />
+									<p:column headerText="Alterado em"
+										styleClass="extrato_col extrato_col_alterado_em" />
+									<p:column headerText=""
+										styleClass="extrato_col extrato_col_btns" />
+								</p:row>
+							</p:columnGroup>
+
+							<p:column>
+								<h:outputText value="#{_.id}" id="otId" />
+							</p:column>
+
+							<p:column>
+								<h:graphicImage
+									value="#{resource['images/'.concat(_.status.icone).concat('.png')]}"
+									title="#{_.status.label}" width="24" />
+							</p:column>
+
+							<p:column rendered="#{true}">
+								<h:outputText
+									value="#{_.categoria.codigoM} - #{_.categoria.descricao}" />
+								<br />
+								<h:outputText value="#{_.modo.codigo} - #{_.modo.descricao}" />
+							</p:column>
+
+							<p:column>
+								<div style="float: left">
+									<b> <h:outputText value="#{_.descricaoMontada}"
+											escape="false" style="white-space: pre-wrap;" /></b>
+									<p:outputPanel rendered="#{_.pessoa.nomeExibicao ne null}">
+										<br />
+										<h:outputText value="#{_.pessoa.nomeExibicao}" />
+									</p:outputPanel>
+								</div>
+								<!-- é de uma cadeia -->
+								<p:outputPanel rendered="#{_.cadeia ne null}"
+									style="float: right">
+									<p:commandButton action="#{movimentacaoFormView.iniEdit(_)}"
+										process="@this" update=":frmDlgCadeia:opnDlg"
+										oncomplete="PF('dlgCadeia').show()"
+										title="Exibir cadeia de movimentações" icon="ui-icon-list" />
+								</p:outputPanel>
+								<!-- é de um parcelamento -->
+								<p:outputPanel rendered="#{_.parcelamento ne null}"
+									style="float: right">
+									<p:commandButton action="#{movimentacaoFormView.iniEdit(_)}"
+										process="@this" update=":frmDlgParcelamento:opnDlg"
+										oncomplete="PF('dlgParcelamento').show()"
+										title="Exibir parcelamento" icon="ui-icon-list" />
+								</p:outputPanel>
+							</p:column>
+
+							<p:column>
+								<h:outputText value="#{_.dtVenctoEfetiva}">
+									<f:convertDateTime pattern="dd/MM/yy" />
+								</h:outputText>
+							</p:column>
+
+							<p:column>
+								<h:outputText value="#{_.dtPagto}">
+									<f:convertDateTime pattern="dd/MM/yy" />
+								</h:outputText>
+							</p:column>
+
+							<p:column>
+								<div style="text-align: right">
+									<h:outputText value="#{_.valorTotal}" id="otValorTotal"
+										converter="#{doubleConverter}" />
+								</div>
+							</p:column>
+
+							<p:column>
+								<h:outputText value="#{_.iudt.updated}">
+									<f:convertDateTime pattern="dd/MM/yy HH:mm" />
+								</h:outputText>
+							</p:column>
+
+							<p:column>
+								<ui:include src="movimentacaoList_btns.xhtml" />
+							</p:column>
+
+
+							<p:columnGroup type="footer">
+
+								<p:row
+									rendered="#{view.totalizacoes['TOTAL_ANTERIORES'] ne null}">
+									<p:column colspan="7" footerText="Total (R$): "
+										style="text-align: right; font-weight: bold" />
+									<p:column style="text-align: right; font-weight: bold">
+										<f:facet name="footer">
+											<h:outputText
+												value="#{view.totalizacoes['TOTAL_ANTERIORES']}"
+												converter="#{doubleConverter}" />
+										</f:facet>
+									</p:column>
+									<p:column />
+									<p:column />
+								</p:row>
+
+
+							</p:columnGroup>
+						</p:dataTable>
+
+
+						<p:dataTable id="dtList" var="_" rowIndexVar="row"
+							selection="#{movimentacaoFormView.selecteds}" rowKey="#{_}"
+							widgetVar="dataTable1Widget" sortBy="#{_.dtUtil}"
+							emptyMessage="Nenhum registro encontrado." value="#{view.list}"
+							rowStyleClass="#{view.getRowStyleClass(_)}">
+
+
+							<p:column selectionMode="multiple" style="width:2%" />
+
+							<p:columnGroup type="header">
+								<p:row>
+									<p:column headerText="#"
+										styleClass="extrato_col extrato_col_sel" />
+									<p:column headerText="Código"
+										styleClass="extrato_col extrato_col_codigo" />
+									<p:column headerText="Status"
+										styleClass="extrato_col extrato_col_status" />
+									<p:column styleClass="extrato_col extrato_col_categoria">
+										<f:facet name="header">
+											<h:outputText value="Categoria" />
+										</f:facet>
+									</p:column>
+									<p:column styleClass="extrato_col extrato_col_descricao">
+										<f:facet name="header">
+											<h:outputText value="Descrição" />
+											<br />
+											<h:outputText value="Sacado/Cedente" />
+										</f:facet>
+									</p:column>
+									<p:column headerText="Dt Vencto"
+										styleClass="extrato_col extrato_col_dt_vencto" />
+									<p:column headerText="Dt Pagto"
+										styleClass="extrato_col extrato_col_dt_util" />
+									<p:column headerText="Valor Total"
+										styleClass="extrato_col extrato_col_valor_total" />
+									<p:column headerText="Alterado em"
+										styleClass="extrato_col extrato_col_alterado_em" />
+									<p:column headerText=""
+										styleClass="extrato_col extrato_col_btns" />
+								</p:row>
+								<p:row rendered="#{view.totalizacoes['SALDO_ANTERIOR'] ne null}">
+									<p:column colspan="7" headerText="Saldo Anterior (R$): "
+										style="text-align: right" />
+									<p:column style="text-align: right; font-weight: bold">
+										<f:facet name="header">
+											<h:outputText value="#{view.totalizacoes['SALDO_ANTERIOR']}"
+												converter="#{doubleConverter}" />
+										</f:facet>
+									</p:column>
+									<p:column />
+									<p:column style="height: 50px" />
+								</p:row>
+								<p:row
+									rendered="#{view.totalizacoes['SALDO_ANTERIOR_COM_CHEQUES'] ne null}">
+									<p:column colspan="7"
+										headerText="Saldo Anterior (+ cheques) (R$): "
+										style="text-align: right" />
+									<p:column style="text-align: right; font-weight: bold">
+										<f:facet name="header">
+											<h:outputText
+												value="#{view.totalizacoes['SALDO_ANTERIOR_COM_CHEQUES']}"
+												converter="#{doubleConverter}" />
+										</f:facet>
+									</p:column>
+									<p:column />
+									<p:column style="height: 50px">
+										<f:facet name="header">
+											<div style="text-align: center">
+												<p:commandButton update=":frm:opnDlgChequesNaoCompensados"
+													process="@this"
+													oncomplete="PF('dlgChequesNaoCompensados').show()"
+													actionListener="#{view.updateAnterioresSummary(view.filtros['dtIni'])}"
+													icon="ui-icon-note"
+													title="Visualizar cheques não compensados" />
+											</div>
+										</f:facet>
+									</p:column>
+								</p:row>
+							</p:columnGroup>
+
+							<p:column>
+								<h:outputText value="#{_.id}" id="otId" />
+							</p:column>
+
+							<p:column>
+								<h:graphicImage
+									value="#{resource['images/'.concat(_.status.icone).concat('.png')]}"
+									title="#{_.status.label}" width="24" />
+							</p:column>
+
+							<p:column rendered="#{true}">
+								<h:outputText
+									value="#{_.categoria.codigoM} - #{_.categoria.descricao}" />
+								<br />
+								<h:outputText value="#{_.modo.codigo} - #{_.modo.descricao}" />
+							</p:column>
+
+							<p:column>
+								<div style="float: left">
+									<b> <h:outputText value="#{_.descricaoMontada}"
+											escape="false" style="white-space: pre-wrap;" /></b>
+									<p:outputPanel rendered="#{_.pessoa.nomeExibicao ne null}">
+										<br />
+										<h:outputText value="#{_.pessoa.nomeExibicao}" />
+									</p:outputPanel>
+								</div>
+								<p:outputPanel rendered="#{_.cadeia ne null}"
+									style="float: right">
+									<p:commandButton action="#{movimentacaoFormView.iniEdit(_)}"
+										process="@this" update=":frmDlgCadeia:opnDlg"
+										oncomplete="PF('dlgCadeia').show()"
+										title="Exibir cadeia de movimentações" icon="ui-icon-list" />
+								</p:outputPanel>
+								<!-- é de um parcelamento -->
+								<p:outputPanel rendered="#{_.parcelamento ne null}"
+									style="float: right">
+									<p:commandButton action="#{movimentacaoFormView.iniEdit(_, 'MOVIMENTACAO_AGRUPADA')}"
+										process="@this" update=":frmDlgParcelamento:opnDlg"
+										oncomplete="PF('dlgParcelamento').show()"
+										title="Exibir parcelamento" icon="ui-icon-list" />
+								</p:outputPanel>
+							</p:column>
+
+							<p:column>
+								<h:outputText value="#{_.dtVenctoEfetiva}">
+									<f:convertDateTime pattern="dd/MM/yy" />
+								</h:outputText>
+							</p:column>
+
+							<p:column>
+								<h:outputText value="#{_.dtPagto}">
+									<f:convertDateTime pattern="dd/MM/yy" />
+								</h:outputText>
+							</p:column>
+
+							<p:column>
+								<div style="text-align: right">
+									<h:outputText value="#{_.valorTotal}" id="otValorTotal"
+										converter="#{doubleConverter}" />
+								</div>
+							</p:column>
+
+							<p:column>
+								<h:outputText value="#{_.iudt.updated}">
+									<f:convertDateTime pattern="dd/MM/yy HH:mm" />
+								</h:outputText>
+							</p:column>
+
+
+							<p:column>
+								<ui:include src="movimentacaoList_btns.xhtml" />
+							</p:column>
+
+							<p:summaryRow listener="#{view.calcularSaldosSumario(_.dtUtil)}">
+
+								<p:column colspan="7"
+									style="text-align: right; font-weight: bold">
+
+									<p:outputPanel>
+										<h:outputText value="Saldo em " />
+										<h:outputText value="#{_.dtUtil}">
+											<f:convertDateTime pattern="dd/MM/yy" />
+										</h:outputText>
+										<h:outputText value=" (R$) :" />
+									</p:outputPanel>
+
+									<p:outputPanel>
+										<h:outputText value="Saldo (+cheques) em " />
+										<h:outputText value="#{_.dtUtil}">
+											<f:convertDateTime pattern="dd/MM/yy" />
+										</h:outputText>
+										<h:outputText value=" (R$) :" />
+									</p:outputPanel>
+									
+									<p:outputPanel>
+										<h:outputText value="Saldo disponível em " />
+										<h:outputText value="#{_.dtUtil}">
+											<f:convertDateTime pattern="dd/MM/yy" />
+										</h:outputText>
+										<h:outputText value=" (R$) :" />
+									</p:outputPanel>
+								</p:column>
+								<p:column style="text-align: right; font-weight: bold">
+									<p:outputPanel>
+										<h:outputText
+											value="#{view.totalizacoes['SUMARIO_SALDO_POSTERIOR']}"
+											converter="#{doubleConverter}" />
+									</p:outputPanel>
+									<p:outputPanel>
+										<h:outputText
+											value="#{view.totalizacoes['SUMARIO_SALDO_POSTERIOR_COM_CHEQUES']}"
+											converter="#{doubleConverter}" />
+									</p:outputPanel>
+									<p:outputPanel>
+										<h:outputText
+											value="#{view.totalizacoes['SUMARIO_SALDO_DISPONIVEL']}"
+											converter="#{doubleConverter}" />
+									</p:outputPanel>
+								</p:column>
+								<p:column />
+								<p:column>
+									<div style="text-align: center">
+										<p:commandButton update=":frm:opnDlgChequesNaoCompensados"
+											process="@this"
+											oncomplete="PF('dlgChequesNaoCompensados').show()"
+											actionListener="#{view.updateAnterioresSummary(_.dtUtil)}"
+											icon="ui-icon-note"
+											title="Visualizar cheques não compensados" />
+									</div>
+								</p:column>
+							</p:summaryRow>
+
+
+
+							<p:columnGroup type="footer">
+
+								<p:row rendered="#{view.totalizacoes['TOTAL_SAIDAS'] ne null}">
+									<p:column colspan="7" footerText="Total Débitos (R$): "
+										style="text-align: right; font-weight: bold" />
+									<p:column style="text-align: right; font-weight: bold">
+										<f:facet name="footer">
+											<h:outputText value="#{view.totalizacoes['TOTAL_SAIDAS']}"
+												converter="#{doubleConverter}" />
+										</f:facet>
+									</p:column>
+									<p:column />
+									<p:column />
+								</p:row>
+								<p:row rendered="#{view.totalizacoes['TOTAL_ENTRADAS'] ne null}">
+									<p:column colspan="7" footerText="Total Créditos (R$): "
+										style="text-align: right; font-weight: bold" />
+									<p:column style="text-align: right; font-weight: bold">
+										<f:facet name="footer">
+											<h:outputText value="#{view.totalizacoes['TOTAL_ENTRADAS']}"
+												converter="#{doubleConverter}" />
+										</f:facet>
+									</p:column>
+									<p:column />
+									<p:column />
+								</p:row>
+								<p:row
+									rendered="#{view.totalizacoes['TOTAL_MOVIMENTADO'] ne null}">
+									<p:column colspan="7" footerText="Total Movimentado (R$): "
+										style="text-align: right; font-weight: bold" />
+									<p:column style="text-align: right; font-weight: bold">
+										<f:facet name="footer">
+											<h:outputText
+												value="#{view.totalizacoes['TOTAL_MOVIMENTADO']}"
+												converter="#{doubleConverter}" />
+										</f:facet>
+									</p:column>
+									<p:column />
+									<p:column />
+								</p:row>
+
+
+							</p:columnGroup>
+						</p:dataTable>
+
+
+
+
+
+
+
+						<p:dialog id="dlgChequesNaoCompensados" modal="true"
+							header="Cheques não compensados" width="900"
+							widgetVar="dlgChequesNaoCompensados">
+							<p:outputPanel id="opnDlgChequesNaoCompensados">
+
+								<p:dataTable var="_" rowIndexVar="row" rowKey="#{_}"
+									emptyMessage="Nenhum registro encontrado."
+									value="#{view.anterioresSummary}"
+									rowStyleClass="#{view.getRowStyleClass(_)}"
+									sortBy="#{_.dtUtil}">
+
+									<p:column style="width: 1px" headerText="#">
+										<h:outputText value="#{row + 1}" />
+									</p:column>
+
+									<p:column headerText="Código" styleClass="extrato_col_codigo">
+										<h:outputText value="#{_.id}" />
+									</p:column>
+
+									<p:column headerText="Status" styleClass="extrato_col_status">
+										<h:graphicImage
+											value="#{resource['images/'.concat(_.status.icone).concat('.png')]}"
+											title="#{_.status.label}" width="24" />
+									</p:column>
+
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Descrição" />
+											<br />
+											<h:outputText value="Sacado/Cedente" />
+										</f:facet>
+										<h:outputText value="#{_.descricaoMontada}" escape="false"
+											style="white-space: pre-wrap;" />
+										<p:outputPanel rendered="#{_.pessoa.nomeExibicao ne null}">
+											<br />
+											<h:outputText value="#{_.pessoa.nomeExibicao}" />
+										</p:outputPanel>
+									</p:column>
+
+									<p:column styleClass="extrato_col_dt_vencto">
+										<f:facet name="header">Dt VenCto<br />Dt Pagto</f:facet>
+										<h:outputText value="#{_.dtVenctoEfetiva}">
+											<f:convertDateTime pattern="dd/MM/yy" />
+										</h:outputText>
+										<br />
+										<h:outputText value="#{_.dtPagto}">
+											<f:convertDateTime pattern="dd/MM/yy" />
+										</h:outputText>
+									</p:column>
+
+									<p:column headerText="Valor Total"
+										styleClass="extrato_col_valor_total">
+										<div style="text-align: right">
+											<h:outputText value="#{_.valorTotal}"
+												converter="#{doubleConverter}" />
+										</div>
+									</p:column>
+
+
+									<p:columnGroup type="footer">
+										<p:row>
+											<p:column colspan="5" footerText="Total (R$): "
+												style="text-align: right; font-weight: bold" />
+											<p:column style="text-align: right; font-weight: bold">
+												<f:facet name="footer">
+													<h:outputText
+														value="#{view.totalizacoes['TOTAL_ANTERIORES_SUMMARY']}"
+														converter="#{doubleConverter}" />
+												</f:facet>
+											</p:column>
+										</p:row>
+
+									</p:columnGroup>
+
+								</p:dataTable>
+
+
+							</p:outputPanel>
+						</p:dialog>
+
+					</p:outputPanel>
+
+
+				</p:panel>
+
+
+			</h:form>
+
+			<ui:include src="/templates/entityIdDlg.xhtml" />
+
+			<ui:include src="/pages/erp/base/pessoaForm.xhtml" />
+
+			<ui:include src="movimentacaoForm_dlg.xhtml" />
+
+			<ui:include src="movimentacaoList_includes_forms.xhtml" />
+
+			<ui:include src="movimentacaoForm_alterarEmLote.xhtml" />
+
+			<ui:include src="movimentacaoList_dlgPesquisa.xhtml" />
+
+			<ui:include src="/templates/dlgRelatorio.xhtml">
+				<ui:param name="sufix" value="FichaMovimentacao" />
+				<ui:param name="titulo" value="Ficha de Movimentação" />
+			</ui:include>
+
+		</sec:authorize>
+	</ui:define>
+
+
+
+
+
+</ui:composition>

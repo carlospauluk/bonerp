@@ -1,0 +1,35 @@
+CREATE DATABASE `bonerp_dev` CHARACTER SET 'utf8' COLLATE 'utf8_swedish_ci';
+
+GRANT ALL PRIVILEGES ON bonerp_dev.* TO 'bonerp_dev'@'%' IDENTIFIED BY 'bonerp_dev';
+FLUSH PRIVILEGES;
+
+
+
+
+
+
+
+CREATE DATABASE `bonerp_dev` CHARACTER SET 'utf8' COLLATE 'utf8_swedish_ci';
+
+GRANT ALL PRIVILEGES ON bonerp_dev.* TO 'bonerp_dev'@'localhost' IDENTIFIED BY 'bonerp_dev';
+FLUSH PRIVILEGES;
+
+
+GRANT ALL PRIVILEGES ON bonerp.* TO 'bonerp'@'%' IDENTIFIED BY 'bonerp';
+FLUSH PRIVILEGES;
+
+DROP DATABASE `bonerp_dev`;
+
+
+mysql -ubonerp_dev -pbonerp_dev bonerp_dev < inicial.sql
+
+
+mysqldump --complete-insert --skip-extended-insert --no-create-db --order-by-primary --single-transaction --dump-date --verbose --host=localhost --user=bonerp_dev --password=bonerp_dev --disable-keys bonerp_dev > backup.sql
+
+
+
+CREATE DATABASE `bonerp_hom` CHARACTER SET 'utf8' COLLATE 'utf8_swedish_ci';
+
+GRANT ALL PRIVILEGES ON bonerp_hom.* TO 'bonerp_hom'@'localhost' IDENTIFIED BY 'bonerp_hom';
+
+FLUSH PRIVILEGES;

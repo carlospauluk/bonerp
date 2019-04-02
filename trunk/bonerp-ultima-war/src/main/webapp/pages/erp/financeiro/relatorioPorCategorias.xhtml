@@ -1,0 +1,172 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:p="http://primefaces.org/ui" template="/templates/template.xhtml">
+
+
+	<ui:param name="view" value="#{relatorioPorCategoriasView}" />
+
+	<ui:define name="content">
+	
+	<div id="_slnm_relatorioPorCategorias" />
+
+		<h:form id="frm">
+
+			<p:panel id="panel" header="Relatório por Categorias">
+
+				<p:spacer height="8" />
+
+				<p:outputPanel id="opnToolbar">
+					<p:toolbar>
+						<f:facet name="right">
+
+							<p:commandButton icon="ui-icon-triangle-1-w"
+								actionListener="#{view.incPeriodo(false)}" process="@this"
+								update=":frm" partialSubmit="true" />
+							<p:commandButton icon="ui-icon-triangle-1-e"
+								actionListener="#{view.incPeriodo(true)}" process="@this"
+								update=":frm" partialSubmit="true" />
+
+							<p:spacer width="20px" />
+
+
+							<h:outputText value="Entre: " />
+
+							<p:calendar styleClass="maskData" showOn="button"
+								value="#{view.dtIni}" id="iDtIni" locale="pt" mask="true"
+								pattern="dd/MM/yyyy" size="12" selectOtherMonths="true"
+								showOtherMonths="true" />
+							<h:outputText value=" e " />
+							<p:calendar styleClass="maskData" showOn="button"
+								value="#{view.dtFim}" id="iDtFim" locale="pt" mask="true"
+								pattern="dd/MM/yyyy" size="12" selectOtherMonths="true"
+								showOtherMonths="true" />
+
+							<p:spacer width="20px" />
+
+
+							<p:commandButton value="Gerar Relatório" update=":frm:opnTree"
+								actionListener="#{view.gerarRelatorio}" icon="ui-icon-gear"
+								title="Gerar Resumos" process="opnToolbar"
+								style="font-weight: bold" />
+
+							<p:commandButton value="Contas a Pagar"
+								actionListener="#{view.checkRelTotalPorCategoria}"
+								icon="ui-icon-print" oncomplete="openDlg(xhr, status, args)"
+								process="@this" />
+
+
+						</f:facet>
+
+					</p:toolbar>
+				</p:outputPanel>
+
+				<p:spacer height="10" />
+
+				<p:outputPanel id="opnTree">
+
+					<p:treeTable value="#{view.arvoreCategorias}" var="_">
+
+						<p:column headerText="Categoria">
+							<h:outputText value="#{_.categoria.descricaoMontada}" />
+						</p:column>
+
+						<p:column headerText="Valor Total" style="width: 140px"
+							sortBy="#{_.total}">
+							<div style="text-align: right">
+								<h:outputText value="#{_.total}"
+									converter="#{doubleConverterNull}" />
+							</div>
+						</p:column>
+
+						<p:column styleClass="noWrapColBtns">
+
+							<p:commandButton
+								actionListener="#{view.updateDtListMovimentacoes(_.categoria)}"
+								title="Visualizar movimentações"
+								oncomplete="PF('dlgForm').show()" update=":frmDlg:opnDlg"
+								process="@this" icon="ui-icon-script" />
+
+						</p:column>
+					</p:treeTable>
+
+				</p:outputPanel>
+
+			</p:panel>
+
+		</h:form>
+
+		<h:form id="frmDlg">
+
+			<p:dialog id="dlgForm" widgetVar="dlgForm" position="top"
+				header="Movimentações" modal="true" resizable="false"
+				closeOnEscape="true">
+				<p:outputPanel id="opnDlg">
+
+					<p:scrollPanel mode="native" style="height: 500px">
+
+						<p:dataTable id="dtList" var="_" rowIndexVar="row" rowKey="#{_}"
+							sortBy="#{_.dtPagto}" emptyMessage="Nenhum registro encontrado."
+							value="#{view.dtListMovimentacoes}">
+
+
+							<p:column headerText="Código">
+								<h:outputText value="#{_.id}" />
+							</p:column>
+
+							<p:column headerText="Carteira">
+								<h:outputText value="#{_.carteira.descricao}" />
+							</p:column>
+
+							<p:column headerText="Descrição">
+								<div style="float: left">
+									<b> <h:outputText value="#{_.descricaoMontada}"
+											escape="false" style="white-space: pre-wrap;" /></b>
+									<p:outputPanel rendered="#{_.pessoa.nomeExibicao ne null}">
+										<br />
+										<h:outputText value="#{_.pessoa.nomeExibicao}" />
+									</p:outputPanel>
+								</div>
+							</p:column>
+
+							<p:column headerText="Dt Pagto">
+								<h:outputText value="#{_.dtPagto}">
+									<f:convertDateTime pattern="dd/MM/yy" />
+								</h:outputText>
+							</p:column>
+
+							<p:column headerText="Valor Total">
+								<div style="text-align: right">
+									<h:outputText value="#{_.valor}"
+										converter="#{doubleConverter}" />
+									<br />
+
+									<h:outputText value="#{_.valorTotal}"
+										rendered="#{_.valorTotal ne _.valor}"
+										converter="#{doubleConverter}" />
+								</div>
+							</p:column>
+
+						</p:dataTable>
+
+					</p:scrollPanel>
+
+
+				</p:outputPanel>
+			</p:dialog>
+
+		</h:form>
+
+
+		<ui:include src="/templates/dlgRelatorio.xhtml">
+			<ui:param name="sufix" value="TotalPorCategoria" />
+			<ui:param name="titulo" value="Relatório por Categorias" />
+		</ui:include>
+
+	</ui:define>
+
+</ui:composition>

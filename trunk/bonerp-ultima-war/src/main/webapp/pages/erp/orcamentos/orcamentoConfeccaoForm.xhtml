@@ -1,0 +1,279 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	template="/templates/template.xhtml">
+
+	<ui:define name="headFirst">
+		<script src="#{resource['js/helpers.js']}" type="text/javascript"></script>
+	</ui:define>
+
+	<ui:define name="content">
+	
+		<div id="_slnm_orcamentoConfeccaoForm" />
+
+
+		<ui:param name="view" value="#{orcamentoConfeccaoFormView}" />
+
+		<f:metadata>
+			<f:viewParam
+				valueChangeListener="#{orcamentoConfeccaoFormView.updateId}"
+				name="id" />
+		</f:metadata>
+
+
+		<p:panel id="panel" header="Orçamento de Confecções"
+			style="width: 1000px; margin: 0 auto;">
+
+			<h:form id="frm">
+			
+				<!-- Declarado para que não dê erro de javascript quando algum dos MBs chame o JSFUtils.execute("loadList()"); -->
+				<p:remoteCommand name="loadList" process="@none" update="@none" />
+
+				<p:defaultCommand target="btnSalvar" />
+
+				<ui:include src="orcamento_cabecalho.xhtml" />
+
+
+				<fd:labelInput noLabel="true" breakAfter="true" alignRight="true">
+					<p:commandButton value="Salvar" update=":frm" style="width: 180px"
+						actionListener="#{view.save}" id="btnSalvar" process="@this opnCampos"
+						title="Salvar o registro atual e limpar para inserir outro"
+						icon="ui-icon-save" />
+
+					<p:menuButton value="Opções">
+
+						<p:menuitem value="Imprimir" disabled="#{view.e.id eq null}"
+							icon="ui-icon-print" oncomplete="PF('dlgRelOrcamento').show()"
+							process="@this" />
+
+						<p:menuitem value="Clonar" update=":frmClonar:opnDlgClonar"
+							disabled="#{view.e.id eq null}" icon="ui-icon-list"
+							process="@this" oncomplete="PF('dlgClonar').show()">
+						</p:menuitem>
+
+						<p:menuitem value="Remover todos os itens"
+							actionListener="#{view.removerTodosItens()}"
+							disabled="#{view.e.id eq null}" icon="ui-icon-trash"
+							process="@this" styleClass="red-btn">
+						</p:menuitem>
+					</p:menuButton>
+
+
+
+				</fd:labelInput>
+
+				<p:spacer height="15" />
+
+
+				<p:outputPanel id="opnDtListGrupos" rendered="#{view.e.id ne null}">
+
+					<p:toolbar>
+						<f:facet name="left">
+							<h:outputText value="Grupos de Itens"
+								style="font-size: 18px; margin: 5px" />
+						</f:facet>
+						<f:facet name="right">
+							<p:commandButton icon="ui-icon-document"
+								oncomplete="PF('dlgGrupo').show()" id="btnNovoGrupo"
+								update=":frmGrupo:dlgGrupo" actionListener="#{view.novoGrupo}"
+								title="Novo Grupo de Itens" style="width: 26; height: 26;"
+								process="@this" value="Novo Grupo" />
+						</f:facet>
+					</p:toolbar>
+
+					<p:spacer height="10px" />
+
+
+
+					<p:outputPanel id="opnDtListGrupoItens">
+
+						<ui:repeat var="grupo" value="#{view.e.grupos}">
+
+							<p:dataTable var="item" value="#{grupo.itens}" id="dtItens"
+								sortBy="#{item.ordem}">
+
+								<p:ajax event="rowReorder" listener="#{view.onRowReorder}"
+									update=":frm:opnDtListGrupoItens" />
+
+								<p:columnGroup type="header">
+									<p:row>
+										<p:column colspan="5" headerText="#{grupo.titulo}" />
+
+										<p:column styleClass="noWrapColBtns">
+											<f:facet name="header">
+
+												<p:commandButton actionListener="#{view.setGrupo(grupo)}"
+													process="@this" icon="ui-icon-build"
+													update=":frmGrupo:opnDlgGrupo"
+													oncomplete="PF('dlgGrupo').show()" title="Editar registro" />
+
+												<p:commandButton actionListener="#{view.deleteGrupo(grupo)}"
+													update=":frm:opnDtListGrupoItens" styleClass="red-btn"
+													rendered="#{grupo.itens eq null or grupo.itens.size() eq 0}"
+													process="@this" title="Deletar Item" icon="ui-icon-trash">
+													<p:confirm header="Atenção" message="Confirmar deleção?"
+														icon="ui-icon-alert" />
+												</p:commandButton>
+
+												<p:commandButton icon="ui-icon-document"
+													oncomplete="PF('dlgItem').show()" id="btnNovoItem"
+													update=":frmItem:dlgItem" process="@this"
+													actionListener="#{view.novoItem(grupo)}" title="Novo Item"
+													style="width: 26; height: 26;" />
+
+
+											</f:facet>
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column headerText="#" />
+										<p:column headerText="Item" />
+										<p:column headerText="Qtde" />
+										<p:column headerText="Valor Unit." />
+										<p:column headerText="Valor Total" />
+										<p:column />
+									</p:row>
+								</p:columnGroup>
+
+
+
+								<p:column style="width: 1px" headerText="#">
+									<h:outputText value="#{item.ordem}" />
+								</p:column>
+
+								<p:column headerText="Descrição">
+									<h:outputText value="#{item.descricao}"
+										style="white-space: pre-wrap;" />
+								</p:column>
+
+								<p:column style="width: 80px" headerText="Qtde"
+									styleClass="noWrap">
+									<div style="text-align: right;">
+										<h:outputText value="#{item.qtde}">
+											<f:convertNumber maxFractionDigits="3" minFractionDigits="3" />
+										</h:outputText>
+									</div>
+								</p:column>
+
+								<p:column style="width: 80px" headerText="Valor Unit."
+									styleClass="noWrap">
+									<div style="text-align: right;">
+										R$
+										<h:outputText value="#{item.valorUnit}"
+											converter="#{doubleConverterNull}" />
+									</div>
+								</p:column>
+
+								<p:column style="width: 80px" headerText="Valor Total"
+									styleClass="noWrap">
+									<div style="text-align: right;">
+										R$
+										<h:outputText value="#{item.valorTotal}"
+											converter="#{doubleConverterNull}" />
+									</div>
+								</p:column>
+
+								<p:column styleClass="noWrapColBtns">
+
+									<p:commandButton actionListener="#{view.setItem(item)}"
+										icon="ui-icon-build" update=":frmItem:opnDlgItem"
+										oncomplete="PF('dlgItem').show()" title="Editar registro" />
+
+									<p:commandButton actionListener="#{view.arredondarPreco(item)}"
+										icon="ui-icon-refresh"
+										update=":frm:opnDtListGrupoItens" title="Arredondar preço">
+										<p:confirm />
+									</p:commandButton>
+
+									<p:commandButton actionListener="#{view.clonarItem(item)}"
+										icon="ui-icon-list" update=":frm:opnDtListGrupoItens"
+										title="Clonar Item" process="@this">
+										<p:confirm />
+									</p:commandButton>
+
+									<p:commandButton actionListener="#{view.deleteItem(item)}"
+										title="Deletar Item" icon="ui-icon-trash" styleClass="red-btn"
+										update=":frm:opnDtListGrupoItens" process="@this">
+										<p:confirm header="Atenção" message="Confirmar deleção?"
+											icon="ui-icon-alert" />
+									</p:commandButton>
+
+								</p:column>
+
+
+								<p:columnGroup type="footer">
+									<p:row>
+										<p:column colspan="4">
+											<f:facet name="footer">
+												<div style="text-align: right;">Total do Grupo:</div>
+											</f:facet>
+										</p:column>
+										<p:column>
+											<f:facet name="footer">
+												<div style="text-align: right;">
+													R$
+													<h:outputText value="#{grupo.valorTotal}"
+														converter="#{doubleConverterNull}" />
+												</div>
+											</f:facet>
+										</p:column>
+
+										<p:column colspan="2" />
+									</p:row>
+								</p:columnGroup>
+
+							</p:dataTable>
+
+						</ui:repeat>
+
+
+
+					</p:outputPanel>
+
+				</p:outputPanel>
+
+				<p:spacer height="30px" />
+
+
+
+
+
+
+			</h:form>
+
+			<ui:include src="orcamentoArquivoForm.xhtml" />
+
+		</p:panel>
+
+		<ui:include src="/pages/erp/crm/clienteDlgBusca.xhtml">
+			<ui:param name="update" value=":frm:opnCliente :frmClonar:opnCliente" />
+			<ui:param name="viewSelec" value="#{view}" />
+			<ui:param name="action" value="selCliente" />
+		</ui:include>
+
+		<ui:include src="/pages/erp/crm/clienteDlg.xhtml">
+			<ui:param name="view" value="#{clienteFormListView}" />
+			<ui:param name="viewAction" value="#{clienteFormListView}" />
+			<ui:param name="action" value="save" />
+			<ui:param name="update" value=":frm:opnCliente" />
+		</ui:include>
+
+		<ui:include src="orcamentoConfeccaoForm_dlg.xhtml" />
+
+
+		<ui:include src="/templates/dlgRelatorio.xhtml">
+			<ui:param name="sufix" value="Orcamento" />
+			<ui:param name="titulo" value="Orçamento" />
+			<ui:param name="submitAction" value="submitFormRelOrcamento" />
+		</ui:include>
+
+
+
+	</ui:define>
+
+
+</ui:composition>

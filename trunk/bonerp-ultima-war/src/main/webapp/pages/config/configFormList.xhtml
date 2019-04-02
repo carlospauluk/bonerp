@@ -1,0 +1,133 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	template="/templates/template.xhtml">
+
+	<ui:define name="content">
+
+		<div id="_slnm_configFormList" />
+
+		<sec:authorize ifAnyGranted="ROLE_ADMIN">
+
+			<ui:param name="view" value="#{configFormListView}" />
+
+			<h:form id="frm">
+
+				<!-- MÉTODO DE ENTRADA NA TELA -->
+				<p:remoteCommand actionListener="#{view.loadList}" autoRun="true"
+					process="@this" name="loadList" update="opnDtList opnToolbar" />
+
+
+				<p:panel id="panel" header="Parâmetros de Configurações"
+					style="width: 1000px; margin: 0 auto;">
+
+
+					<p:outputPanel id="opnToolbar">
+
+						<p:toolbar>
+							<f:facet name="left">
+
+								<p:commandButton id="btnNovo" icon="ui-icon-document"
+									actionListener="#{view.novo}" title="Novo registro (N)"
+									oncomplete="PF('dlgForm').show()" update=":frm:opnDlg"
+									process="@this" />
+
+								<p:commandButton id="btnAtualizar" title="Atualizar dados (A)"
+									update=":frm:dtList" process="@this" icon="ui-icon-refresh"
+									actionListener="#{view.limparFiltrosECarregar}" />
+
+							</f:facet>
+
+
+
+						</p:toolbar>
+
+					</p:outputPanel>
+
+					<p:spacer height="10" />
+
+					<p:outputPanel id="opnDtList">
+
+						<p:dataTable id="dtList" var="_" rowIndexVar="row"
+							emptyMessage="Nenhum registro encontrado." value="#{view.list}">
+
+							<p:column style="width: 20px" headerText="#">
+								<h:outputText value="#{row + 1}" />
+							</p:column>
+
+							<p:column sortBy="#{_.chave}" headerText="Chave">
+								<h:outputText value="#{_.chave}" />
+							</p:column>
+
+							<p:column sortBy="#{_.valor}" headerText="Valor">
+								<h:outputText style="white-space: pre" value="#{_.valor}" />
+							</p:column>
+
+							<p:column styleClass="noWrapColBtns" headerText="">
+
+								<p:commandButton title="Editar registro" icon="ui-icon-build"
+									id="btnEditar" actionListener="#{view.setE(_)}"
+									update=":frm:opnDlg" process="@this"
+									onclick="PF('dlgForm').show();" styleClass="amber-btn" />
+
+								<p:commandButton title="Excluir registro" icon="ui-icon-trash"
+									actionListener="#{view.deletar(_)}" styleClass="red-btn"
+									process="@this" update=":frm:opnDtList">
+									<p:confirm />
+								</p:commandButton>
+
+							</p:column>
+						</p:dataTable>
+
+					</p:outputPanel>
+
+					<p:spacer height="15" />
+
+				</p:panel>
+
+
+				<p:dialog id="dlgForm" widgetVar="dlgForm" header="Usuário"
+					position="top" modal="true" width="750" resizable="false">
+
+					<p:outputPanel id="opnDlg">
+
+						<fd:labelInput label="Chave *:" labelWidth="120px">
+							<p:inputText size="50" value="#{view.e.chave}" id="iChave"
+								style="text-transform: none" />
+						</fd:labelInput>
+
+						<fd:labelInput label="Valor *:" labelWidth="120px">
+							<p:inputTextarea cols="90" rows="5" value="#{view.e.valor}"
+								id="iValor" />
+						</fd:labelInput>
+
+						<p:spacer width="20" />
+
+						<!-- BUTTONS -->
+						<div style="text-align: right;">
+
+							<p:commandButton title="Salvar o registro atual"
+								oncomplete="afterFormSubmit(xhr, status, args)"
+								update=":frm:panel" icon="ui-icon-save" value="Salvar"
+								style="width: 110px" process="opnDlg"
+								actionListener="#{view.save}" />
+
+							<p:spacer width="20" />
+
+						</div>
+
+					</p:outputPanel>
+				</p:dialog>
+
+			</h:form>
+
+
+		</sec:authorize>
+
+	</ui:define>
+
+</ui:composition>

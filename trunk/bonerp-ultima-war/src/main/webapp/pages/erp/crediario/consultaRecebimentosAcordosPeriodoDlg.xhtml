@@ -1,0 +1,59 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags">
+
+	<sec:authorize ifNotGranted="ROLE_CREDIARIO_ADMIN">
+		<div class="errorMsg">Usuário sem autorização para acessar este
+			recurso.</div>
+	</sec:authorize>
+
+	<sec:authorize ifAnyGranted="ROLE_CREDIARIO_ADMIN">
+
+
+		<!-- FORM ALTERAR EM LOTE -->
+		<h:form id="frmDlgAcordosPeriodo">
+
+			<p:dialog id="dlgFormAcordosPeriodo"
+				header="Consultar Acordos por Período" position="top"
+				widgetVar="dlgFormAcordosPeriodo" resizable="false" width="850"
+				modal="true"   closable="true"
+				closeOnEscape="true">
+
+				<p:outputPanel id="opnDlg">
+
+					<fd:labelInput label="Período :" labelWidth="100px">
+					De: 
+						<p:calendar mode="popup" styleClass="maskData" id="iData"
+							value="#{view.periodoIni}" locale="pt_BR" pattern="dd/MM/yyyy"
+							size="12" selectOtherMonths="true" showOtherMonths="true" /> até 
+						<p:calendar mode="popup" styleClass="maskData" id="iData"
+							value="#{view.periodoFim}" locale="pt_BR" pattern="dd/MM/yyyy"
+							size="12" selectOtherMonths="true" showOtherMonths="true" />
+					</fd:labelInput>
+
+
+					<fd:labelInput noLabel="true" breakAfter="true" alignRight="true">
+						<p:defaultCommand target="btnConsultar" scope="frmDlg" />
+						<p:commandButton id="btnConsultar" icon="ui-icon-save"
+							value="Baixar Parcela" actionListener="#{view.consultarAcordosPorPeriodo}" />
+
+					</fd:labelInput>
+
+				</p:outputPanel>
+
+				<p:spacer height="10px" />
+				<div style="clear: both;" />
+
+			</p:dialog>
+
+			
+		</h:form>
+
+	</sec:authorize>
+
+
+</ui:composition>

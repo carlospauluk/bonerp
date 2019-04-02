@@ -1,0 +1,207 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:fd="http://ocabit.com.br/facelets">
+
+	<h:form id="frmItem">
+
+		<p:dialog id="dlgItem" header="Item de Orçamento" widgetVar="dlgItem"
+			resizable="false" width="1000" modal="true" position="top"
+			closable="true" closeOnEscape="true">
+
+			<p:outputPanel id="opnDlgItem">
+
+				<p:focus for="iDescricao" context="opnDlgItem" />
+
+				<f:validateBean disabled="true">
+					<fd:labelInput label="Ordem :" labelWidth="100px" breakAfter="true">
+						<p:inputText size="8" value="#{view.item.ordem}" id="iOrdem"
+							styleClass="maskInt">
+							<f:convertNumber integerOnly="true" />
+						</p:inputText>
+					</fd:labelInput>
+				</f:validateBean>
+
+				<fd:labelInput label="Descrição :" labelWidth="100px"
+					breakAfter="true">
+
+					<p:inputTextarea id="iDescricao" rows="3" cols="80"
+						value="#{view.item.descricao}" />
+
+					<p:spacer width="20px" />
+					<p:commandButton value="Pesquisar Confecção"
+						oncomplete="PF('dlgBuscaConfeccaoPreco').show()" process="@this"
+						update=":frmDlgBuscaConfeccaoPreco:opnDlgBuscaConfeccaoPreco" />
+				</fd:labelInput>
+
+				<fd:labelInput label="Grupo :" labelWidth="100px" breakAfter="true">
+					<p:selectOneMenu id="iGrupos" value="#{view.item.grupo}"
+						converter="#{entityIdConverter}">
+						<f:selectItem itemValue="" itemLabel="" />
+						<f:selectItems value="#{view.e.grupos}" var="_"
+							itemLabel="#{_.titulo}" itemValue="#{_}" />
+					</p:selectOneMenu>
+				</fd:labelInput>
+
+				<fd:labelInput label="Qtde :" labelWidth="100px">
+					<p:inputText value="#{view.item.qtde}" id="iQtde"
+						styleClass="maskQtde">
+						<f:convertNumber maxFractionDigits="3" minFractionDigits="3" />
+					</p:inputText>
+				</fd:labelInput>
+
+				<fd:labelInput label="Valor Unit. :">
+					<p:inputText value="#{view.item.valorUnit}" size="11"
+						styleClass="maskMoney" id="iValorUnit"
+						converter="#{doubleConverterAbsNull}">
+						<p:ajax event="blur" process="iQtde iValorUnit" global="false"
+							update="iValorTotal"
+							onstart="PF('asValorTotal').trigger('start')"
+							oncomplete="PF('asValorTotal').trigger('complete')" />
+					</p:inputText>
+				</fd:labelInput>
+
+				<div class="fieldsRight">
+					<fd:labelInput noLabel="true">
+						<p:ajaxStatus widgetVar="asValorTotal">
+							<f:facet name="start">
+								<h:graphicImage value="#{resource['images/ajaxloading.gif']}" />
+							</f:facet>
+							<f:facet name="complete">
+								<h:outputText value="" />
+							</f:facet>
+						</p:ajaxStatus>
+					</fd:labelInput>
+					<fd:labelInput label="Valor Total :">
+						<p:inputText value="#{view.item.valorTotal}" readonly="true"
+							size="11" id="iValorTotal" styleClass="maskMoney"
+							converter="#{doubleConverterAbsNull}" />
+					</fd:labelInput>
+				</div>
+				<div style="clear: both" />
+				<p:spacer height="30px" />
+				<div style="clear: both" />
+				<!-- BUTTONS -->
+				<div style="float: right;">
+
+					<p:commandButton title="Salvar o registro atual" id="btnSalvarItem"
+						update=" :frm:opnDtListGrupos" icon="ui-icon-save" value="Salvar"
+						style="width: 150px" actionListener="#{view.saveItem}"
+						oncomplete="afterFormSubmit(xhr, status, args);" />
+
+					<p:defaultCommand target="btnSalvarItem" scope="frmItem" />
+
+				</div>
+			</p:outputPanel>
+
+		</p:dialog>
+
+	</h:form>
+
+
+	<h:form id="frmGrupo">
+
+		<p:dialog id="dlgGrupo" header="Grupo de Itens" widgetVar="dlgGrupo"
+			resizable="false" width="1000" modal="true" position="top"
+			closable="true" closeOnEscape="true">
+
+			<p:outputPanel id="opnDlgGrupo">
+
+				<f:validateBean disabled="true">
+					<fd:labelInput label="Ordem :" labelWidth="90px" breakAfter="true">
+						<p:inputText size="8" value="#{view.grupo.ordem}" id="iOrdem"
+							styleClass="maskInt">
+							<f:convertNumber integerOnly="true" />
+						</p:inputText>
+					</fd:labelInput>
+				</f:validateBean>
+
+				<fd:labelInput label="Título :" labelWidth="90px" breakAfter="true">
+					<p:inputText size="120" value="#{view.grupo.titulo}" id="iTitulo" />
+				</fd:labelInput>
+
+				<fd:labelInput label="Obs. :" labelWidth="90px">
+					<p:inputTextarea rows="4" cols="70" value="#{view.grupo.obs}"
+						maxlength="5000" />
+				</fd:labelInput>
+
+
+
+				<!-- BUTTONS -->
+				<div style="float: right;">
+
+					<p:commandButton title="Salvar o registro atual"
+						id="btnSalvarGrupo" update=":frm" icon="ui-icon-save"
+						value="Salvar" style="width: 150px"
+						actionListener="#{view.saveGrupo}"
+						oncomplete="afterFormSubmit(xhr, status, args);" />
+
+					<p:defaultCommand target="btnSalvarGrupo" scope="frmGrupo" />
+
+				</div>
+			</p:outputPanel>
+
+		</p:dialog>
+
+	</h:form>
+
+
+	<h:form id="frmClonar">
+
+		<p:dialog id="dlgClonar" header="Clonar Orçamento"
+			widgetVar="dlgClonar" resizable="false" width="1000" modal="true"
+			position="top" closable="true" closeOnEscape="true">
+
+			<p:outputPanel id="opnDlgClonar">
+
+				<p:outputPanel id="opnCliente">
+					<fd:labelInput labelWidth="100px" label="Cliente :">
+						<p:autoComplete id="iCliente" size="80" value="#{view.e.cliente}"
+							var="c" itemLabel="#{c.pessoa.nome}" itemValue="#{c}"
+							forceSelection="false"
+							completeMethod="#{clienteFinder.findByStr}" minQueryLength="3"
+							converter="#{entityIdConverter}">
+							<p:ajax event="itemSelect" update="opnCliente" />
+							<p:ajax event="query" global="false" />
+						</p:autoComplete>
+						<p:spacer width="4" />
+
+						<p:commandButton id="btnBuscaCliente" title="Buscar Clientes"
+							onclick="PF('dlgBuscaCliente').show()"
+							actionListener="#{clienteDlgBuscaView.resetBusca}"
+							update=":frmDlgBuscaCliente:opnDlgBuscaCliente" process="@this"
+							icon="ui-icon-search" />
+
+						<p:commandButton id="btnNovoCliente" title="Inserir novo Cliente"
+							onclick="PF('dlgForm').show()" update=":frmCliente:opnDlg"
+							actionListener="#{clienteFormListView.novo}" process="@this"
+							icon="ui-icon-document" />
+
+					</fd:labelInput>
+				</p:outputPanel>
+
+				<fd:labelInput noLabel="true" breakAfter="true" alignRight="true">
+
+					<p:commandButton value="Clonar Orçamento" update=":frm"
+						style="width: 180px" actionListener="#{view.clonarOrcamento}"
+						id="btnClonar" title="Clona o orçamento" icon="ui-icon-save" />
+
+				</fd:labelInput>
+
+			</p:outputPanel>
+
+		</p:dialog>
+
+	</h:form>
+
+	<ui:include src="/pages/erp/producao/confeccaoPrecoBuscaDlg.xhtml">
+		<ui:param name="update" value=":frmItem:opnDlgItem" />
+		<ui:param name="viewSelec" value="#{view}" />
+		<ui:param name="action" value="selConfeccaoPreco" />
+	</ui:include>
+
+
+</ui:composition>

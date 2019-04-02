@@ -1,0 +1,74 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:p="http://primefaces.org/ui">
+
+	<div id="_slnm_bancoFormList" />
+
+
+	<ui:decorate template="/templates/formList.xhtml">
+
+
+		<ui:param name="role" value="FINANCEIRO" />
+
+		<ui:param name="view" value="#{bancoFormListView}" />
+		<ui:param name="titulo" value="Bancos" />
+		<ui:param name="tituloDlg" value="Banco" />
+
+		<ui:define name="cols">
+
+			<p:column sortBy="#{_.codigoBanco}">
+				<f:facet name="header">Código</f:facet>
+				<h:outputText value="#{_.codigoBanco}" />
+			</p:column>
+
+			<p:column sortBy="#{_.nome}">
+				<f:facet name="header">Nome</f:facet>
+				<h:outputText value="#{_.nome}" />
+			</p:column>
+
+			<p:column sortBy="#{_.utilizado}" headerText="Utilizado"
+				style="width: 110px">
+				<h:outputText value="#{_.utilizado ? 'SIM' : 'NÃO'}" />
+			</p:column>
+
+		</ui:define>
+
+
+
+		<ui:define name="campos">
+
+			<fd:labelInput label="Código *:" breakAfter="true" labelWidth="80px">
+				<p:inputText size="10" styleClass="maskInt"
+					value="#{view.e.codigoBanco}" id="iCodigoBanco"
+					converter="#{integerConverter}" />
+				<div style="float: right;">
+					<p:message for="iCodigoBanco" display="icon" />
+				</div>
+			</fd:labelInput>
+
+			<fd:labelInput label="Nome *:" breakAfter="true" labelWidth="80px">
+				<p:inputText size="50" value="#{view.e.nome}" id="iNome" />
+				<div style="float: right;">
+					<p:message for="iNome" display="icon" />
+				</div>
+			</fd:labelInput>
+
+			<fd:labelInput label="Utilizado *:" labelWidth="80px">
+				<p:selectOneRadio value="#{view.e.utilizado}">
+					<f:selectItem itemValue="true" itemLabel="SIM" />
+					<f:selectItem itemValue="false" itemLabel="NÃO" />
+				</p:selectOneRadio>
+			</fd:labelInput>
+
+		</ui:define>
+
+	</ui:decorate>
+
+
+
+</ui:composition>

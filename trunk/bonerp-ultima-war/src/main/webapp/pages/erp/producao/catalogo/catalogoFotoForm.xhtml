@@ -1,0 +1,114 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags">
+
+
+	<!-- exibição de mensagem caso usuário não tenha permissão de acesso -->
+
+	<ui:param name="viewForm" value="#{catalogoItemFotoFormView}" />
+
+	<p:outputPanel id="opnCatalogoFoto">
+
+
+
+
+		<p:fileUpload fileUploadListener="#{viewForm.uploadArquivo}"
+			mode="advanced" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" auto="true"
+			update="opnCatalogoFoto" dragDropSupport="true" multiple="true"
+			cancelLabel="Cancelar" label="Selecionar arquivo..." />
+
+		<fd:labelInput noLabel="true" breakAfter="true">
+		</fd:labelInput>
+
+		<p:spacer height="10" />
+
+		<fd:labelInput noLabel="true" alignRight="true" breakAfter="true">
+			<p:commandButton actionListener="#{viewForm.saveUpload}"
+				style="width: 300px; height: 50px; font-weight: bold"
+				value="Salvar arquivos" process="@this"
+				update=":frm:opnCatalogoFoto" />
+		</fd:labelInput>
+
+		<p:spacer height="30" />
+
+
+		<p:dataTable id="dtListFotos" var="_" rowIndexVar="row"
+			emptyMessage="Nenhum registro encontrado." value="#{view.item.fotos}">
+
+			<p:column headerText="#" style="width: 20px">
+				<h:outputText value="#{row + 1}" />
+			</p:column>
+
+			<p:column headerText="">
+				<div style="text-align: center;">
+				
+					<p:lightBox styleClass="imagebox" id="lighbox1">
+					
+						<h:outputLink value="#" title="#{_.nomeArquivo}">
+							<p:graphicImage value="#{catalogoItemFotoStreamer.thumbnail}"
+								width="250px" cache="false">
+								<f:param name="id" value="#{_.id}" />
+								<f:param name="width" value="250" />
+							</p:graphicImage>
+						</h:outputLink>
+
+
+						<f:facet name="inline">
+							<p:graphicImage value="#{catalogoItemFotoStreamer.image}" width="800" cache="false">
+								<f:param name="id" value="#{_.id}" />
+								<f:param name="width" value="800" />
+							</p:graphicImage>
+						</f:facet>
+
+					</p:lightBox>
+					
+				</div>
+			</p:column>
+
+
+			<p:column headerText="Artigos">
+				<p:outputPanel style="float: left">
+
+					<p:dataList value="#{_.artigos}" var="artigo" type="ordered">
+						<h:outputText value="#{artigo.descricao}" />
+					</p:dataList>
+
+
+				</p:outputPanel>
+				<p:outputPanel style="float: right">
+					<p:commandButton
+						action="#{catalogoItemFotoFormView.openDlgSelArtigosFoto(_)}"
+						process="@this" update=":frmDlgSelArtigosFoto:opnDlg"
+						oncomplete="PF('dlgSelArtigosFoto').show()"
+						title="Selecionar artigos para a foto" icon="ui-icon-list" />
+				</p:outputPanel>
+			</p:column>
+
+
+			<p:column styleClass="noWrapColBtns">
+
+				<p:commandButton title="Excluir registro" icon="ui-icon-trash" styleClass="red-btn"
+					id="btnExcluirFoto" actionListener="#{viewForm.deletar(_)}"
+					update=":frm:opnCatalogoFoto" process="@this">
+					<p:confirm />
+				</p:commandButton>
+
+			</p:column>
+		</p:dataTable>
+
+
+		<p:spacer height="15" />
+
+	</p:outputPanel>
+
+
+
+
+
+
+
+</ui:composition>

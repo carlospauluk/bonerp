@@ -1,0 +1,208 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:p="http://primefaces.org/ui">
+
+
+	<div id="_slnm_regraImportacaoLinhaFormList" />
+
+	<ui:decorate template="/templates/formList.xhtml">
+
+
+		<ui:param name="role" value="FINANCEIRO" />
+
+		<ui:param name="view" value="#{regraImportacaoLinhaFormListView}" />
+		<ui:param name="titulo" value="Regras para Importação de Linhas" />
+		<ui:param name="tituloDlg" value="Regra para Importação de Linha" />
+
+		<ui:define name="cols">
+			<p:column headerText="Regex Java" sortBy="#{_.regraRegexJava}">
+				<h:outputText value="#{_.regraRegexJava}" />
+
+				<p:outputPanel style="float: right">
+					<h:outputText value="#{_.sinalValorLabel}" />
+				</p:outputPanel>
+
+			</p:column>
+
+			<p:column sortBy="#{_.tipoLancto.label}">
+				<f:facet name="header">
+					Tipo de Lancto<br />
+					Categoria
+				</f:facet>
+				<h:outputText value="#{_.tipoLancto.label}" />
+				<br />
+				<h:outputText
+					value="#{_.categoria.codigoM} - #{_.categoria.descricao}" />
+			</p:column>
+
+			<p:column>
+				<f:facet name="header">
+					Carteira<br />
+					Carteira Destino
+				</f:facet>
+				<h:outputText value="#{_.carteira.codigo} - #{_.carteira.descricao}" />
+				<br />
+				<h:outputText
+					value="#{_.carteiraDestino.codigo} - #{_.carteiraDestino.descricao}" />
+			</p:column>
+
+			<p:column headerText="Padrão da Descrição"
+				sortBy="#{_.padraoDescricao}">
+				<h:outputText value="#{_.padraoDescricao}" />
+			</p:column>
+
+		</ui:define>
+
+
+
+		<ui:define name="campos">
+
+			<fd:labelInput label="Regex Java: " breakAfter="true"
+				labelWidth="150px">
+				<p:inputText size="90" value="#{view.e.regraRegexJava}"
+					id="iRegraRegexJava" style="text-transform: none" />
+			</fd:labelInput>
+
+			<fd:labelInput label="Tipo Lancto: *" labelWidth="150px">
+				<p:selectOneMenu id="iTipoLancto" value="#{view.e.tipoLancto}"
+					converter="#{tipoLanctoConverter}">
+					<f:selectItems value="#{lmFinanc.tiposLancto}" var="s"
+						itemLabel="#{s.label}" itemValue="#{s}" />
+					<p:ajax process="@this" update="opnCategoria" partialSubmit="true"
+						listener="#{view.updateTipoLancto}" />
+				</p:selectOneMenu>
+			</fd:labelInput>
+
+			<fd:labelInput label="Status: *" alignRight="true" breakAfter="true">
+				<p:selectOneMenu id="iStatus" value="#{view.e.status}"
+					converter="#{statusMovimentacaoConverter}">
+					<f:selectItems value="#{lmFinanc.statusValues}" var="s"
+						itemLabel="#{s.label}" itemValue="#{s}" />
+				</p:selectOneMenu>
+			</fd:labelInput>
+
+			<fd:labelInput label="Modo Moviment: *" labelWidth="150px">
+				<p:selectOneMenu id="iModoMoviment" value="#{view.e.modo}"
+					converter="#{entityIdConverter}">
+					<f:selectItem />
+					<f:selectItems value="#{lmFinanc.modoValues}" var="mm"
+						itemLabel="#{mm.codigo} - #{mm.descricao}" itemValue="#{mm}" />
+					<p:ajax event="change" process="@this" partialSubmit="true"
+						update="opnCheque" />
+				</p:selectOneMenu>
+			</fd:labelInput>
+
+			<fd:labelInput label="Sinal Valor *:" breakAfter="true"
+				alignRight="true">
+				<p:selectOneRadio value="#{view.e.sinalValor}" id="iSinalValor">
+					<f:selectItem itemValue="0" itemLabel="Ambos" />
+					<f:selectItem itemValue="1" itemLabel="Positivo" />
+					<f:selectItem itemValue="-1" itemLabel="Negativo" />
+				</p:selectOneRadio>
+			</fd:labelInput>
+
+			<fd:labelInput label="Carteira :" labelWidth="150px">
+				<p:selectOneMenu id="iCarteira" value="#{view.e.carteira}"
+					converter="#{entityIdConverter}">
+					<f:selectItem itemLabel="" itemValue="" />
+					<f:selectItems value="#{lmFinanc.carteiraValues}" var="c"
+						itemLabel="#{c.codigo} - #{c.descricao}" itemValue="#{c}" />
+				</p:selectOneMenu>
+			</fd:labelInput>
+
+			<fd:labelInput label="Carteira (Destino): *" breakAfter="true">
+				<p:selectOneMenu id="iCarteiraDestino"
+					value="#{view.e.carteiraDestino}" converter="#{entityIdConverter}">
+					<f:selectItem itemLabel="" itemValue="" />
+					<f:selectItems value="#{lmFinanc.carteiraValues}" var="c"
+						itemLabel="#{c.codigo} - #{c.descricao}" itemValue="#{c}" />
+				</p:selectOneMenu>
+			</fd:labelInput>
+
+
+			<fd:labelInput label="Padrão da Descrição: *" breakAfter="true"
+				labelWidth="150px">
+				<p:inputText size="80" value="#{view.e.padraoDescricao}"
+					style="text-transform: none" id="iPadraoDescricao" />
+			</fd:labelInput>
+
+			<p:outputPanel id="opnCategoria">
+
+				<!-- NÃO DEVE PREENCHER CATEGORIA QUANDO TIPO LANCTO = 'TRANSF_PROPRIA' (POIS POR PADRÃO IRÁ SETAR PARA 2.99) -->
+				<p:outputPanel rendered="#{view.e.tipoLancto ne 'TRANSF_PROPRIA'}">
+
+					<fd:labelInput labelWidth="150px" label="Categoria: *">
+
+						<p:inputText converter="#{categoriaCodigoConverter}"
+							value="#{view.e.categoria.codigo}" size="10" readonly="true" />
+
+						<h:outputText value="-" />
+
+						<p:autoComplete id="iCategoria" size="60"
+							value="#{view.e.categoria}" var="cat"
+							itemLabel="#{cat.descricao}" itemValue="#{cat}"
+							forceSelection="false"
+							completeMethod="#{categoriaFinder.findFolhasBy}"
+							minQueryLength="3" widgetVar="acCategoria"
+							converter="#{entityIdConverter}">
+							<p:ajax event="itemSelect" process="@this" update="opnCategoria" />
+						</p:autoComplete>
+
+						<p:spacer width="4" />
+
+						<p:commandButton id="btnBuscaCateg" title="Buscar Categoria"
+							actionListener="#{categoriaFormListView.categoriaFormListView}"
+							oncomplete="PF('dlgBuscaCateg').show()"
+							update=":frmDlgBuscaCateg:opnTree" partialSubmit="true"
+							process="@none" icon="ui-icon-search" />
+
+						<!-- utilizado quando seleciona uma categoria no dlgBuscaCateg -->
+						<p:remoteCommand name="updateOpnCategoria" update="opnCategoria"
+							process="@none" />
+
+					</fd:labelInput>
+
+				</p:outputPanel>
+
+				<p:outputPanel rendered="#{view.e.tipoLancto eq 'TRANSF_PROPRIA'}">
+					<fd:labelInput labelWidth="150px" label="Categoria: ">
+						<p:inputText value="#{view.e.categoria.descricaoMontada}"
+							size="40" readonly="true" />
+					</fd:labelInput>
+				</p:outputPanel>
+
+			</p:outputPanel>
+
+			<fd:labelInput label="Centro Custo: *" breakAfter="true"
+				alignRight="true">
+				<p:selectOneMenu id="iCentroCusto" value="#{view.e.centroCusto}"
+					converter="#{entityIdConverter}">
+					<f:selectItem />
+					<f:selectItems value="#{lmFinanc.centroCustoValues}" var="cc"
+						itemLabel="#{cc.codigo} - #{cc.descricao}" itemValue="#{cc}" />
+				</p:selectOneMenu>
+			</fd:labelInput>
+
+
+			<p:outputPanel id="opnCheque">
+				<ui:include src="movimentacaoForm_campos_cheque.xhtml">
+					<ui:param name="exibir_numCheque" value="false" />
+				</ui:include>
+			</p:outputPanel>
+
+		</ui:define>
+
+
+	</ui:decorate>
+
+	<ui:include src="categoriaDlgBusca.xhtml">
+		<ui:param name="viewForm" value="#{regraImportacaoLinhaFormListView}" />
+	</ui:include>
+
+
+</ui:composition>

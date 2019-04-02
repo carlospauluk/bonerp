@@ -1,0 +1,128 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.bonsucesso.erp</groupId>
+		<artifactId>bonerp</artifactId>
+		<version>1.6.0-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>bonerp-jsfview-jar</artifactId>
+	<packaging>jar</packaging>
+	<name>bonerp-jsfview-jar</name>
+	<description>JAR para os Managed Beans e outras classes referentes a camada View do projeto BonERP (para poder ter dois WAR com interfaces diferentes)</description>
+
+
+
+
+	<properties>
+		<java-version>1.7</java-version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+		<sonar.host.url>http://localhost:9000/</sonar.host.url>
+	</properties>
+
+	<profiles>
+		<profile>
+			<id>HOM</id>
+			<properties>
+				<sonar.host.url>http://localhost:8080/sonar</sonar.host.url>
+			</properties>
+		</profile>
+	</profiles>
+
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources/</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.5</version>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>com.ocabit</groupId>
+			<artifactId>ocabitbase</artifactId>
+			<version>${ocabitbase.version}</version>
+			<type>jar</type>
+		</dependency>
+
+		<dependency>
+			<groupId>com.bonsucesso.erp</groupId>
+			<artifactId>bonerp-model-jar</artifactId>
+			<version>1.6.0-SNAPSHOT</version>
+			<type>jar</type>
+		</dependency>
+
+		<dependency>
+			<groupId>com.bonsucesso.erp</groupId>
+			<artifactId>bonerp-businessdata-jar</artifactId>
+			<version>1.6.0-SNAPSHOT</version>
+			<type>jar</type>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.bonsucesso.erp</groupId>
+			<artifactId>bonerp-selenium-jar</artifactId>
+			<version>1.6.0-SNAPSHOT</version>
+			<type>jar</type>
+		</dependency>
+
+		<dependency>
+			<groupId>com.bonsucesso.erp</groupId>
+			<artifactId>jasper-fonts</artifactId>
+			<version>1.0.0</version>
+			<type>jar</type>
+		</dependency>
+
+		<dependency>
+			<groupId>net.sf.barcode4j</groupId>
+			<artifactId>barcode4j</artifactId>
+			<version>2.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>batik</groupId>
+			<artifactId>batik-bridge</artifactId>
+			<version>1.6-1</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>xercesImpl</artifactId>
+					<groupId>xerces</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.16</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.firebirdsql.jdbc</groupId>
+			<artifactId>jaybird</artifactId>
+			<version>2.2.5</version>
+		</dependency>
+
+
+	</dependencies>
+
+
+
+</project>

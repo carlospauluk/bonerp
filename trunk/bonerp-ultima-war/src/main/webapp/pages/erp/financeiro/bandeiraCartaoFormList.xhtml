@@ -1,0 +1,69 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:p="http://primefaces.org/ui">
+
+
+	<div id="_slnm_bandeiraCartaoFormList" />
+
+	<ui:decorate template="/templates/formList.xhtml">
+
+
+		<ui:param name="role" value="FINANCEIRO" />
+
+		<ui:param name="view" value="#{bandeiraCartaoFormListView}" />
+		<ui:param name="titulo" value="Bandeiras de Cartões" />
+		<ui:param name="tituloDlg" value="Bandeira de Cartão" />
+
+
+		<ui:define name="cols">
+			<p:column sortBy="#{_.descricao}" headerText="Descrição">
+				<h:outputText value="#{_.descricao}" />
+			</p:column>
+
+			<p:column styleClass="noWrapSmall" headerText="Modo">
+				<h:outputText value="#{_.modo.codigo} - #{_.modo.descricao}" />
+			</p:column>
+
+		</ui:define>
+
+
+
+		<ui:define name="campos">
+
+			<fd:labelInput label="Descrição *:" breakAfter="true"
+				labelWidth="120px" forId="iDescricao">
+				<p:inputText size="50" value="#{view.e.descricao}" id="iDescricao" />
+				<div style="float: right;">
+					<p:message for="iDescricao" display="icon" />
+				</div>
+			</fd:labelInput>
+
+
+			<fd:labelInput label="Modo Moviment :" breakAfter="true"
+				labelWidth="120px" forId="iModoMoviment">
+				<p:selectOneMenu id="iModoMoviment" value="#{view.e.modo}"
+					converter="#{entityIdConverter}">
+					<f:selectItem />
+					<f:selectItems value="#{lmFinanc.modoValues}" var="mm"
+						itemLabel="#{mm.codigo} - #{mm.descricao}" itemValue="#{mm}" />
+				</p:selectOneMenu>
+			</fd:labelInput>
+
+			<fd:labelInput label="Labels *:" breakAfter="true" labelWidth="120px"
+				forId="iLabels">
+				<p:inputTextarea cols="70" rows="5" value="#{view.e.labels}"
+					id="iLabels" />
+			</fd:labelInput>
+
+		</ui:define>
+
+	</ui:decorate>
+
+
+
+</ui:composition>

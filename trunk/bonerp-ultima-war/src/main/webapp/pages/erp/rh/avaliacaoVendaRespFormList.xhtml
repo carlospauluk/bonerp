@@ -1,0 +1,224 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:p="http://primefaces.org/ui">
+
+	<div id="_slnm_avaliacaoVendaRespFormList" />
+
+
+	<ui:decorate template="/templates/formList.xhtml">
+
+
+		<ui:param name="role" value="RH" />
+
+		<ui:param name="rolesAcesso" value="ROLE_RH,ROLE_RH_ADMIN" />
+
+		<ui:param name="view" value="#{avaliacaoVendaRespFormListView}" />
+		<ui:param name="titulo" value="Respostas - Avaliações de Vendas" />
+		<ui:param name="tituloDlg" value="Resposta - Avaliação de Venda" />
+		<ui:param name="widthDlg" value="750" />
+		<ui:param name="exibirColuna_rownum" value="false" />
+
+		<ui:define name="cols">
+
+			<p:column style="width: 20px" headerText="#">
+				<h:outputText value="#{row + 1}" />
+			</p:column>
+
+			<p:column styleClass="noWrapSmall" headerText="Dt Avaliação"
+				sortBy="#{_.dtAvaliacao}">
+				<h:outputText value="#{_.dtAvaliacao}">
+					<f:convertDateTime pattern="dd/MM/yy HH:mm" />
+				</h:outputText>
+			</p:column>
+
+			<p:column styleClass="noWrapSmall" sortBy="#{_.dtVenda}"
+				headerText="Dt Venda">
+				<div style="text-align: center">
+					<h:outputText value="#{_.venda.dtVenda}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</div>
+			</p:column>
+
+			<p:column sortBy="#{_.venda.vendedor.pessoa.nome}"
+				headerText="Vendedor">
+				<h:outputText value="#{_.venda.vendedor.pessoa.nome}" />
+			</p:column>
+
+			<p:column sortBy="#{_.venda.pv}" headerText="PV"
+				styleClass="noWrapSmall">
+				<h:outputText value="#{_.venda.pv}" />
+			</p:column>
+
+			<p:column sortBy="#{_.venda.valorTotal}" styleClass="noWrapSmall"
+				headerText="Valor Venda">
+				<div style="text-align: right">
+					<h:outputText value="#{_.venda.valorTotal}"
+						converter="#{doubleConverterNull}" />
+				</div>
+			</p:column>
+
+
+		</ui:define>
+
+
+
+		<ui:define name="campos">
+
+			<fd:labelInput label="Avaliação de Venda *:" labelWidth="130px">
+				<p:selectOneMenu id="iAvaliacaoVenda"
+					value="#{view.e.avaliacaoVenda}" converter="#{entityIdConverter}">
+					<f:selectItem />
+					<f:selectItems value="#{lmRH.avaliacaoVendaValues}" var="_"
+						itemLabel="#{_.descricao}" itemValue="#{_}" />^
+					<p:ajax event="change" update="@form:opnQuestoes" process="@this"
+						listener="#{view.updateAvaliacaoVenda}" />
+				</p:selectOneMenu>
+			</fd:labelInput>
+
+			<fd:labelInput label="Dt/Hr Avaliação *: " alignRight="true"
+				breakAfter="true">
+				<p:calendar styleClass="maskDataHora" value="#{view.e.dtAvaliacao}"
+					id="iDtAvaliacao" locale="pt" pages="1" pattern="dd/MM/yy HH:mm"
+					showOn="button" widgetVar="iDtAvaliacao" size="15"
+					selectOtherMonths="true" showOtherMonths="true">
+				</p:calendar>
+			</fd:labelInput>
+
+			<fd:labelInput label="Pré-venda :" labelWidth="130px">
+				<p:inputText size="10" value="#{view.e.venda.pv}"
+					styleClass="maskInt">
+					<f:convertNumber integerOnly="true" />
+				</p:inputText>
+			</fd:labelInput>
+
+			<fd:labelInput label="Valor :">
+				<p:inputText size="10" value="#{view.e.venda.valorTotal}"
+					id="iValorTotal" styleClass="maskMoney" style="text-align: right;">
+					<fd:bigDecimalConverter onlyAbs="true" />
+				</p:inputText>
+			</fd:labelInput>
+
+			<fd:labelInput label="Dt Venda *: " alignRight="true"
+				breakAfter="true">
+
+				<p:calendar styleClass="maskData" value="#{view.e.venda.dtVenda}"
+					id="iDtVenda" locale="pt" pages="1" pattern="dd/MM/yyyy"
+					showOn="button" widgetVar="iDtVenda" size="12"
+					selectOtherMonths="true" showOtherMonths="true">
+
+					<p:ajax event="blur" process="@this" partialSubmit="true"
+						update="@form:opnFuncionario" />
+
+				</p:calendar>
+
+
+			</fd:labelInput>
+
+			<p:outputPanel id="opnFuncionario">
+
+				<fd:labelInput label="Funcionário *:" labelWidth="130px"
+					breakAfter="true">
+					<p:selectOneMenu id="iFuncionario"
+						rendered="#{view.e.venda.dtVenda ne null}"
+						value="#{view.e.venda.vendedor}" converter="#{entityIdConverter}">
+						<f:selectItem />
+						<f:selectItems
+							value="#{funcionarioFinder.findVendedoresAtivosNoMesAno(view.e.venda.dtVenda)}"
+							var="_" itemLabel="#{_.pessoa.nome}" itemValue="#{_}" />
+					</p:selectOneMenu>
+				</fd:labelInput>
+
+			</p:outputPanel>
+
+
+			<p:outputPanel id="opnQuestoes">
+
+
+				<p:scrollPanel style="border-width: 0px ; height:380px"
+					mode="native">
+
+					<p:outputPanel rendered="#{view.e.avaliacaoVenda.id ne null}">
+
+						<p:fieldset legend="Questões">
+
+							<ui:repeat var="_" value="#{view.e.avaliacaoVenda.questoes}">
+
+								<b>#{_.ordem}) #{_.questao}</b>
+								<br />
+								<br />
+
+
+								<p:inputTextarea required="true"
+									requiredMessage="A questão #{_.ordem} precisa ser respondida."
+									value="#{view.respostas[_.ordem]}" cols="70" rows="4"
+									rendered="#{_.tipoResposta == 'TEXTO'}" />
+
+								<p:selectOneRadio required="true"
+									requiredMessage="A questão #{_.ordem} precisa ser respondida."
+									value="#{view.respostas[_.ordem]}"
+									rendered="#{_.tipoResposta == 'NOTA_0_10'}">
+									<f:selectItem itemValue="0" itemLabel="0" />
+									<f:selectItem itemValue="1" itemLabel="1" />
+									<f:selectItem itemValue="2" itemLabel="2" />
+									<f:selectItem itemValue="3" itemLabel="3" />
+									<f:selectItem itemValue="4" itemLabel="4" />
+									<f:selectItem itemValue="5" itemLabel="5" />
+									<f:selectItem itemValue="6" itemLabel="6" />
+									<f:selectItem itemValue="7" itemLabel="7" />
+									<f:selectItem itemValue="8" itemLabel="8" />
+									<f:selectItem itemValue="9" itemLabel="9" />
+									<f:selectItem itemValue="10" itemLabel="10" />
+								</p:selectOneRadio>
+
+								<p:selectOneRadio required="true"
+									requiredMessage="A questão #{_.ordem} precisa ser respondida."
+									value="#{view.respostas[_.ordem]}"
+									rendered="#{_.tipoResposta == 'SIM_NAO_NAOSEI'}">
+									<f:selectItem itemValue="SIM" itemLabel="SIM" />
+									<f:selectItem itemValue="NÃO" itemLabel="NÃO" />
+									<f:selectItem itemValue="NÃO SEI" itemLabel="NÃO SEI" />
+								</p:selectOneRadio>
+
+								<p:selectOneRadio required="true"
+									requiredMessage="A questão #{_.ordem} precisa ser respondida."
+									value="#{view.respostas[_.ordem]}"
+									rendered="#{_.tipoResposta == 'SIM_NAO_MAISOUMENOS'}">
+									<f:selectItem itemValue="SIM" itemLabel="SIM" />
+									<f:selectItem itemValue="NÃO" itemLabel="NÃO" />
+									<f:selectItem itemValue="MAIS OU MENOS"
+										itemLabel="MAIS OU MENOS" />
+								</p:selectOneRadio>
+
+
+
+								<br />
+								<br />
+								<br />
+
+
+
+							</ui:repeat>
+
+						</p:fieldset>
+
+					</p:outputPanel>
+
+				</p:scrollPanel>
+
+			</p:outputPanel>
+
+
+		</ui:define>
+
+	</ui:decorate>
+
+
+
+</ui:composition>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<f:view contentType="text/html">
+	<h:head>
+		<f:facet name="first">
+			<meta content='text/html; charset=UTF-8' http-equiv="Content-Type" />
+		</f:facet>
+	</h:head>
+
+	<h:body>
+		<h:form id="form">
+		
+
+			<p:inputText value="#{testMB.d}">
+				<f:convertNumber />
+			</p:inputText>
+			<br />
+			<br />
+			
+			<br /><br /><br /><br />
+
+			<p:commandButton actionListener="#{testMB.doIt}" update="form" value="Atualizar por aqui" />
+			<p:commandButton actionListener="#{testMB.doItProgrammatically}" value="Atualizar programmatticcally" />
+		</h:form>
+	</h:body>
+
+</f:view>
+
+</html>

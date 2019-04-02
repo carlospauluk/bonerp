@@ -1,0 +1,51 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:p="http://primefaces.org/ui" template="/templates/template.xhtml">
+
+
+	<ui:define name="headFirst">
+		<script src="#{resource['js/helpers.js']}" type="text/javascript"></script>
+	</ui:define>
+
+	<ui:param name="view" value="#{downloadZipFiscalView}" />
+
+	<ui:define name="content">
+
+		<div id="_slnm_downloadZipFiscal" />
+
+
+		<h:form id="frm">
+
+			<p:panel id="panel" header="Download Arquivos Fiscais - ZIP">
+
+
+				<h:outputText value="Data: " />
+				<p:calendar styleClass="maskData" showOn="button"
+					value="#{view.mesAno}" locale="pt" mask="true" pattern="dd/MM/yyyy"
+					size="12" selectOtherMonths="true" showOtherMonths="true">
+				</p:calendar>
+
+				<p:commandButton value="Processar" actionListener="#{view.processar}"
+					icon="ui-icon-gear" update=":frm" />
+				
+					
+				<p:commandButton value="Download" ajax="false" rendered="#{view.file ne null}"
+					icon="ui-icon-arrowthick-1-s">
+					<p:fileDownload value="#{view.file}" />
+				</p:commandButton>
+
+
+			</p:panel>
+
+		</h:form>
+
+
+
+
+	</ui:define>
+</ui:composition>

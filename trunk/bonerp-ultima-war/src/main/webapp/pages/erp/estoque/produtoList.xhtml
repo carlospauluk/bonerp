@@ -1,0 +1,152 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:param name="view" value="#{produtoListView}" />
+
+	<div id="_slnm_produtoList" />
+
+	<ui:decorate template="/templates/list.xhtml">
+
+		<ui:param name="role" value="ESTOQUE" />
+
+		<ui:param name="titulo" value="Produtos" />
+		<ui:param name="viewForm" value="#{produtoFormView}" />
+		<ui:param name="updateDlg" value=":frmProduto:opnDlg" />
+		<ui:param name="widgetDlgForm" value="dlgProduto" />
+
+		<ui:param name="alterarEmLote" value="true" />
+		<ui:param name="exibirColuna_btnsEditarDeletar" value="false" />
+		<ui:param name="exibirColuna_IudtUpdated" value="false" />
+
+
+
+		<ui:define name="cols">
+
+			<p:column sortBy="#{_.reduzido}" headerText="Reduzido"
+				styleClass="noWrapSmall">
+				<h:outputText value="#{_.reduzido}" converter="#{reduzidoConverter}" />
+			</p:column>
+
+			<p:column sortBy="#{_.descricao}" headerText="Descrição"
+				style="white-space: normal">
+
+				<div style="float: left">
+					<h:outputText value="#{_.descricao}" />
+				</div>
+			</p:column>
+
+			<p:column sortBy="#{_.fornecedor.pessoa.nomeFantasia}"
+				style="white-space: normal" headerText="Fornecedor">
+				<h:outputText
+					value="#{stringUtils.zerofill(_.fornecedor.codigo,3)} #{_.fornecedor.pessoa.nomeFantasia}" />
+			</p:column>
+
+			<p:column sortBy="#{_.subdepto.depto.nome}"
+				style="white-space: normal" headerText="Depto">
+				<h:outputText
+					value="#{stringUtils.zerofill(_.subdepto.depto.codigo,2)} #{_.subdepto.depto.nome}" />
+			</p:column>
+
+			<p:column sortBy="#{_.subdepto.nome}" style="white-space: normal"
+				headerText="Subdepto">
+				<h:outputText
+					value="#{stringUtils.zerofill(_.subdepto.codigo,3)} #{_.subdepto.nome}" />
+			</p:column>
+
+			<p:column sortBy="#{_.precoAtual.dtCusto}" headerText="Dt Custo"
+				style="width: 1px">
+				<div style="text-align: center;">
+					<h:outputText value="#{_.precoAtual.dtCusto}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</div>
+			</p:column>
+
+			<p:column sortBy="#{_.precoAtual.precoPrazo}" style="width: 80px"
+				headerText="Preço Prazo">
+				<div style="text-align: right;">
+					R$
+					<h:outputText value="#{_.precoAtual.precoPrazo}"
+						converter="#{doubleConverterNull}" />
+				</div>
+			</p:column>
+			<p:column sortBy="#{_.precoAtual.precoPromo}" style="width: 80px"
+				headerText="Preço Promo">
+				<div style="text-align: right;">
+					R$
+					<h:outputText value="#{_.precoAtual.precoPromo}"
+						converter="#{doubleConverterNull}" />
+				</div>
+			</p:column>
+
+			<p:column styleClass="noWrapSmall" headerText="Alterado em"
+				sortBy="#{_.iudt.updated}">
+				<h:outputText value="#{_.iudt.updated}">
+					<f:convertDateTime pattern="dd/MM/yy HH:mm" />
+				</h:outputText>
+			</p:column>
+
+
+			<p:column styleClass="noWrapColBtns">
+
+				<p:commandButton actionListener="#{produtoFormView.setE(_)}"
+					update=":frmProduto:opnDlg" oncomplete="PF('dlgProduto').show()"
+					title="Editar registro" icon="ui-icon-build" />
+
+				<p:commandButton actionListener="#{produtoFormView.setE(_)}"
+					update=":frmDlgProdutoPrecos:opnDlgProdutoPrecos"
+					oncomplete="PF('dlgProdutoPrecos').show()" title="Lista de preços"
+					icon="ui-icon-script" />
+
+			</p:column>
+		</ui:define>
+	</ui:decorate>
+
+	<ui:include src="produtoDlg.xhtml">
+		<ui:param name="view" value="#{produtoFormView}" />
+		<ui:param name="e" value="#{produtoFormView.e}" />
+		<ui:param name="ePreco" value="#{produtoFormView.preco}" />
+		<ui:param name="action" value="save" />
+	</ui:include>
+
+	<ui:include src="produtoLoteDlg.xhtml">
+		<ui:param name="e" value="#{produtoFormView.e}" />
+		<ui:param name="ePreco" value="#{produtoFormView.preco}" />
+		<ui:param name="saveLote" value="true" />
+		<ui:param name="viewForm" value="#{produtoFormView}" />
+		<ui:param name="action" value="saveLote" />
+		<ui:param name="update" value=" :frm:opnDtList :frm:opnLoadList" />
+		<ui:param name="sufix" value="Produto" />
+	</ui:include>
+
+	<ui:include src="/pages/erp/estoque/fornecedorDlgBusca.xhtml">
+		<ui:param name="sufix" value="Produto" />
+		<ui:param name="update" value=":frmProduto:opnFornecedor" />
+		<ui:param name="viewSelec" value="#{produtoFormView}" />
+	</ui:include>
+
+	<ui:include src="/pages/erp/estoque/fornecedorDlgBusca.xhtml">
+		<ui:param name="sufix" value="ProdutoLote" />
+		<ui:param name="update" value=":frmAlterarEmLote:opnFornecedor" />
+		<ui:param name="viewSelec" value="#{produtoFormView}" />
+	</ui:include>
+
+	<ui:include src="/pages/erp/estoque/fornecedorDlg.xhtml">
+		<ui:param name="sufix" value="Produto" />
+	</ui:include>
+
+	<ui:include src="produtoList_dlgPesquisa.xhtml" />
+
+	<ui:include src="produtoPrecosDlg.xhtml">
+		<ui:param name="e" value="#{produtoFormView.e}" />
+	</ui:include>
+
+
+
+
+</ui:composition>

@@ -1,0 +1,597 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags">
+
+
+
+	<!-- exibição de mensagem caso usuário não tenha permissão de acesso -->
+	<sec:authorize ifNotGranted="ROLE_PRODUCAO">
+		<div class="errorMsg">Usuário sem autorização para acessar este
+			recurso.</div>
+	</sec:authorize>
+
+	<sec:authorize ifAnyGranted="ROLE_PRODUCAO">
+
+		<ui:param name="view" value="#{confeccaoBuilderView}" />
+
+		<h:form id="frmDlgQtdesTamanho">
+
+			<p:dialog id="dlgQtdesTamanho" header="Qtdes/Tamanho" position="top"
+				widgetVar="dlgQtdesTamanho" resizable="false" modal="true"
+				closable="true" closeOnEscape="true">
+
+				<p:outputPanel id="opnDlgQtdesTamanho">
+
+					<p:outputPanel autoUpdate="true">
+						<script type="text/javascript">
+							aplicarMasks();
+						</script>
+					</p:outputPanel>
+
+
+					<fd:labelInput label="Insumo :" labelWidth="100px"
+						breakAfter="true">
+
+						<p:inputText readonly="true" size="55"
+							value="#{view.confeccaoItem.insumo.descricao}" />
+
+						<p:commandButton update=":frmDlgInsumoSel:opnDlgInsumoSel"
+							oncomplete="PF('dlgInsumoSel').show()"
+							title="Selecionar e inserir novo insumo na planilha"
+							icon="ui-icon-build" />
+
+
+					</fd:labelInput>
+
+					<fd:labelInput label="" labelWidth="100px" alignRight="true"
+						breakAfter="true">
+
+						<p:commandButton update="opnDlgQtdesTamanho"
+							process="opnDlgQtdesTamanho"
+							actionListener="#{view.limparQtdesTamanho}" icon="ui-icon-cancel"
+							value="Limpar" title="Limpa todos os valores" />
+
+						<p:spacer width="10px" />
+
+						<p:commandButton update="opnDlgQtdesTamanho"
+							process="opnDlgQtdesTamanho"
+							actionListener="#{view.igualarQtdesTamanho}"
+							icon="ui-icon-arrow-4-diag" value="Igualar"
+							title="Iguala todos os valores pelo maior valor informado" />
+
+					</fd:labelInput>
+
+
+					<p:repeat varStatus="vs" value="#{view.confeccao.grade.tamanhos}"
+						var="t">
+
+						<fd:labelInput label="#{t.tamanho} :" labelWidth="100px"
+							breakAfter="true">
+
+							<p:inputText value="#{view.confeccaoItem.mapaGradeQtdes[t]}"
+								styleClass="maskDecPos#{view.confeccaoItem.insumo.unidadeProduto.casasDecimais}">
+								<fd:bigDecimalConverter onlyAbs="true" />
+								<f:attribute name="decimals"
+									value="#{view.confeccaoItem.insumo.unidadeProduto.casasDecimais}" />
+							</p:inputText>
+
+						</fd:labelInput>
+					</p:repeat>
+
+					<!-- BOTÃO SALVAR -->
+					<fd:labelInput noLabel="true" breakAfter="true" alignRight="true">
+						<p:commandButton title="Salvar o registro atual" id="btnSalvar"
+							update=":frm" icon="ui-icon-save" value="Salvar"
+							process="opnDlgQtdesTamanho" style="width: 90px"
+							actionListener="#{view.salvarQtdesConfeccaoItem}"
+							oncomplete="afterFormSubmit(xhr, status, args);" />
+
+						<p:defaultCommand target=":frmDlgQtdesTamanho:btnSalvar" />
+					</fd:labelInput>
+
+				</p:outputPanel>
+
+			</p:dialog>
+
+		</h:form>
+
+		<h:form id="frmDlgInsumoSel">
+
+			<p:dialog id="dlgInsumoSel" header="Selecionar Insumo" position="top"
+				widgetVar="dlgInsumoSel" resizable="false" width="900" modal="true"
+				closable="true" closeOnEscape="true">
+
+				<p:outputPanel id="opnDlgInsumoSel">
+
+					<p:outputPanel autoUpdate="true">
+						<script type="text/javascript">
+							aplicarMasks();
+						</script>
+					</p:outputPanel>
+
+
+					<fd:labelInput label="Insumo :" labelWidth="150px"
+						breakAfter="true">
+						<p:autoComplete forceSelection="true" dropdown="true"
+							itemLabel="#{insumo.descricao}" completeMethod="#{view.acInsumo}"
+							minQueryLength="3" var="insumo" converter="#{entityIdConverter}"
+							itemValue="#{insumo}" value="#{view.confeccaoItem.insumo}"
+							size="100" scrollHeight="300">
+							<p:ajax event="itemSelect" update="opnDlgInsumoSeparado"
+								listener="#{view.updateTipoInsumo}" />
+						</p:autoComplete>
+
+					</fd:labelInput>
+
+					<hr />
+
+					<p:outputPanel id="opnDlgInsumoSeparado">
+						<fd:labelInput label="Tipo de Insumo :" labelWidth="150px"
+							breakAfter="true">
+
+							<p:selectOneMenu converter="#{entityIdConverter}"
+								value="#{view.confeccaoItem.insumo.tipoInsumo}">
+								<f:selectItem itemValue="" itemLabel="" />
+								<f:selectItems value="#{lmProducao.tiposInsumo}" var="_"
+									itemValue="#{_}" itemLabel="#{_.descricao}" />
+								<p:ajax process="@this" update="opnDlgInsumoSel" />
+							</p:selectOneMenu>
+						</fd:labelInput>
+
+						<fd:labelInput label="Insumo :" labelWidth="150px"
+							breakAfter="true">
+							<p:selectOneMenu converter="#{entityIdConverter}"
+								value="#{view.confeccaoItem.insumo}">
+								<f:selectItem itemValue="" itemLabel="" />
+								<f:selectItems
+									value="#{insumoFinder.findByTipoInsumo(view.confeccaoItem.insumo.tipoInsumo)}"
+									var="_" itemValue="#{_}" itemLabel="#{_.descricao}" />
+								<p:ajax update="opnDlgInsumoSel" process="@this"
+									listener="#{view.updateTipoInsumo}" />
+							</p:selectOneMenu>
+						</fd:labelInput>
+
+
+						<fd:labelInput label="Unidade Produto :" labelWidth="150px"
+							breakAfter="true">
+							<p:inputText
+								value="#{view.confeccaoItem.insumo.unidadeProduto.label}"
+								readonly="true" />
+						</fd:labelInput>
+
+						<fd:labelInput label="Preço Custo :" labelWidth="150px">
+								R$ <p:inputText styleClass="maskMoney" size="11"
+								value="#{view.confeccaoItem.insumo.precoAtual.precoCusto}"
+								style="text-align: right;" converter="#{doubleConverterAbsNull}"
+								readonly="true">
+							</p:inputText>
+						</fd:labelInput>
+
+						<fd:labelInput label="Prazo :">
+							<p:inputText size="6"
+								value="#{view.confeccaoItem.insumo.precoAtual.prazo}"
+								styleClass="maskInt" readonly="true">
+								<f:convertNumber integerOnly="true" />
+							</p:inputText> dias
+						</fd:labelInput>
+
+						<fd:labelInput label="Dt Custo :" alignRight="true"
+							breakAfter="true">
+							<p:inputText styleClass="maskData"
+								value="#{view.confeccaoItem.insumo.precoAtual.dtCusto}"
+								readonly="true">
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</p:inputText>
+						</fd:labelInput>
+
+					</p:outputPanel>
+
+					<fd:labelInput noLabel="true" alignRight="true" breakAfter="true">
+						<p:commandButton id="btnSalvar"
+							update=":frm :frmDlgQtdesTamanho:opnDlgQtdesTamanho"
+							icon="ui-icon-save" value="Salvar" style="width: 110px"
+							actionListener="#{view.salvarConfeccaoItem}"
+							oncomplete="afterFormSubmit(xhr, status, args);" />
+					</fd:labelInput>
+
+
+				</p:outputPanel>
+			</p:dialog>
+		</h:form>
+
+		<h:form id="frmDlgConfeccao">
+			<p:dialog id="dlgConfeccao" header="Confecção" position="top"
+				widgetVar="dlgConfeccao" resizable="false" width="900" modal="true"
+				closable="true" closeOnEscape="true">
+
+				<p:outputPanel id="opnDlgConfeccao">
+
+					<p:outputPanel autoUpdate="true">
+						<script type="text/javascript">
+							aplicarMasks();
+						</script>
+					</p:outputPanel>
+
+					<p:focus for="iDescricaoConfeccao" context="opnDlgConfeccao" />
+
+					<fd:labelInput label="Id :" labelWidth="150px" breakAfter="true">
+						<p:inputText id="iId" disabled="true" value="#{view.confeccao.id}" />
+					</fd:labelInput>
+
+					<fd:labelInput label="Tipo de Artigo :" labelWidth="150px">
+						<p:selectOneMenu converter="#{entityIdConverter}"
+							value="#{view.confeccao.tipoArtigo}">
+							<f:selectItem itemValue="" itemLabel="" />
+							<f:selectItems value="#{lmProducao.tiposArtigo}" var="_"
+								itemValue="#{_}" itemLabel="#{_.descricao}" />
+						</p:selectOneMenu>
+					</fd:labelInput>
+
+					<fd:labelInput label="Bloqueada para edições: " alignRight="true">
+						<p:selectBooleanCheckbox value="#{view.confeccao.bloqueada}" />
+					</fd:labelInput>
+					
+					<fd:labelInput label="Oculta: " alignRight="true" breakAfter="true">
+						<p:selectBooleanCheckbox value="#{view.confeccao.oculta}" />
+					</fd:labelInput>
+
+					<fd:labelInput label="Descrição :" labelWidth="150px">
+						<p:inputText size="55" id="iDescricaoConfeccao"
+							value="#{view.confeccao.descricao}" />
+					</fd:labelInput>
+
+					<fd:labelInput label="Modo Cálculo :">
+						<p:selectOneMenu id="iModoCalculo"
+							value="#{view.confeccao.modoCalculo}">
+							<f:selectItems value="#{lmProducao.modoCalculoPrecoConfeccaos}"
+								var="_" itemLabel="#{_}" itemValue="#{_}"
+								itemDescription="#{_.label}" />
+						</p:selectOneMenu>
+					</fd:labelInput>
+
+					<fd:labelInput label="Grade :" alignRight="true" breakAfter="true">
+						<p:selectOneMenu id="iGrade" value="#{view.confeccao.grade}"
+							converter="#{entityIdConverter}">
+							<f:selectItem itemLabel="" itemValue="" />
+							<f:selectItems value="#{lmEstoque.grades}" var="g"
+								itemLabel="#{g.codigo}" itemValue="#{g}"
+								itemDescription="#{g.obs}" />
+						</p:selectOneMenu>
+					</fd:labelInput>
+
+					<p:outputPanel id="opnCamposCoef">
+						<fd:labelInput label="Prazo :" labelWidth="150px">
+							<p:inputText size="4" value="#{view.confeccao.prazoPadrao}"
+								styleClass="maskInt" id="iPrazo">
+								<f:convertNumber integerOnly="true" />
+							</p:inputText> dias
+						</fd:labelInput>
+
+						<fd:labelInput label="Margem :">
+							<p:inputText size="6" value="#{view.confeccao.margemPadrao}"
+								styleClass="maskMoney" id="iMargem">
+								<fd:bigDecimalConverter decimals="2" />
+							</p:inputText>%
+						</fd:labelInput>
+
+						<fd:labelInput label="Custo Operac :">
+							<p:inputText size="6"
+								value="#{view.confeccao.custoOperacionalPadrao}" tabindex="0"
+								styleClass="maskQtde" id="iCustoOperac">
+								<fd:bigDecimalConverter decimals="3" onlyAbs="true" />
+							</p:inputText>%
+						</fd:labelInput>
+
+						<fd:labelInput label="Custo Financeiro :">
+							<p:inputText size="6"
+								value="#{view.confeccao.custoFinanceiroPadrao}" tabindex="0"
+								styleClass="maskMoney" id="iCustoFinanceiro"
+								converter="#{porcentConverter}" />%
+						</fd:labelInput>
+					</p:outputPanel>
+
+					<!-- BOTÃO SALVAR -->
+					<fd:labelInput noLabel="true" breakAfter="true" alignRight="true">
+						<p:commandButton title="Salvar o registro atual" id="btnSalvar"
+							update=":frm" icon="ui-icon-save" value="Salvar"
+							style="width: 90px" actionListener="#{view.salvarConfeccao}"
+							oncomplete="afterFormSubmit(xhr, status, args);" />
+					</fd:labelInput>
+
+					<div style="clear: both" />
+
+					<p:spacer height="30px" />
+
+				</p:outputPanel>
+
+
+			</p:dialog>
+		</h:form>
+
+		<h:form id="frmDlgClonarConfeccao">
+			<p:dialog id="dlgClonarConfeccao" header="Clonar Confecção"
+				position="top" widgetVar="dlgClonarConfeccao" resizable="false"
+				width="900" modal="true" closable="true" closeOnEscape="true">
+
+				<p:outputPanel id="opnDlgClonarConfeccao">
+
+					<fd:labelInput label="Instituição :" labelWidth="150px"
+						breakAfter="true">
+						<p:autoComplete size="50" id="iInstituicao"
+							value="#{view.confeccaoClone.instituicao}" var="_"
+							scrollHeight="300" itemLabel="#{_.nome}" itemValue="#{_}"
+							forceSelection="true" maxResults="99999" dropdown="true"
+							completeMethod="#{instituicaoFinder.findBy}" minQueryLength="2"
+							converter="#{entityIdConverter}">
+							<p:ajax event="itemSelect" update="iDescricaoClone"
+								process="opnDlgClonarConfeccao"
+								listener="#{view.updateDescricaoClone}" />
+						</p:autoComplete>
+					</fd:labelInput>
+
+					<fd:labelInput label="Tipo de Artigo :" labelWidth="150px"
+						breakAfter="true">
+						<p:selectOneMenu converter="#{entityIdConverter}"
+							value="#{view.confeccaoClone.tipoArtigo}">
+							<f:selectItem itemValue="" itemLabel="" />
+							<f:selectItems value="#{lmProducao.tiposArtigo}" var="_"
+								itemValue="#{_}" itemLabel="#{_.descricao}" />
+							<p:ajax event="change" update="iDescricaoClone"
+								process="opnDlgClonarConfeccao"
+								listener="#{view.updateDescricaoClone}" />
+						</p:selectOneMenu>
+					</fd:labelInput>
+
+					<fd:labelInput label="Descrição :" labelWidth="150px"
+						breakAfter="true">
+						<p:inputText size="65" id="iDescricaoClone"
+							value="#{view.confeccaoClone.descricao}" />
+					</fd:labelInput>
+
+					<!-- BOTÃO SALVAR -->
+					<fd:labelInput noLabel="true" breakAfter="true" alignRight="true">
+						<p:commandButton title="Salvar o registro atual" id="btnClonar"
+							update=":frm opnDlgClonarConfeccao" icon="ui-icon-save"
+							value="Salvar" style="width: 90px"
+							actionListener="#{view.clonarConfeccao}"
+							oncomplete="afterFormSubmit(xhr, status, args);" />
+					</fd:labelInput>
+
+				</p:outputPanel>
+
+
+			</p:dialog>
+		</h:form>
+
+		<h:form id="frmDlgPreco">
+
+			<p:dialog id="dlgPreco" header="Preço" widgetVar="dlgPreco"
+				position="top" width="800px" resizable="false" modal="true"
+				closable="true" closeOnEscape="true">
+
+				<p:outputPanel id="opnDlgPreco">
+
+					<p:outputPanel autoUpdate="true">
+						<script type="text/javascript">
+							aplicarMasks();
+						</script>
+					</p:outputPanel>
+
+
+					<fd:labelInput label="Descrição :" breakAfter="true"
+						labelWidth="90px">
+						<p:inputText size="80" value="#{view.preco.descricao}" />
+					</fd:labelInput>
+
+					<p:outputPanel id="opnElementosPreco">
+
+
+						<p:outputPanel id="opnCamposCoef">
+							<fd:labelInput label="Prazo :" labelWidth="90px">
+								<p:inputText size="4" value="#{view.preco.prazo}"
+									styleClass="maskInt" id="iPrazo">
+									<f:convertNumber integerOnly="true" />
+								</p:inputText> dias
+						</fd:labelInput>
+
+							<fd:labelInput label="Margem :">
+								<p:inputText size="6" value="#{view.preco.margem}"
+									styleClass="maskMoney" id="iMargem"
+									converter="#{doubleConverterNull}" />%
+						</fd:labelInput>
+
+							<fd:labelInput label="Custo Operac :">
+								<p:inputText size="6" value="#{view.preco.custoOperacional}"
+									tabindex="0" styleClass="maskMoney"
+									converter="#{doubleConverterNull}" id="iCustoOperac">
+									<p:ajax event="blur" listener="#{view.calcularCoeficiente}"
+										update="opnElementosPreco"
+										process="iPrazo iMargem iCustoOperac" />
+								</p:inputText>%
+						</fd:labelInput>
+						</p:outputPanel>
+
+						<p:outputPanel id="opnCoef">
+							<fd:labelInput label="Coef :" paddingLeft="30px"
+								breakAfter="true">
+								<p:inputText size="6" value="#{view.preco.coeficiente}"
+									readonly="true" styleClass="maskQtde" id="iCoef">
+									<fd:bigDecimalConverter decimals="3" onlyAbs="true" />
+								</p:inputText>%
+						</fd:labelInput>
+						</p:outputPanel>
+
+
+						<fd:labelInput label="Dt Custo :" labelWidth="90px"
+							breakAfter="true">
+							<p:calendar styleClass="maskData" value="#{view.preco.dtCusto}"
+								locale="pt_BR" showOn="button" pattern="dd/MM/yyyy" size="12"
+								selectOtherMonths="true" showOtherMonths="true" />
+						</fd:labelInput>
+
+						<fd:labelInput label="Preço Custo :" labelWidth="100px">
+								R$ <p:inputText styleClass="maskMoney" size="9"
+								value="#{view.preco.precoCusto}" style="text-align: right;"
+								converter="#{doubleConverterAbsNull}" id="iPrecoCusto">
+								<p:ajax event="blur" listener="#{view.calcularPrecos}"
+									update="opnPrecos" process="opnElementosPreco" />
+							</p:inputText>
+						</fd:labelInput>
+					</p:outputPanel>
+
+					<p:outputPanel id="opnPrecos">
+						<fd:labelInput label="Preço Prazo :">
+									R$ <p:inputText styleClass="maskMoney" size="9"
+								value="#{view.preco.precoPrazo}" style="text-align: right;"
+								converter="#{doubleConverterAbsNull}">
+							</p:inputText>
+						</fd:labelInput>
+
+						<fd:labelInput label="Preço Vista :">
+									R$ <p:inputText styleClass="maskMoney" size="9"
+								value="#{view.preco.precoVista}" style="text-align: right;"
+								converter="#{doubleConverterAbsNull}">
+							</p:inputText>
+						</fd:labelInput>
+					</p:outputPanel>
+
+
+					<!-- BOTÃO SALVAR -->
+					<fd:labelInput noLabel="true" breakAfter="true" alignRight="true">
+						<p:commandButton title="Salvar o registro atual"
+							id="btnSalvarPreco" update=":frm:opnConfeccaoPrecos"
+							icon="ui-icon-save" value="Salvar" style="width: 90px"
+							actionListener="#{view.salvarPreco}"
+							oncomplete="afterFormSubmit(xhr, status, args);" />
+					</fd:labelInput>
+
+				</p:outputPanel>
+			</p:dialog>
+		</h:form>
+
+		<h:form id="frmDlgColarItens">
+
+			<p:dialog id="dlgColarItens" header="Itens Copiados" position="top"
+				widgetVar="dlgColarItens" width="900" resizable="false" modal="true"
+				closable="true" closeOnEscape="true">
+
+				<p:outputPanel id="opnDlgColarItens">
+
+					<p:dataTable value="#{view.clipboardItens()}" var="item"
+						id="dtColarItens" rowIndexVar="row">
+
+						<p:column style="width: 20px">
+							#{row+1}
+						</p:column>
+
+						<p:column headerText="Insumo" styleClass="colInsumo">
+							<h:outputText
+								value="#{stringUtils.zerofill(item.insumo.codigo,5)} - #{item.insumo.descricao}" />
+						</p:column>
+
+						<p:column headerText="Preço" styleClass="colPreco">
+							<div style="text-align: right;">
+								<h:outputText value="#{item.insumo.precoAtual.precoCusto}"
+									converter="#{doubleConverterNull}" />
+							</div>
+						</p:column>
+						<p:columns value="#{view.confeccao.grade.tamanhos}" var="t"
+							columnIndexVar="colIndex" styleClass="colsTamanhos">
+							<f:facet name="header">
+								<h:outputText value="#{t.tamanho}" />
+							</f:facet>
+							<div style="text-align: right;">
+
+								<h:outputText value="#{item.mapaGradeQtdes[t]}">
+									<fd:bigDecimalConverter onlyAbs="true" />
+									<f:attribute name="decimals"
+										value="#{item.insumo.unidadeProduto.casasDecimais}" />
+								</h:outputText>
+
+							</div>
+
+							<f:facet name="footer">
+								<div style="text-align: right;">
+									<h:outputText
+										value="#{view.totalPorTipoInsumo(view.confeccao,tipoInsumo,t)}"
+										converter="#{doubleConverterNull}" />
+								</div>
+
+							</f:facet>
+
+						</p:columns>
+
+
+					</p:dataTable>
+
+					<div style="clear: both" />
+					<p:spacer height="50px" />
+					<div style="clear: both" />
+
+
+					<fd:labelInput noLabel="true" breakAfter="true" alignRight="true">
+						<p:commandButton title="Colar itens para a planilha atual"
+							id="btnColarItens" update=":frm:opnConfeccaoItens"
+							icon="ui-icon-save" value="Colar" style="width: 250px"
+							actionListener="#{view.clipboardPasteItens}"
+							oncomplete="afterFormSubmit(xhr, status, args);" />
+					</fd:labelInput>
+
+				</p:outputPanel>
+			</p:dialog>
+		</h:form>
+
+		<h:form id="frmDlgMigrarGrade">
+
+			<p:dialog id="dlgMigrarGrade" header="Migrar Grade" position="top"
+				widgetVar="dlgMigrarGrade" width="900" resizable="false"
+				modal="true" closable="true" closeOnEscape="true">
+
+				<p:outputPanel id="opnDlgMigrarGrade">
+
+					<p:scrollPanel style="height:450px" mode="native">
+
+						<p:dataTable value="#{view.listarOutrasGrades()}" var="_"
+							rowIndexVar="row">
+
+							<p:column headerText="Código">
+								<h:outputText value="#{_.codigo}" />
+							</p:column>
+
+							<p:column headerText="Unidade Padrão">
+								<h:outputText value="#{_.unidadeProdutoPadrao.label}" />
+							</p:column>
+
+							<p:column headerText="Obs">
+								<h:outputText value="#{_.obs}" />
+							</p:column>
+
+							<p:column headerText="">
+								<p:commandButton actionListener="#{view.migrarGrade(_)}"
+									process="@this"
+									oncomplete="afterFormSubmit(xhr, status, args);" update=":frm"
+									value="Migrar" icon="ui-icon-transform">
+									<p:confirm />
+								</p:commandButton>
+							</p:column>
+
+						</p:dataTable>
+
+						<div style="clear: both" />
+
+					</p:scrollPanel>
+
+
+				</p:outputPanel>
+			</p:dialog>
+		</h:form>
+
+
+	</sec:authorize>
+
+
+</ui:composition>

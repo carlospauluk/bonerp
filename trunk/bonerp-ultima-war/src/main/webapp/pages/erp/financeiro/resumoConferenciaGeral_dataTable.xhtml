@@ -1,0 +1,43 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:p="http://primefaces.org/ui">
+
+
+	<p:outputPanel rendered="#{fn:length(dtList) > 0}">
+
+		<p:spacer height="30px" />
+
+		<p:dataTable var="_" value="#{dtList}">
+
+			<f:facet name="header">
+				<h:outputText value="#{titulo}" rendered="#{titulo ne null}"
+					style="font-size: 16px" />
+			</f:facet>
+
+			<p:column>
+				<p:outputPanel style="float: left; line-height: 26px">
+					<h:outputText value=" >>> " rendered="#{_.icone ne null}" />
+					<h:outputText value="#{_.descricao}" />
+				</p:outputPanel>
+				<p:outputPanel style="float: right" rendered="#{_.icone ne null}">
+					<h:graphicImage
+						value="#{resource['images/'.concat(_.icone).concat('.png')]}"
+						title="#{_.obs}" width="24" />
+				</p:outputPanel>
+			</p:column>
+			<p:column width="100">
+				<div style="text-align: right">
+					<h:outputText value="#{_.valor}" converter="#{doubleConverter}" />
+				</div>
+			</p:column>
+		</p:dataTable>
+
+	</p:outputPanel>
+
+
+</ui:composition>

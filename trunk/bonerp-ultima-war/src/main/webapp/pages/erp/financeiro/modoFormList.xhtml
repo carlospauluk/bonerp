@@ -1,0 +1,132 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:p="http://primefaces.org/ui">
+
+
+	<div id="_slnm_modoFormList" />
+
+	<ui:decorate template="/templates/formList.xhtml">
+
+
+		<ui:param name="role" value="FINANCEIRO" />
+
+		<ui:param name="view" value="#{modoFormListView}" />
+		<ui:param name="titulo" value="Modos de Movimentação" />
+		<ui:param name="tituloDlg" value="Modo de Movimentação" />
+
+		<ui:param name="exibirColuna_rownum" value="false" />
+
+		<ui:define name="cols">
+			<p:column sortBy="#{_.codigo}">
+				<f:facet name="header">Código</f:facet>
+				<h:outputText value="#{_.codigo}" />
+			</p:column>
+			<p:column sortBy="#{_.descricao}">
+				<f:facet name="header">Descrição</f:facet>
+				<h:outputText value="#{_.descricao}" />
+			</p:column>
+			<p:column sortBy="#{_.modoDeTransfPropria}" styleClass="noWrapSmall">
+				<f:facet name="header">Transf. Própria</f:facet>
+				<h:outputText value="#{_.modoDeTransfPropria ? 'SIM' : 'NÃO'}" />
+			</p:column>
+			<p:column sortBy="#{_.modoDeTransfCaixa}" styleClass="noWrapSmall">
+				<f:facet name="header">Transf. Caixa</f:facet>
+				<h:outputText value="#{_.modoDeTransfCaixa ? 'SIM' : 'NÃO'}" />
+			</p:column>
+			<p:column sortBy="#{_.modoComBancoOrigem}" styleClass="noWrapSmall">
+				<f:facet name="header">Com Banco Origem</f:facet>
+				<h:outputText value="#{_.modoComBancoOrigem ? 'SIM' : 'NÃO'}" />
+			</p:column>
+			<p:column sortBy="#{_.modoDeMovimentAgrup}" styleClass="noWrapSmall">
+				<f:facet name="header">Movimet. Agrup.</f:facet>
+				<h:outputText value="#{_.modoDeMovimentAgrup ? 'SIM' : 'NÃO'}" />
+			</p:column>
+			<p:column sortBy="#{_.modoDeCartao}" styleClass="noWrapSmall">
+				<f:facet name="header">Cartão</f:facet>
+				<h:outputText value="#{_.modoDeCartao ? 'SIM' : 'NÃO'}" />
+			</p:column>
+			<p:column sortBy="#{_.modoDeCheque}" styleClass="noWrapSmall">
+				<f:facet name="header">Cheque</f:facet>
+				<h:outputText value="#{_.modoDeCheque ? 'SIM' : 'NÃO'}" />
+			</p:column>
+
+		</ui:define>
+
+
+
+		<ui:define name="campos">
+
+			<fd:labelInput label="Código * :" breakAfter="true"
+				labelWidth="140px">
+				<p:inputText size="10" value="#{view.e.codigo}" styleClass="maskInt" id="iCodigo">
+					<f:convertNumber integerOnly="true" />
+				</p:inputText>
+			</fd:labelInput>
+
+			<fd:labelInput label="Descrição *:" breakAfter="true"
+				labelWidth="140px">
+				<p:inputText size="50" value="#{view.e.descricao}" id="iDescricao" />
+				<div style="float: right;">
+					<p:message for="iDescricao" display="icon" />
+				</div>
+			</fd:labelInput>
+
+
+			<fd:labelInput label="Transf. Própria *:" labelWidth="140px"
+				breakAfter="true">
+				<p:selectOneRadio value="#{view.e.modoDeTransfPropria}" id="iModoDeTransfPropria">
+					<f:selectItem itemValue="true" itemLabel="SIM" />
+					<f:selectItem itemValue="false" itemLabel="NÃO" />
+				</p:selectOneRadio>
+			</fd:labelInput>
+
+			<fd:labelInput label="Com Banco Origem *:" labelWidth="140px"
+				breakAfter="true">
+				<p:selectOneRadio value="#{view.e.modoComBancoOrigem}" id="iModoComBancoOrigem">
+					<f:selectItem itemValue="true" itemLabel="SIM" />
+					<f:selectItem itemValue="false" itemLabel="NÃO" />
+				</p:selectOneRadio>
+			</fd:labelInput>
+
+			<fd:labelInput label="Transf. Caixa *:" labelWidth="140px"
+				breakAfter="true">
+				<p:selectOneRadio value="#{view.e.modoDeTransfCaixa}" id="iModoDeTransfCaixa">
+					<f:selectItem itemValue="true" itemLabel="SIM" />
+					<f:selectItem itemValue="false" itemLabel="NÃO" />
+				</p:selectOneRadio>
+			</fd:labelInput>
+
+			<fd:labelInput label="Moviment. Agrup *:" labelWidth="140px"
+				breakAfter="true">
+				<p:selectOneRadio value="#{view.e.modoDeMovimentAgrup}" id="iModoDeMovimentAgrup">
+					<f:selectItem itemValue="true" itemLabel="SIM" />
+					<f:selectItem itemValue="false" itemLabel="NÃO" />
+				</p:selectOneRadio>
+			</fd:labelInput>
+
+			<fd:labelInput label="Cartão *:" labelWidth="140px" breakAfter="true">
+				<p:selectOneRadio value="#{view.e.modoDeCartao}" id="iModoDeCartao">
+					<f:selectItem itemValue="true" itemLabel="SIM" />
+					<f:selectItem itemValue="false" itemLabel="NÃO" />
+				</p:selectOneRadio>
+			</fd:labelInput>
+
+			<fd:labelInput label="Cheque *:" labelWidth="140px" breakAfter="true">
+				<p:selectOneRadio value="#{view.e.modoDeCheque}" id="iModoDeCheque">
+					<f:selectItem itemValue="true" itemLabel="SIM" />
+					<f:selectItem itemValue="false" itemLabel="NÃO" />
+				</p:selectOneRadio>
+			</fd:labelInput>
+
+		</ui:define>
+
+	</ui:decorate>
+
+
+
+</ui:composition>

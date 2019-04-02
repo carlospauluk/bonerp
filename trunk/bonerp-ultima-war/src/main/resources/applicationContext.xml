@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:lang="http://www.springframework.org/schema/lang"
+	xmlns:cache="http://www.springframework.org/schema/cache"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+           http://www.springframework.org/schema/tx 
+           http://www.springframework.org/schema/tx/spring-tx-4.1.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-4.1.xsd
+           http://www.springframework.org/schema/lang 
+           http://www.springframework.org/schema/lang/spring-lang-4.1.xsd
+           http://www.springframework.org/schema/cache
+           http://www.springframework.org/schema/cache/spring-cache-4.1.xsd"
+	default-autowire="no">
+
+
+	<!-- dataSource para o Postgres (Spartacus) -->
+	<bean id="dataSourcePostgresSpartacus"
+		class="org.apache.tomcat.dbcp.dbcp.BasicDataSource">
+
+		<property name="driverClassName" value="org.postgresql.Driver" />
+		<property name="url" value="${databasePostgresSpartacus.url}" />
+		<property name="username" value="${databasePostgresSpartacus.username}" />
+		<property name="password" value="${databasePostgresSpartacus.password}" />
+		
+		
+		
+		<property name="validationQuery" value="SELECT 1;" />
+		<property name="testOnBorrow" value="true" />
+	</bean>
+
+	<bean id="txManagerSpartacus"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
+		scope="singleton">
+		<property name="dataSource" ref="dataSourcePostgresSpartacus" />
+	</bean>
+
+	<tx:annotation-driven transaction-manager="txManagerSpartacus" />
+
+	<!-- dataSource para o Firebird -->
+	<bean id="dataSourceCrediarioFB" class="org.firebirdsql.pool.FBWrappingDataSource">
+		<property name="database" value="${databaseCrediarioFB.url}" />
+		<property name="userName" value="${databaseCrediarioFB.username}" />
+		<property name="password" value="${databaseCrediarioFB.password}" />
+		<property name="type" value="TYPE4" />
+		<property name="maxPoolSize" value="5" />
+		<property name="minPoolSize" value="1" />
+		<property name="pooling" value="true" />
+	</bean>
+
+	<!-- dataSource para o Firebird -->
+	<bean id="dataSourceDataFB" class="org.firebirdsql.pool.FBWrappingDataSource">
+		<property name="database" value="${databaseDataFB.url}" />
+		<property name="userName" value="${databaseDataFB.username}" />
+		<property name="password" value="${databaseDataFB.password}" />
+		<property name="type" value="TYPE4" />
+		<property name="maxPoolSize" value="5" />
+		<property name="minPoolSize" value="1" />
+		<property name="pooling" value="true" />
+	</bean>
+
+	<!-- <context:load-time-weaver weaver-class="org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver" 
+		/> -->
+
+	<bean id="pum"
+		class="org.springframework.orm.jpa.persistenceunit.DefaultPersistenceUnitManager">
+		<property name="defaultDataSource" ref="dataSource" />
+
+		<property name="persistenceXmlLocations">
+			<list>
+				<value>classpath*:META-INF/persistence.xml</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="entityManagerFactory" depends-on="pum"
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="loadTimeWeaver">
+			<bean
+				class="org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver" />
+		</property>
+		<property name="dataSource" ref="dataSource" />
+		<property name="persistenceUnitName" value="bonerpPU" />
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+				<property name="databasePlatform" value="org.hibernate.dialect.MySQL5InnoDBDialect" />
+				<property name="showSql" value="${database.showSql}" />
+				<property name="generateDdl" value="${database.generateDdl}" />
+			</bean>
+		</property>
+	</bean>
+
+
+
+	<tx:annotation-driven transaction-manager="txManager" />
+
+
+
+
+	<bean id="txManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="entityManagerFactory" />
+	</bean>
+
+
+
+	<bean
+		class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
+
+	<bean
+		class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
+
+
+	<bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
+		<property name="scopes">
+			<map>
+				<entry key="view">
+					<bean class="org.primefaces.spring.scope.ViewScope" />
+				</entry>
+			</map>
+		</property>
+	</bean>
+
+
+
+	<!-- Start the Triggers -->
+	<bean id="scheduleFactory"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean" />
+
+
+	<context:component-scan base-package="com.ocabit,com.bonsucesso" />
+
+
+	<context:property-placeholder location="classpath:/application.properties"
+		ignore-unresolvable="true" />
+
+
+	<!-- CACHE CONFIGURATION -->
+	<cache:annotation-driven cache-manager="cacheManager" />
+
+	<bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
+		<property name="cacheManager" ref="ehcache" />
+	</bean>
+
+	<bean id="ehcache"
+		class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+		<property name="configLocation" value="classpath:ehcache.xml" />
+		<property name="shared" value="true" />
+	</bean>
+
+
+
+</beans>

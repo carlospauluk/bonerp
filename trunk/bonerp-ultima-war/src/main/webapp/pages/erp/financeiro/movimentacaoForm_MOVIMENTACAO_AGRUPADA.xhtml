@@ -1,0 +1,220 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:sec="http://www.springframework.org/security/tags">
+
+
+	<!-- 
+	
+		Este é um arquivo de template. Deve ser "decorado" pelos vários tipos de arquivos de movimentações 
+		que constam no enum <<MovimentacaoBusiness.TipoLancto>>
+	
+		PARAMS:
+			tipoLancto: utilizado como sufixo
+			tituloDlg: título do dialog
+	-->
+
+	<ui:param name="viewForm" value="#{movimentacaoFormView}" />
+
+
+	<p:outputPanel id="opnCamposCima">
+
+		<p:outputPanel id="opnGrupo">
+			<fd:labelInput labelWidth="120px" label="Grupo Moviment :"
+				breakAfter="true">
+				<p:inputText value="#{viewForm.e.grupoItem.descricao}"
+					readonly="true" size="60" />
+			</fd:labelInput>
+		</p:outputPanel>
+
+		<p:outputPanel id="opnCategoria">
+			<fd:labelInput labelWidth="120px" label="Categoria :">
+
+				<p:inputText converter="#{categoriaCodigoConverter}"
+					value="#{viewForm.e.categoria.codigo}" size="10" readonly="true" />
+
+				<h:outputText value="-" />
+
+				<p:autoComplete id="iCategoria" size="60"
+					value="#{viewForm.e.categoria}" var="cat"
+					itemLabel="#{cat.descricao}" itemValue="#{cat}"
+					forceSelection="false" completeMethod="#{categoriaFinder.findFolhasBy}"
+					minQueryLength="3" widgetVar="acCategoria"
+					converter="#{entityIdConverter}">
+					<p:ajax event="itemSelect" process="@this" update="opnCategoria"
+						oncomplete="_$('iModoMoviment').focus()" />
+				</p:autoComplete>
+
+				<p:spacer width="4" />
+
+				<p:commandButton id="btnBuscaCateg" title="Buscar Categoria"
+					actionListener="#{categoriaFormListView.categoriaFormListView}"
+					oncomplete="PF('dlgBuscaCateg').show()"
+					update=":frmDlgBuscaCateg:opnTree" partialSubmit="true"
+					process="@none" icon="ui-icon-search" />
+
+
+			</fd:labelInput>
+
+			<!-- SÓ EXIBE NOS CASOS DE PRO-LABORE -->
+			<p:outputPanel layout="inline"
+				rendered="#{viewForm.e.categoria.centroCustoDif eq true}">
+				<fd:labelInput label="Centro Custo:" alignRight="true">
+					<p:selectOneMenu id="iCentroCusto"
+						value="#{viewForm.e.centroCusto}" converter="#{entityIdConverter}">
+						<f:selectItem />
+						<f:selectItems value="#{lmFinanc.centroCustoValues}" var="cc"
+							itemLabel="#{cc.codigo} - #{cc.descricao}" itemValue="#{cc}" />
+					</p:selectOneMenu>
+				</fd:labelInput>
+			</p:outputPanel>
+
+			<fd:labelInput noLabel="true" breakAfter="true" />
+
+		</p:outputPanel>
+
+		<fd:labelInput label="Descrição :" labelWidth="120px">
+			<p:inputText id="iDescricao" size="65"
+				value="#{viewForm.e.descricao}" />
+		</fd:labelInput>
+
+		<fd:labelInput label="Dt Moviment :" breakAfter="true"
+			alignRight="true">
+			<p:calendar styleClass="maskData" value="#{viewForm.e.dtMoviment}"
+				id="iDtMoviment" locale="pt" pages="1" pattern="dd/MM/yyyy"
+				showOn="button" widgetVar="iDtMoviment" size="12"
+				selectOtherMonths="true" showOtherMonths="true"
+				onfocus="$(''#frmMovimentacao_{#tipoLancto}\\:iDtMoviment_input').select()">
+			</p:calendar>
+		</fd:labelInput>
+
+
+	</p:outputPanel>
+
+
+	<p:outputPanel id="opnParcelamento">
+
+		<p:outputPanel rendered="#{viewForm.parcelamento eq false}">
+			<fd:labelInput labelWidth="120px" label="Parcelamento :"
+				breakAfter="true">
+				<p:selectBooleanCheckbox value="#{viewForm.parcelamento}">
+					<p:ajax process="opnCamposCima @this" update="spMovimentacao"
+						listener="#{viewForm.updateParcelamento}" />
+				</p:selectBooleanCheckbox>
+			</fd:labelInput>
+		</p:outputPanel>
+
+		<p:outputPanel rendered="#{viewForm.parcelamento eq true}">
+
+			<fd:labelInput noLabel="true" breakAfter="true" />
+
+			<p:spacer height="10px" />
+
+			
+
+			<p:fieldset legend="Parcelamento" id="fsParcelamento">
+
+				<fd:labelInput labelWidth="105px" label="Parcelamento :">
+					<p:selectBooleanCheckbox value="#{viewForm.parcelamento}">
+						<p:ajax process="opnCamposCima @this" update="spMovimentacao"
+							listener="#{viewForm.updateParcelamento}" />
+					</p:selectBooleanCheckbox>
+				</fd:labelInput>
+
+				<fd:labelInput label="Núm Parcelas :">
+					<p:inputText id="iNumParcelas"
+						value="#{viewForm.qtdeParcelas}" size="8"
+						styleClass="maskInt" />
+
+				</fd:labelInput>
+
+				<fd:labelInput label="Valor Total :">
+					<p:inputText size="10"
+						value="#{viewForm.e.parcelamento.valorTotal}"
+						id="iValorTotalParcelas" styleClass="maskMoney"
+						style="text-align: right;" converter="#{doubleConverterAbs}">
+					</p:inputText>
+				</fd:labelInput>
+
+				<fd:labelInput label="Valor Parcela :">
+					<p:inputText size="10" value="#{viewForm.e.valorTotal}"
+						id="iValorParcela" styleClass="maskMoney"
+						style="text-align: right;" converter="#{doubleConverterAbs}">
+					</p:inputText>
+				</fd:labelInput>
+
+				<fd:labelInput alignRight="true" breakAfter="true">
+					<p:commandButton value="Gerar" style="width: 180px"
+						actionListener="#{viewForm.gerarParcelas(true)}" partialSubmit="true"
+						process=":frmMovimentacao_MOVIMENTACAO_AGRUPADA:opnDlgMovimentacao" 
+						update=":frmMovimentacao_MOVIMENTACAO_AGRUPADA:opnParcelamento" />
+				</fd:labelInput>
+
+				<p:remoteCommand name="atualizarDtListParcelas" process="@none"
+					update="opnParcelas" />
+
+				<p:outputPanel id="opnParcelas">
+
+					<p:spacer height="20px" />
+
+					<p:dataTable value="#{viewForm.e.parcelamento.parcelas}" var="parc"
+						editable="true" editMode="cell" rowIndexVar="row"
+						id="dtListParcelas">
+
+						<p:ajax event="cellEdit" process="@this" partialSubmit="true"
+							listener="#{viewForm.onParcelaEdit(parc)}"
+							update=":frmMovimentacao_#{tipoLancto}:iValorTotalParcelas"
+							oncomplete="atualizarDtListParcelas()" />
+
+
+						<p:column styleClass="noWrapSmall" headerText="Número">
+							<h:outputText value="#{parc.numParcela}" />
+						</p:column>
+
+						<p:column styleClass="noWrapSmall" headerText="Dt Vencto">
+							<h:outputText value="#{parc.grupoItem.descricao}" />
+						</p:column>
+
+						<p:column styleClass="noWrapSmall" headerText="Valor">
+							<p:cellEditor>
+								<f:facet name="output">
+									<div style="text-align: right">
+										<h:outputText value="#{parc.valorTotal}"
+											converter="#{doubleConverterNull}" />
+									</div>
+								</f:facet>
+
+								<f:facet name="input">
+									<p:inputText size="10" value="#{parc.valorTotal}"
+										id="iValorTotalParcelas" styleClass="maskMoney"
+										style="text-align: right;" converter="#{doubleConverterAbs}">
+									</p:inputText>
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+
+
+					</p:dataTable>
+
+					<p:spacer height="20px" />
+
+				</p:outputPanel>
+			</p:fieldset>
+
+			<p:spacer height="10px" />
+
+
+		</p:outputPanel>
+
+	</p:outputPanel>
+
+
+	<ui:include src="movimentacaoForm_campos_obs-valores.xhtml" />
+
+
+
+</ui:composition>

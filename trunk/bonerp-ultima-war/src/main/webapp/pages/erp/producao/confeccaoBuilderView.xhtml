@@ -1,0 +1,534 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	template="/templates/template.xhtml">
+
+	<ui:define name="content">
+
+		<div id="_slnm_confeccaoBuilderView" />
+
+
+		<style>
+.colInsumo {
+	width: 220px;
+	font-size: 11px;
+	padding: 0;
+}
+
+.colPreco {
+	font-size: 11px;
+	width: 30px;
+	padding: 0px;
+}
+
+.colsTamanhos {
+	font-size: 11px;
+	width: 25px;
+	padding: 0px;
+}
+
+.colBotoes {
+	white-space: nowrap;
+	width: 80px;
+	padding: 0px;
+}
+
+.ui-datatable thead th, .ui-datatable tbody td, .ui-datatable tfoot td {
+	padding: 3px;
+}
+</style>
+
+		<!-- exibição de mensagem caso usuário não tenha permissão de acesso -->
+		<sec:authorize ifNotGranted="ROLE_PRODUCAO">
+			<div class="errorMsg">Usuário sem autorização para acessar este
+				recurso.</div>
+		</sec:authorize>
+
+		<sec:authorize ifAnyGranted="ROLE_PRODUCAO">
+
+			<ui:param name="view" value="#{confeccaoBuilderView}" />
+
+			<f:metadata>
+				<f:viewParam
+					valueChangeListener="#{confeccaoBuilderView.updateConfeccaoId}"
+					name="confeccaoId" />
+			</f:metadata>
+
+			<h:form id="frm">
+
+				<p:remoteCommand name="loadList" />
+
+				<p:panel id="panel" header="Planilha de Confecção">
+
+					<p:spacer height="10" />
+
+					<div style="clear: both;" />
+
+					<p:outputPanel id="opnCamposConfeccao">
+
+						<fd:labelInput label="Instituição :" labelWidth="150px"
+							breakAfter="true">
+
+							<p:focus for="iInstituicao" context="opnCamposConfeccao" />
+
+							<p:autoComplete size="50" id="iInstituicao"
+								value="#{confeccaoBuilderView.instituicao}" var="_"
+								scrollHeight="300" itemLabel="#{_.nome}" itemValue="#{_}"
+								forceSelection="true" maxResults="99999" dropdown="true"
+								completeMethod="#{instituicaoFinder.findBy}" minQueryLength="2"
+								converter="#{entityIdConverter}">
+								<p:ajax event="itemSelect"
+									update="opnTiposArtigos opnConfeccaoTable opnConfeccaoPrecos"
+									process="@this" listener="#{view.updateInstituicao}" />
+							</p:autoComplete>
+
+						</fd:labelInput>
+
+						<p:outputPanel id="opnTiposArtigos">
+							<fd:labelInput label="Tipo de Artigo :" labelWidth="150px"
+								breakAfter="true">
+								<p:selectOneMenu converter="#{entityIdConverter}"
+									value="#{view.tipoArtigo}">
+									<f:selectItem itemValue="" itemLabel="" />
+									<f:selectItems value="#{view.tiposArtigos}" var="_"
+										itemValue="#{_}" itemLabel="#{_.descricao}" />
+									<p:ajax listener="#{view.updateTipoArtigo}" process="@this"
+										update="opnConfeccao opnConfeccaoTable opnConfeccaoPrecos" />
+								</p:selectOneMenu>
+
+								<p:spacer width="30px" />
+
+								<p:selectBooleanCheckbox
+									value="#{view.exibirSomenteTiposArtigosDaInstituicao}">
+									<p:ajax event="change"
+										update="opnTiposArtigos opnConfeccao opnConfeccaoTable opnConfeccaoPrecos"
+										process="@this" />
+								</p:selectBooleanCheckbox>
+								Exibir somente Tipos de Artigo da Instituição.
+								
+							</fd:labelInput>
+
+							<p:outputPanel id="opnConfeccao">
+								<fd:labelInput label="Confecção :" labelWidth="150px">
+									<p:selectOneMenu converter="#{entityIdConverter}"
+										value="#{view.confeccao}">
+										<f:selectItem itemValue="" itemLabel="" />
+										<f:selectItems value="#{view.confeccoes}" var="_"
+											itemLabelEscaped="true" itemValue="#{_}"
+											itemLabel="#{_.descricao}" />
+										<p:ajax listener="#{view.buildConfeccaoTable()}"
+											process="@this"
+											update="opnConfeccaoTable opnConfeccaoPrecos opnButtons opnConfeccao" />
+
+									</p:selectOneMenu>
+
+								</fd:labelInput>
+
+								<fd:labelInput noLabel="true">
+									<p:commandButton rendered="#{view.confeccao ne null}"
+										title="Editar esta confecção" value="Editar Confecção"
+										icon="ui-icon-create" oncomplete="PF('dlgConfeccao').show()"
+										process="@this" update=":frmDlgConfeccao:opnDlgConfeccao" />
+
+
+									<p:spacer width="30px" />
+
+									<p:selectBooleanCheckbox
+										value="#{view.exibirConfeccoesOcultas}">
+										<p:ajax event="change"
+											update="opnTiposArtigos opnConfeccao opnConfeccaoTable opnConfeccaoPrecos"
+											process="@this" listener="#{view.updateTipoArtigo}" />
+									</p:selectBooleanCheckbox>
+								Exibir planilhas ocultas.
+									
+								</fd:labelInput>
+
+								<p:outputPanel id="opnButtons"
+									rendered="#{view.tipoArtigo ne null}">
+									<fd:labelInput noLabel="true" breakAfter="true"
+										alignRight="true">
+
+										<p:commandButton actionListener="#{view.novaConfeccao}"
+											title="Incluir uma nova confecção para esta Instituição, com este Tipo de Artigo"
+											value="Nova Confecção" icon="ui-icon-document"
+											oncomplete="PF('dlgConfeccao').show()" process="@this"
+											update=":frmDlgConfeccao:opnDlgConfeccao" />
+										<p:spacer width="10" />
+
+										<p:splitButton value="Clonar"
+											actionListener="#{view.novoConfeccaoClone}"
+											title="Clonar esta planilha de confecção"
+											update=":frmDlgClonarConfeccao:opnDlgClonarConfeccao"
+											icon="ui-icon-control-point-duplicate"
+											oncomplete="PF('dlgClonarConfeccao').show()" process="@this">
+
+											<p:menuitem title="Deletar Planilha de Confecção"
+												rendered="#{view.confeccao ne null and view.confeccao.bloqueada eq false}"
+												value="Deletar" icon="ui-icon-delete"
+												actionListener="#{view.deletarConfeccao}" update=":frm"
+												process="@this">
+												<p:confirm />
+											</p:menuitem>
+
+											<p:menuitem title="Imprimir Planilha de Confecção"
+												rendered="#{view.confeccao ne null}" value="Imprimir"
+												icon="ui-icon-print"
+												oncomplete="PF('dlgRelPlanilhaConfeccao').show()"
+												process="@this" />
+
+											<p:menuitem
+												title="Migra a grade da confecção mantendo as qtdes dos insumos por posição"
+												rendered="#{view.confeccao ne null}" value="Migrar Grade"
+												icon="ui-icon-transform"
+												oncomplete="PF('dlgMigrarGrade').show()" process="@this" />
+
+										</p:splitButton>
+
+									</fd:labelInput>
+								</p:outputPanel>
+
+							</p:outputPanel>
+
+
+						</p:outputPanel>
+
+					</p:outputPanel>
+
+					<p:spacer height="10" style="" />
+					<div style="clear: both;" />
+
+
+					<p:outputPanel id="opnConfeccaoTable">
+
+						<p:outputPanel rendered="#{view.confeccao.id ne null}">
+
+							<p:outputPanel rendered="#{view.confeccao.bloqueada eq true}">
+								<div class="ui-messages ui-widget">
+									<div class="ui-messages-warn ui-corner-all">
+										<span class="ui-messages-warn-icon"></span>
+										<ul>
+											<li>
+												<span class="ui-messages-warn-summary">Atenção!</span>
+												<span class="ui-messages-warn-detail">
+													<b>Esta planilha de confecção está bloqueada para
+														edições.</b>
+												</span>
+											</li>
+										</ul>
+									</div>
+								</div>
+							</p:outputPanel>
+
+
+							<p:outputPanel id="opnToolbar"
+								rendered="#{view.confeccao.bloqueada eq false}">
+								<p:toolbar>
+									<f:facet name="left">
+										<p:commandButton id="btnNovo"
+											update=":frmDlgInsumoSel:opnDlgInsumoSel"
+											actionListener="#{view.novoInsumo}"
+											oncomplete="PF('dlgInsumoSel').show()"
+											value="Selecionar Insumo" icon="ui-icon-add"
+											title="Selecionar e inserir novo insumo na planilha" />
+
+										<p:commandButton id="btnAtualizar"
+											update="opnTiposInsumoItem opnToolbar opnConfeccaoPrecos"
+											process="@this" icon="ui-icon-refresh"
+											value="Recarregar planilha"
+											title="Recalcula e recarrega os dados da planilha"
+											actionListener="#{view.buildConfeccaoTable()}" />
+
+										<p:commandButton id="btnCadastrarInsumo"
+											update=":frmInsumo:opnDlgInsumo"
+											actionListener="#{insumoFormListView.novo}"
+											oncomplete="PF('dlgInsumo').show()" icon="ui-icon-add-circle"
+											value="Cadastrar novo insumo"
+											title="Cadastrar e inserir novo insumo" />
+									</f:facet>
+
+									<f:facet name="right">
+
+										<p:commandButton id="btnCopiarItens"
+											actionListener="#{view.clipboardCopyItens}"
+											icon="ui-icon-content-copy" value="Copiar Itens"
+											process="@this opnConfeccaoItens"
+											title="Copiar itens para área de transferência"
+											update="opnToolbar" />
+
+										<p:commandButton id="btnColarItens"
+											disabled="#{view.clipboardItens().size() eq 0}"
+											icon="ui-icon-content-paste"
+											oncomplete="PF('dlgColarItens').show()"
+											update=":frmDlgColarItens:opnDlgColarItens"
+											value="Colar Itens" process="@this"
+											title="Colar itens da área de transferência" />
+
+									</f:facet>
+								</p:toolbar>
+							</p:outputPanel>
+
+							<p:outputPanel id="opnTiposInsumoItem">
+
+								<p:outputPanel id="opnConfeccaoItens">
+
+
+									<ui:repeat value="#{view.confeccao.tiposInsumoItem}"
+										var="tipoInsumo">
+
+										<p:dataTable var="item" rowIndexVar="row" id="dtItens"
+											tableStyle="table-layout: fixed !important; padding: 0"
+											value="#{view.confeccao.itensPorTipoInsumo[tipoInsumo]}">
+
+											<f:facet name="header">
+												<h:outputText value="#{tipoInsumo.descricao}"
+													id="#{jsfUtils.getRandomId()}" />
+											</f:facet>
+
+											<p:column width="10">
+												<h:selectBooleanCheckbox value="#{view.itensSelecs[item]}" />
+											</p:column>
+
+											<p:column headerText="Insumo" styleClass="colInsumo">
+												<h:outputText
+													value="#{stringUtils.zerofill(item.insumo.codigo,5)} - #{item.insumo.descricao}" />
+											</p:column>
+
+											<p:column headerText="Preço" styleClass="colPreco">
+												<div style="text-align: right;">
+													<h:outputText value="#{item.insumo.precoAtual.precoCusto}"
+														converter="#{doubleConverterNull}" />
+												</div>
+											</p:column>
+											<p:columns value="#{view.confeccao.grade.tamanhos}" var="t"
+												columnIndexVar="colIndex" styleClass="colsTamanhos">
+												<f:facet name="header">
+													<h:outputText value="#{t.tamanho}" />
+												</f:facet>
+												<div style="text-align: right;">
+
+													<h:outputText value="#{item.mapaGradeQtdes[t]}">
+														<fd:bigDecimalConverter onlyAbs="true" />
+														<f:attribute name="decimals"
+															value="#{item.insumo.unidadeProduto.casasDecimais}" />
+													</h:outputText>
+
+												</div>
+
+												<f:facet name="footer">
+													<div style="text-align: right;">
+														<h:outputText
+															value="#{view.totalPorTipoInsumo(view.confeccao,tipoInsumo,t)}"
+															converter="#{doubleConverterNull}" />
+													</div>
+
+												</f:facet>
+
+											</p:columns>
+
+											<p:column styleClass="colBotoes">
+												<p:outputPanel
+													rendered="#{view.confeccao.bloqueada eq false}">
+													<div style="text-align: center;">
+														<p:commandButton
+															actionListener="#{view.setConfeccaoItem(item)}"
+															update=":frmDlgQtdesTamanho:opnDlgQtdesTamanho"
+															oncomplete="PF('dlgQtdesTamanho').show()"
+															title="Editar registro" icon="ui-icon-build" />
+
+														<p:commandButton
+															actionListener="#{view.deletarConfeccaoItem(item)}"
+															update=":frm" title="Deletar registro"
+															icon="ui-icon-trash" styleClass="red-btn">
+															<p:confirm />
+														</p:commandButton>
+													</div>
+												</p:outputPanel>
+
+											</p:column>
+
+										</p:dataTable>
+
+									</ui:repeat>
+
+
+								</p:outputPanel>
+
+
+								<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+								<!-- trecho copiado direto do html gerado pelo primefaces, para poder somente gerar uma última linha, independente, de totalização -->
+
+								<div class="ui-datatable ui-widget">
+									<div class="ui-datatable-header ui-widget-header ui-corner-top">
+										<span>TOTAIS</span>
+									</div>
+									<div class="ui-datatable-tablewrapper">
+										<table style="table-layout: fixed !important" role="grid">
+											<tbody class="ui-datatable-data ui-widget-content">
+												<tr role="row" class="ui-widget-content ui-datatable-even"
+													data-ri="0">
+													<td style="width: 10px"></td>
+													<td class="colInsumo" role="gridcell"></td>
+													<td class="colPreco" role="gridcell">
+														<div style="text-align: right;"></div>
+													</td>
+
+													<ui:repeat value="#{view.confeccao.grade.tamanhos}" var="t">
+														<td class="colsTamanhos" role="gridcell">
+
+															<div
+																style="text-align: right; font-weight: bold; color: red; font-size: 11px">
+																<h:outputText
+																	value="#{view.confeccao.mapaGradeValores[t]}"
+																	converter="#{doubleConverterNull}" />
+															</div>
+
+														</td>
+													</ui:repeat>
+
+													<td class="colBotoes" role="gridcell">
+														<div style="text-align: center;"></div>
+													</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+								</div>
+
+
+								<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+
+								<p:panel rendered="#{view.confeccao.bloqueada eq false}">
+
+									<fd:labelInput label="Obs. :" labelWidth="90px">
+										<p:inputTextarea rows="8" cols="120"
+											value="#{view.confeccao.obs}" id="iObs" />
+									</fd:labelInput>
+
+									<fd:labelInput noLabel="true" breakAfter="true">
+										<p:commandButton update=":frm" icon="ui-icon-save"
+											value="Salvar Obs." style="width: 110px" process="@this iObs"
+											actionListener="#{view.salvarConfeccao}" />
+									</fd:labelInput>
+
+								</p:panel>
+
+
+							</p:outputPanel>
+
+
+
+							<p:panel header="Preços" id="opnConfeccaoPrecos">
+
+
+
+								<p:commandButton actionListener="#{view.criarPrecos}"
+									rendered="#{view.confeccao.bloqueada eq false}"
+									value="Calcular Preços" process="@this"
+									update="opnConfeccaoPrecos">
+									<p:confirm />
+								</p:commandButton>
+
+								<p:dataTable var="preco" value="#{view.confeccao.precos}">
+									<p:column headerText="Tamanhos">
+										<h:outputText value="#{preco.descricao}" />
+									</p:column>
+									<p:column headerText="Custo" style="width: 90px"
+										sortBy="#{preco.precoCusto}">
+										<div style="text-align: right;">
+											R$
+											<h:outputText value="#{preco.precoCusto}"
+												converter="#{doubleConverterNull}" />
+										</div>
+									</p:column>
+									<p:column headerText="Margem" style="width: 90px">
+										<div style="text-align: right;">
+											<h:outputText value="#{preco.margem}"
+												converter="#{doubleConverterNull}" />
+											%
+										</div>
+									</p:column>
+									<p:column headerText="Prazo" style="width: 90px">
+										<div style="text-align: right;">
+											<h:outputText value="#{preco.prazo}">
+												<f:convertNumber integerOnly="true" />
+											</h:outputText>
+										</div>
+									</p:column>
+									<p:column headerText="Preço Prazo" style="width: 90px"
+										sortBy="#{preco.precoPrazo}">
+										<div style="text-align: right;">
+											R$
+											<h:outputText value="#{preco.precoPrazo}"
+												converter="#{doubleConverterNull}" />
+										</div>
+									</p:column>
+									<p:column headerText="Preço Vista" style="width: 90px">
+										<div style="text-align: right;">
+											R$
+											<h:outputText value="#{preco.precoVista}"
+												converter="#{doubleConverterNull}" />
+										</div>
+									</p:column>
+
+									<p:column styleClass="colBotoes">
+										<div style="text-align: center;">
+											<p:commandButton actionListener="#{view.setPreco(preco)}"
+												update=":frmDlgPreco:opnDlgPreco"
+												oncomplete="PF('dlgPreco').show()" process="@this"
+												title="Editar registro" icon="ui-icon-build" />
+
+											<p:commandButton actionListener="#{view.deletarPreco(preco)}"
+												id="btnDeletarPreco" title="Deletar registro"
+												styleClass="red-btn" icon="ui-icon-trash"
+												update=":frm:opnConfeccaoPrecos" process="@this">
+												<p:confirm />
+											</p:commandButton>
+										</div>
+
+									</p:column>
+
+								</p:dataTable>
+							</p:panel>
+
+						</p:outputPanel>
+
+					</p:outputPanel>
+
+					<p:spacer height="30px" />
+
+
+					<div style="clear: both;" />
+
+				</p:panel>
+
+
+			</h:form>
+
+
+			<ui:include src="confeccaoBuilderViewDlg.xhtml" />
+
+
+
+			<ui:include src="insumoDlg.xhtml">
+				<ui:param name="update" value=":frm" />
+				<ui:param name="viewSave" value="#{confeccaoBuilderView}" />
+				<ui:param name="actionSave" value="salvarNovoInsumo" />
+			</ui:include>
+
+
+			<ui:include src="confeccaoBuilderDlgRelatorios.xhtml" />
+
+
+
+
+
+
+		</sec:authorize>
+
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.0.1.final using JasperReports Library version 6.0.0  -->
+<!-- 2015-11-21T16:43:01 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rpTotalPorCategoria_moviments" pageWidth="554" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="554" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Error" uuid="fcd4fbeb-6caf-437f-aebe-179ff2d31ae4">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="bonerp_dev"/>
+	<property name="com.jaspersoft.studio.unit." value="cm"/>
+	<parameter name="dtIni" class="java.util.Date"/>
+	<parameter name="dtFim" class="java.util.Date"/>
+	<parameter name="categ_id" class="java.lang.Long"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT
+	moviment.id,
+    moviment.carteira_id,
+    cart.descricao AS carteira_descricao,
+	moviment.modo_id,
+    modo.descricao AS modo_descricao,
+    moviment.descricao AS moviment_descricao,
+    moviment.documento_fiscal,
+    moviment.obs,
+    moviment.num_parcela,
+
+   (SELECT count(mQtde.id) FROM fin_movimentacao mQtde WHERE moviment.parcelamento_id = mQtde.parcelamento_id) as qtde_parcelas,
+
+    pessoa.nome as razao_social,
+    pessoa.nome_fantasia,
+    moviment.dt_vencto_efetiva,
+    moviment.dt_pagto,
+    moviment.valor,
+    moviment.acrescimos,
+    moviment.descontos,
+    
+    IF(categ.codigo_super=1,moviment.valor_total,moviment.valor_total*-1) as valor_total_c,
+    SUM(moviment.valor_total) soma,
+    
+    
+    CASE modo.id
+   	WHEN 9 THEN CONCAT('', COALESCE(bandeira.descricao,''), COALESCE(CONCAT(' (', operadora.descricao, ')'),''))
+    WHEN 10 THEN CONCAT('', COALESCE(bandeira.descricao,''), COALESCE(CONCAT(' (', operadora.descricao, ')'),''))
+    ELSE moviment.descricao
+   END AS descricao_agrup,
+    
+    moviment.valor_total as valor_total_sf,
+    banco_cheque.codigo_banco as cheque_codigo_banco,
+    banco_cheque.nome as cheque_nome_banco,
+    moviment.cheque_agencia,
+    moviment.cheque_conta,
+    moviment.cheque_num_cheque,
+    categ.codigo as categ_codigo,
+    categ.descricao as categ_descricao,
+    banco.nome as banco_nome,
+    moviment.recorrente
+FROM
+     fin_movimentacao moviment 
+    	LEFT JOIN fin_banco banco ON moviment.documento_banco_id = banco.id
+        LEFT JOIN bon_pessoa pessoa ON moviment.pessoa_id = pessoa.id
+        LEFT JOIN fin_banco banco_cheque ON moviment.cheque_banco_id = banco_cheque.id
+        LEFT JOIN fin_parcelamento parcelamento ON moviment.parcelamento_id = parcelamento.id
+    	LEFT JOIN fin_bandeira_cartao bandeira ON moviment.bandeira_cartao_id = bandeira.id
+        LEFT JOIN fin_operadora_cartao operadora ON moviment.operadora_cartao_id = operadora.id
+        JOIN fin_carteira cart ON moviment.carteira_id = cart.id
+        JOIN fin_modo modo ON moviment.modo_id = modo.id
+        JOIN fin_categoria categ ON moviment.categoria_id = categ.id
+  WHERE
+	moviment.status IN ('A_COMPENSAR','REALIZADA') AND
+	(moviment.dt_vencto_efetiva BETWEEN $P{dtIni} AND $P{dtFim}) AND
+	categ.id = $P{categ_id} AND categ.codigo != '202003'	
+   GROUP BY descricao_agrup, moviment.carteira_id, modo.id
+   ORDER BY soma DESC]]>
+	</queryString>
+	<field name="id" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="carteira_id" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="carteira_descricao" class="java.lang.String"/>
+	<field name="modo_id" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="modo_descricao" class="java.lang.String"/>
+	<field name="moviment_descricao" class="java.lang.String"/>
+	<field name="documento_fiscal" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="obs" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="num_parcela" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="qtde_parcelas" class="java.lang.Long"/>
+	<field name="razao_social" class="java.lang.String"/>
+	<field name="nome_fantasia" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="dt_vencto_efetiva" class="java.sql.Date">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="dt_pagto" class="java.sql.Date">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="valor" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="acrescimos" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="descontos" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="valor_total_sf" class="java.math.BigDecimal"/>
+	<field name="cheque_codigo_banco" class="java.lang.Integer"/>
+	<field name="cheque_nome_banco" class="java.lang.String"/>
+	<field name="cheque_agencia" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="cheque_conta" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="cheque_num_cheque" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="categ_codigo" class="java.lang.Long"/>
+	<field name="categ_descricao" class="java.lang.String"/>
+	<field name="banco_nome" class="java.lang.String"/>
+	<field name="recorrente" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="soma" class="java.math.BigDecimal"/>
+	<field name="valor_total_c" class="java.math.BigDecimal"/>
+	<field name="descricao_agrup" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<property name="local_mesure_unitheight" value="pixel"/>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<staticText>
+				<reportElement x="0" y="0" width="248" height="20" uuid="ef35e416-205d-41d9-947b-b236c6f8dcba">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="local_mesure_unitheight" value="pixel"/>
+				</reportElement>
+				<box padding="2">
+					<topPen lineWidth="0.2"/>
+					<bottomPen lineWidth="0.2"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Lucida Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Descrição]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="485" y="0" width="68" height="20" uuid="d389e265-92aa-4558-8f4a-ac8d18931ec4">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="local_mesure_unitwidth" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box padding="2">
+					<topPen lineWidth="0.2"/>
+					<bottomPen lineWidth="0.2"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Lucida Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="365" y="0" width="120" height="20" uuid="ccbfe76f-21c4-4fd0-8b33-4950e7588497">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box padding="2">
+					<topPen lineWidth="0.2"/>
+					<bottomPen lineWidth="0.2"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Lucida Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Modo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="248" y="0" width="117" height="20" uuid="61cd7064-d12b-44a3-8910-22cfc9571dd9">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="local_mesure_unitheight" value="pixel"/>
+				</reportElement>
+				<box padding="2">
+					<topPen lineWidth="0.2"/>
+					<bottomPen lineWidth="0.2"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Lucida Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Carteira]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="13" splitType="Stretch">
+			<property name="local_mesure_unitheight" value="pixel"/>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<textField>
+				<reportElement x="0" y="0" width="248" height="13" uuid="32103587-8b00-428d-a63e-e0d888b85794">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="local_mesure_unitheight" value="pixel"/>
+				</reportElement>
+				<box padding="2">
+					<topPen lineWidth="0.1"/>
+					<bottomPen lineWidth="0.1"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{moviment_descricao}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="485" y="0" width="69" height="13" uuid="bf9ee27c-5ba4-4b7f-a899-1e019292f759">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="local_mesure_unitwidth" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box padding="2">
+					<topPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{soma}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="365" y="0" width="120" height="13" uuid="c44dcd8b-2b50-4f38-83cf-142a32b7ffee">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box padding="2">
+					<topPen lineWidth="0.1"/>
+					<bottomPen lineWidth="0.1"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{modo_descricao}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="248" y="0" width="117" height="13" uuid="6c71a71e-f137-4be2-8056-f8f75aa2cc58">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="local_mesure_unitheight" value="pixel"/>
+				</reportElement>
+				<box padding="2">
+					<topPen lineWidth="0.1"/>
+					<bottomPen lineWidth="0.1"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{carteira_descricao}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="15">
+			<property name="local_mesure_unitheight" value="pixel"/>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</band>
+	</columnFooter>
+</jasperReport>

@@ -1,0 +1,75 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags">
+
+
+	<!-- 
+		PARAMS:
+		
+		sufix
+	
+	 -->
+
+
+	<p:outputPanel id="opnProduto">
+
+		<f:validateBean disabled="true">
+			<fd:labelInput label="Reduzido :" labelWidth="100px">
+				<p:inputText size="15" value="#{p.reduzido}" styleClass="maskInt"
+					id="iReduzido" readonly="true">
+					<f:convertNumber integerOnly="true" />
+				</p:inputText>
+			</fd:labelInput>
+		</f:validateBean>
+
+		<fd:labelInput label="Descrição :">
+			<p:inputText size="65" value="#{p.descricao}" readonly="true" />
+		</fd:labelInput>
+
+		<fd:labelInput label="Unidade :" alignRight="true" breakAfter="true">
+			<p:inputText size="10" value="#{p.unidadeProduto.label}"
+				readonly="true" />
+		</fd:labelInput>
+
+
+		<fd:labelInput labelWidth="100px" label="Fornecedor :">
+			<p:inputText size="8" value="#{p.fornecedor.codigo}" readonly="true" />
+			<p:inputText size="70" value="#{p.fornecedor.pessoa.nomeExibicao}"
+				readonly="true" />
+		</fd:labelInput>
+
+		<fd:labelInput label="Grade :" alignRight="true" breakAfter="true">
+			<p:inputText size="8" value="#{p.grade.codigo}" readonly="true" />
+		</fd:labelInput>
+
+
+		<fd:labelInput label="Depto :" labelWidth="100px">
+			<p:inputText size="50" value="#{p.subdepto.depto.codigo} - #{p.subdepto.depto.nome}"
+				readonly="true" />
+		</fd:labelInput>
+
+		<fd:labelInput label="Subdepto :" breakAfter="true">
+			<p:inputText size="50"
+				value="#{p.subdepto.codigo} - #{p.subdepto.nome}" readonly="true" />
+		</fd:labelInput>
+
+
+		<fd:labelInput label="Referência :" labelWidth="100px">
+			<p:inputText size="15" value="#{p.referencia}" readonly="true" />
+		</fd:labelInput>
+
+
+		<fd:labelInput label="Dt Últ Venda :" alignRight="true"
+			breakAfter="true">
+			<p:inputText size="15" value="#{p.dtUltVenda}" readonly="true">
+				<f:convertDateTime pattern="dd/MM/yyyy" />			
+			</p:inputText>
+		</fd:labelInput>
+
+	</p:outputPanel>
+
+</ui:composition>

@@ -1,0 +1,63 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:param name="view" value="#{notaFiscalEntradaListView}" />
+
+	<div id="_slnm_notaFiscalList" />
+
+	<ui:decorate template="/templates/list.xhtml">
+
+		<ui:param name="role" value="ESTOQUE" />
+
+		<ui:param name="titulo" value="Notas Fiscais de Entrada" />
+		<ui:param name="viewForm" value="#{notaFiscalEntradaFormView}" />
+
+		<ui:param name="formOutcome"
+			value="/pages/erp/fiscal/notaFiscalEntradaForm.jsf" />
+
+
+
+		<ui:define name="cols">
+
+			<p:column headerText="Id" sortBy="#{_.id}" style="width: 1px">
+				<h:outputText value="#{stringUtils.zerofill(_.id, 6)}" />
+			</p:column>
+
+			<p:column headerText="Dt Emissão" sortBy="#{_.dtEmissao}"
+				style="width: 1px">
+				<div style="text-align: center;">
+					<h:outputText value="#{_.dtEmissao}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</div>
+			</p:column>
+
+			<p:column headerText="Fornecedor"
+				sortBy="#{_.fornecedor.pessoa.nomeExibicao}">
+				<h:outputText value="#{_.fornecedor.pessoa.nomeExibicao}" />
+			</p:column>
+
+
+			<p:column headerText="Valor Total" sortBy="#{_.valorTotal}"
+				style="width: 80px" styleClass="noWrap">
+				<div style="text-align: right;">
+					R$
+					<h:outputText value="#{_.valorTotal}"
+						converter="#{doubleConverter}" />
+				</div>
+			</p:column>
+
+
+		</ui:define>
+	</ui:decorate>
+
+
+	<ui:include src="notaFiscalEntradaList_dlgPesquisa.xhtml" />
+
+
+</ui:composition>

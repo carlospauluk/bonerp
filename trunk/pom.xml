@@ -1,0 +1,246 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.ocabit</groupId>
+		<artifactId>ocabitparent</artifactId>
+		<version>2.5.5-SNAPSHOT</version>
+	</parent>
+	<groupId>com.bonsucesso.erp</groupId>
+	<artifactId>bonerp</artifactId>
+	<version>1.6.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<name>bonerp</name>
+
+	<modules>
+		<module>bonerp-model-jar</module>
+		<module>bonerp-businessdata-jar</module>
+		<module>ekt2bonerp-jar</module>
+		<module>bonerp-selenium-jar</module>
+		<module>servipaws-jar</module>
+		<module>bonerp-jsfview-jar</module>
+		<module>nfe310-jar</module>
+		<module>bonerp-ultima-war</module>
+	</modules>
+
+	<properties>
+		<ambiente>DESENVOLVIMENTO</ambiente>
+		<java-version>1.7</java-version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+
+
+		<mvn.dbconfig.file>D:\ocabit\bonerp\config\dbconfig.file</mvn.dbconfig.file>
+		<mvn.database.dialect>org.hibernate.dialect.MySQL5InnoDBDialect</mvn.database.dialect>
+		<mvn.database.showSql>true</mvn.database.showSql>
+		<mvn.database.generateDdl>true</mvn.database.generateDdl>
+
+		<mvn.databasePostgresSpartacus.url>jdbc:postgresql://savexml.ctnxa3p61kft.sa-east-1.rds.amazonaws.com/savexml375</mvn.databasePostgresSpartacus.url>
+		<mvn.databasePostgresSpartacus.serverName>pgsql.savexml.com.br</mvn.databasePostgresSpartacus.serverName>
+		<mvn.databasePostgresSpartacus.portNumber>5432</mvn.databasePostgresSpartacus.portNumber>
+		<mvn.databasePostgresSpartacus.databaseName>savexml375</mvn.databasePostgresSpartacus.databaseName>
+		<mvn.databasePostgresSpartacus.username>savexml375</mvn.databasePostgresSpartacus.username>
+		<mvn.databasePostgresSpartacus.password>BomXspS2017</mvn.databasePostgresSpartacus.password>
+
+		<mvn.databaseCrediarioFB.url>10.1.1.5/3050:C:/Scuna/PREV2000/data/CREDIARIO.COPY.FDB</mvn.databaseCrediarioFB.url>
+		<mvn.databaseCrediarioFB.username>GERAL</mvn.databaseCrediarioFB.username>
+		<mvn.databaseCrediarioFB.password>160ahlzb</mvn.databaseCrediarioFB.password>
+
+		<mvn.databaseDataFB.url>10.1.1.5/3050:C:/Scuna/PREV2000/data/DATA.FDB</mvn.databaseDataFB.url>
+		<mvn.databaseDataFB.username>GERAL</mvn.databaseDataFB.username>
+		<mvn.databaseDataFB.password>160ahlzb</mvn.databaseDataFB.password>
+
+		<mvn.javax.faces.PROJECT_STAGE>Development</mvn.javax.faces.PROJECT_STAGE>
+		<mvn.javax.faces.FACELETS_REFRESH_PERIOD>1</mvn.javax.faces.FACELETS_REFRESH_PERIOD>
+
+		<mvn.config.logsdir>D:/ocabit/bonerp/logs/</mvn.config.logsdir>
+
+		<ocabitbase.version>2.5.5-SNAPSHOT</ocabitbase.version>
+
+		<ocabitbase.jar.path>file://D:/ocabit/ocabitbase/trunk/target/ocabitbase-${ocabitbase.version}.jar</ocabitbase.jar.path>
+		<bonerp.jar.path>file://D:/ocabit/bonerp/trunk/bonerp-model-jar/target/bonerp-model-jar-${project.version}.jar</bonerp.jar.path>
+		<ekt2bonerp.jar.path>file://D:/ocabit/bonerp/trunk/ekt2bonerp-jar/target/ekt2bonerp-jar-${project.version}.jar</ekt2bonerp.jar.path>
+
+
+		<file.encoding>UTF-8</file.encoding>
+
+		<mvn.ehcache.path>D:/ocabit/bonerp/ehcache/</mvn.ehcache.path>
+
+
+		<pastaArquivosEktFiscal>\\\\10.1.1.100\\spartacus\\</pastaArquivosEktFiscal>
+
+	</properties>
+
+
+	<profiles>
+		<profile>
+			<id>HOM</id>
+			<properties>
+				<ambiente>HOMOLOGAÇÃO</ambiente>
+				<server.address>10.1.1.234</server.address>
+
+				<mvn.primefaces.theme>home</mvn.primefaces.theme>
+
+				<mvn.dbconfig.file>/home/ocabit/bonerp-hom/config/dbconfig-HOM.file</mvn.dbconfig.file>
+
+				<mvn.databaseCrediarioFB.url>10.1.1.5/3050:C:/Scuna/PREV2000/data/CREDIARIO.COPY.FDB</mvn.databaseCrediarioFB.url>
+				<mvn.databaseCrediarioFB.username>GERAL</mvn.databaseCrediarioFB.username>
+				<mvn.databaseCrediarioFB.password>160ahlzb</mvn.databaseCrediarioFB.password>
+
+				<mvn.databaseDataFB.url>10.1.1.5/3050:C:/Scuna/PREV2000/data/DATA.FDB</mvn.databaseDataFB.url>
+				<mvn.databaseDataFB.username>GERAL</mvn.databaseDataFB.username>
+				<mvn.databaseDataFB.password>160ahlzb</mvn.databaseDataFB.password>
+
+				<mvn.javax.faces.PROJECT_STAGE>Production</mvn.javax.faces.PROJECT_STAGE>
+				<mvn.javax.faces.FACELETS_REFRESH_PERIOD>-1</mvn.javax.faces.FACELETS_REFRESH_PERIOD>
+
+				<mvn.database.showSql>false</mvn.database.showSql>
+
+				<mvn.config.logsdir>/home/ocabit/bonerp-hom/logs/</mvn.config.logsdir>
+
+				<ocabitbase.jar.path>WEB-INF/lib/ocabitbase-${ocabitbase.version}.jar</ocabitbase.jar.path>
+				<bonerp.jar.path>WEB-INF/lib/bonerp-model-jar-${project.version}.jar</bonerp.jar.path>
+
+				<urlContext>bonerp-hom</urlContext>
+
+				<mvn.ehcache.path>/home/ocabit/bonerp/ehcache/</mvn.ehcache.path>
+			</properties>
+		</profile>
+		<profile>
+			<id>PROD</id>
+			<properties>
+				<ambiente>PRODUÇÃO</ambiente>
+				<server.address>10.1.1.234</server.address>
+
+				<mvn.primefaces.theme>omega</mvn.primefaces.theme>
+
+				<mvn.dbconfig.file>/home/ocabit/bonerp/config/dbconfig.file</mvn.dbconfig.file>
+
+				<mvn.databaseCrediarioFB.url>10.1.1.5/3050:C:/Scuna/PREV2000/data/CREDIARIO.FDB</mvn.databaseCrediarioFB.url>
+				<mvn.databaseCrediarioFB.username>GERAL</mvn.databaseCrediarioFB.username>
+				<mvn.databaseCrediarioFB.password>160ahlzb</mvn.databaseCrediarioFB.password>
+
+				<mvn.databaseDataFB.url>10.1.1.5/3050:C:/Scuna/PREV2000/data/DATA.FDB</mvn.databaseDataFB.url>
+				<mvn.databaseDataFB.username>GERAL</mvn.databaseDataFB.username>
+				<mvn.databaseDataFB.password>160ahlzb</mvn.databaseDataFB.password>
+
+				<mvn.javax.faces.PROJECT_STAGE>Production</mvn.javax.faces.PROJECT_STAGE>
+				<mvn.javax.faces.FACELETS_REFRESH_PERIOD>-1</mvn.javax.faces.FACELETS_REFRESH_PERIOD>
+
+				<mvn.database.showSql>false</mvn.database.showSql>
+
+				<mvn.config.logsdir>/home/ocabit/bonerp/logs/</mvn.config.logsdir>
+
+				<ocabitbase.jar.path>WEB-INF/lib/ocabitbase-${ocabitbase.version}.jar</ocabitbase.jar.path>
+				<bonerp.jar.path>WEB-INF/lib/bonerp-model-jar-${project.version}.jar</bonerp.jar.path>
+
+				<mvn.ehcache.path>/home/ocabit/bonerp/ehcache/</mvn.ehcache.path>
+
+				<pastaArquivosEktFiscal>/mnt/10.1.1.100-spartacus/</pastaArquivosEktFiscal>
+
+			</properties>
+		</profile>
+
+		<profile>
+			<id>PROD-MIRROR</id>
+			<properties>
+				<ambiente>PRODUÇÃO</ambiente>
+				<server.address>10.1.1.235</server.address>
+
+				<mvn.primefaces.theme>omega</mvn.primefaces.theme>
+
+				<mvn.dbconfig.file>/home/ocabit/bonerp/config/dbconfig.file</mvn.dbconfig.file>
+
+				<mvn.databaseCrediarioFB.url>10.1.1.5/3050:C:/Scuna/PREV2000/data/CREDIARIO.FDB</mvn.databaseCrediarioFB.url>
+				<mvn.databaseCrediarioFB.username>GERAL</mvn.databaseCrediarioFB.username>
+				<mvn.databaseCrediarioFB.password>160ahlzb</mvn.databaseCrediarioFB.password>
+
+				<mvn.databaseDataFB.url>10.1.1.5/3050:C:/Scuna/PREV2000/data/DATA.FDB</mvn.databaseDataFB.url>
+				<mvn.databaseDataFB.username>GERAL</mvn.databaseDataFB.username>
+				<mvn.databaseDataFB.password>160ahlzb</mvn.databaseDataFB.password>
+
+				<mvn.javax.faces.PROJECT_STAGE>Production</mvn.javax.faces.PROJECT_STAGE>
+				<mvn.javax.faces.FACELETS_REFRESH_PERIOD>-1</mvn.javax.faces.FACELETS_REFRESH_PERIOD>
+
+				<mvn.database.showSql>false</mvn.database.showSql>
+
+				<mvn.config.logsdir>/home/ocabit/bonerp/logs/</mvn.config.logsdir>
+
+				<ocabitbase.jar.path>WEB-INF/lib/ocabitbase-${ocabitbase.version}.jar</ocabitbase.jar.path>
+				<bonerp.jar.path>WEB-INF/lib/bonerp-model-jar-${project.version}.jar</bonerp.jar.path>
+
+				<mvn.ehcache.path>/home/ocabit/bonerp/ehcache/</mvn.ehcache.path>
+			</properties>
+		</profile>
+
+
+		<profile>
+			<id>DEVBASEHOM</id>
+			<properties>
+				<mvn.primefaces.theme>home</mvn.primefaces.theme>
+				<mvn.dbconfig.file>D:\ocabit\bonerp\config\dbconfig-HOM.file</mvn.dbconfig.file>
+			</properties>
+		</profile>
+
+		<profile>
+			<id>DEVBASEPROD</id>
+			<properties>
+				<mvn.dbconfig.file>D:\ocabit\bonerp\config\dbconfig-PROD.file</mvn.dbconfig.file>
+			</properties>
+		</profile>
+
+		<profile>
+			<id>DEVBASEPROD-LINUX</id>
+			<properties>
+				<mvn.dbconfig.file>/home/carlos/dev/ocabit/bonerp/config/dbconfig-PROD.file</mvn.dbconfig.file>
+
+				<ocabitbase.jar.path>file://home/carlos/dev/ocabit/ocabitbase/trunk/target/ocabitbase-${ocabitbase.version}.jar</ocabitbase.jar.path>
+				<bonerp.jar.path>file://home/carlos/dev/ocabit/bonerp/trunk/bonerp-model-jar/target/bonerp-model-jar-${project.version}.jar</bonerp.jar.path>
+				<ekt2bonerp.jar.path>file://home/carlos/dev/ocabit/bonerp/trunk/ekt2bonerp-jar/target/ekt2bonerp-jar-${project.version}.jar</ekt2bonerp.jar.path>
+
+				<mvn.ehcache.path>/home/carlos/dev/bonerp/ehcache/</mvn.ehcache.path>
+
+			</properties>
+		</profile>
+
+
+	</profiles>
+
+
+	<scm>
+		<connection>scm:svn:https://www.ocabit.com/svn/bonerp/trunk/</connection>
+		<developerConnection>scm:svn:https://www.ocabit.com/svn/bonerp/trunk/</developerConnection>
+		<url>https://www.ocabit.com/svn/bonerp/trunk/</url>
+	</scm>
+
+	<distributionManagement>
+		<repository>
+			<id>central</id>
+			<name>libs-release</name>
+			<url>https://artifactory.ocabit.com/artifactory/libs-release-local</url>
+		</repository>
+		<snapshotRepository>
+			<id>snapshots</id>
+			<name>libs-snapshot</name>
+			<url>https://artifactory.ocabit.com/artifactory/libs-snapshot-local</url>
+		</snapshotRepository>
+	</distributionManagement>
+
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>javancss-maven-plugin</artifactId>
+				<version>2.1</version>
+			</plugin>
+		</plugins>
+	</reporting>
+
+
+
+
+</project>

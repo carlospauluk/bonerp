@@ -1,0 +1,277 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	template="/templates/template.xhtml">
+
+	<ui:define name="headFirst">
+		<script src="#{resource['js/helpers.js']}" type="text/javascript"></script>
+	</ui:define>
+
+	<ui:define name="content">
+	
+		<div id="_slnm_gradeForm" />
+
+		<sec:authorize ifNotGranted="ROLE_ESTOQUE_ADMIN">
+			<div class="errorMsg">Usuário sem autorização para acessar este
+				recurso.</div>
+		</sec:authorize>
+
+		<sec:authorize ifAnyGranted="ROLE_ESTOQUE_ADMIN">
+
+			<ui:param name="view" value="#{gradeFormListView}" />
+
+			<h:form id="frm">
+
+				<p:panel id="panel" header="Grades/Tamanhos"
+					style="width: 1000px; margin: 0 auto;">
+
+					<p:toolbar>
+						<f:facet name="left">
+							<p:commandButton id="btnNovo" icon="ui-icon-document"
+								oncomplete="PF('dlgGrade').show()" actionListener="#{view.novo}"
+								process="@this" title="Novo registro (N)" value="Nova Grade"
+								update="opnDlgGrade" />
+						</f:facet>
+					</p:toolbar>
+
+					<p:spacer height="10" />
+
+
+					<p:outputPanel id="opnLoadList">
+						<p:remoteCommand id="rcLoadList"
+							actionListener="#{view.loadList}" autoRun="true" name="loadList"
+							update="opnDtList opnDtListTamanhos" process="@this" />
+					</p:outputPanel>
+
+
+					<p:outputPanel id="opnDtList">
+
+
+						<p:dataTable id="dtList" var="_" rowIndexVar="row" rowKey="#{_}"
+							emptyMessage="Nenhum registro encontrado." value="#{view.list}"
+							selection="#{view.e}" selectionMode="single">
+
+							<p:ajax event="rowSelect" listener="#{view.onRowSelect}"
+								process="@this" update=":frm:opnDtListTamanhos " />
+
+							<p:column headerText="Código">
+								<h:outputText value="#{_.codigo}" />
+							</p:column>
+
+							<p:column headerText="Unidade Padrão">
+								<h:outputText value="#{_.unidadeProdutoPadrao.label}" />
+							</p:column>
+
+							<p:column headerText="Obs">
+								<h:outputText value="#{_.obs}" />
+							</p:column>
+
+							<p:column styleClass="noWrapColBtns">
+
+								<p:commandButton title="Editar registro" icon="ui-icon-build"
+									id="btnEditar" actionListener="#{view.setE(_)}" process="@this"
+									onclick="PF('dlgGrade').show();" update=":frm:opnDlgGrade" />
+
+								<p:commandButton title="Excluir registro" icon="ui-icon-trash"
+									id="btnExcluir" styleClass="red-btn"
+									process="@this" actionListener="#{view.deletar(_)}"
+									update=":frm:panel">
+									<p:confirm />
+								</p:commandButton>
+
+							</p:column>
+
+							<f:facet name="footer"> Total de Registros: #{fn:length(view.list)}</f:facet>
+						</p:dataTable>
+					</p:outputPanel>
+
+					<p:spacer height="15" />
+
+					<p:panel id="opnDtListTamanhos" header="Tamanhos">
+
+						<p:toolbar>
+							<f:facet name="left">
+								<p:commandButton icon="ui-icon-document"
+									oncomplete="PF('dlgTamanho').show()"
+									actionListener="#{view.novoTamanho}" process="@this"
+									title="Novo registro (N)" value="Novo Tamanho"
+									update=":frmTamanho:opnDlgTamanho" />
+							</f:facet>
+						</p:toolbar>
+
+						<p:spacer height="10" />
+
+						<p:dataTable id="dtListTamanhos" var="_" rowIndexVar="row"
+							emptyMessage="Nenhum registro encontrado." sortBy="#{'ordem'}"
+							value="#{view.e.tamanhos}">
+
+							<p:column sortBy="ordem" headerText="Ordem">
+								<h:outputText value="#{_.ordem}" />
+							</p:column>
+
+							<p:column headerText="Tamanho">
+								<h:outputText value="#{_.tamanho}" />
+							</p:column>
+							
+							<p:column headerText="Posição">
+								<h:outputText value="#{_.posicao}" />
+							</p:column>
+
+							<p:column styleClass="noWrapColBtns">
+
+								<p:commandButton title="Editar registro" icon="ui-icon-build"
+									id="btnEditar" actionListener="#{view.setTamanho(_)}"
+									process="@this" onclick="PF('dlgTamanho').show();"
+									update=":frmTamanho:opnDlgTamanho" />
+
+								<p:commandButton title="Excluir registro" icon="ui-icon-trash"
+									id="btnExcluir"	process="@this" update=":frm:panel" styleClass="red-btn"
+									actionListener="#{view.deletarTamanho(_)}">
+									<p:confirm />
+								</p:commandButton>
+
+							</p:column>
+
+							<f:facet name="footer"> Total de Registros: #{fn:length(view.e.tamanhos)}</f:facet>
+						</p:dataTable>
+					</p:panel>
+
+					<p:messages showDetail="false" />
+
+				</p:panel>
+
+
+				<p:dialog id="dlgGrade" widgetVar="dlgGrade" position="top"
+					header="Grade" modal="true" width="600" resizable="false"
+					closeOnEscape="true">
+					<p:outputPanel id="opnDlgGrade">
+
+						<p:messages severity="warn,error" />
+
+						<p:focus context="opnDlgGrade" />
+
+						<f:validateBean disabled="true">
+							<fd:labelInput label="Código *:" breakAfter="true"
+								labelWidth="110px">
+								<p:inputText size="10" value="#{view.e.codigo}"
+									id="iCodigoGrade" />
+								<div style="float: right;">
+									<p:message for="iCodigoGrade" display="icon" />
+								</div>
+							</fd:labelInput>
+						</f:validateBean>
+
+						<fd:labelInput label="Unidade Padrão :" labelWidth="110px"
+							breakAfter="true">
+							<p:selectOneMenu id="iUnidadePadrao"
+								value="#{view.e.unidadeProdutoPadrao}"
+								converter="#{entityIdConverter}">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems value="#{lmEstoque.unidadesProduto}" var="u"
+									itemLabel="#{u.descricao}" itemValue="#{u}" />
+							</p:selectOneMenu>
+						</fd:labelInput>
+
+						<fd:labelInput label="Obs. :" labelWidth="110px" breakAfter="true">
+							<p:inputText value="#{view.e.obs}" maxlength="100" size="60"
+								id="iObs" />
+							<p:commandButton process="@this"
+								actionListener="#{view.updateObs}" update="iObs"
+								icon="ui-icon-gear" />
+						</fd:labelInput>
+
+						<p:spacer width="20" />
+
+
+						<!-- BUTTONS -->
+						<div style="text-align: right;">
+
+							<p:commandButton title="Salvar o registro atual" id="btnSalvar"
+								update="opnLoadList" process="opnDlgGrade"
+								oncomplete="afterFormSubmit(xhr, status, args);"
+								icon="ui-icon-save" value="Salvar" style="width: 110px"
+								actionListener="#{view.save}" />
+
+							<p:defaultCommand target="btnSalvar" scope=":frm" />
+
+							<p:spacer width="20" />
+
+						</div>
+
+					</p:outputPanel>
+				</p:dialog>
+
+
+
+			</h:form>
+
+			<h:form id="frmTamanho">
+
+				<p:dialog id="dlgTamanho" widgetVar="dlgTamanho" header="Tamanho"
+					position="top" modal="true" width="600" resizable="false"
+					closeOnEscape="true">
+
+					<p:outputPanel id="opnDlgTamanho">
+
+						<p:messages severity="warn,error" />
+
+						<p:focus context="opnDlgTamanho" />
+
+						<fd:labelInput label="Tamanho *:" breakAfter="true"
+							labelWidth="110px">
+							<p:inputText size="50" value="#{view.tamanho.tamanho}" />
+						</fd:labelInput>
+
+						<fd:labelInput label="Ordem :" breakAfter="true"
+							labelWidth="110px">
+							<p:inputText size="10" value="#{view.tamanho.ordem}"
+								styleClass="maskInt">
+								<f:convertNumber integerOnly="true" />
+							</p:inputText>
+							* Em branco para preenchimento automático.
+						</fd:labelInput>
+						
+						<fd:labelInput label="Posição :" breakAfter="true"
+							labelWidth="110px">
+							<p:inputText size="10" value="#{view.tamanho.posicao}" 
+								styleClass="maskInt">
+								<f:convertNumber integerOnly="true" />
+							</p:inputText>
+						</fd:labelInput>
+
+						<p:spacer width="20" />
+
+
+						<!-- BUTTONS -->
+						<div style="text-align: right;">
+
+							<p:commandButton title="Salvar o registro atual"
+								id="btnSalvarTamanho" process=":frmTamanho:dlgTamanho"
+								oncomplete="afterFormSubmit(xhr, status, args);"
+								update=":frm:opnLoadList"
+								icon="ui-icon-save" value="Salvar" style="width: 110px"
+								actionListener="#{view.saveTamanho}" />
+
+							<p:defaultCommand target="btnSalvarTamanho" scope=":frmTamanho" />
+
+							<p:spacer width="20" />
+
+						</div>
+
+					</p:outputPanel>
+				</p:dialog>
+
+			</h:form>
+
+
+		</sec:authorize>
+
+	</ui:define>
+
+
+</ui:composition>

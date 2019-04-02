@@ -1,0 +1,152 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/templates/template.xhtml">
+
+
+	<ui:define name="content">
+
+		<div id="_slnm_diaUtilFormList" />
+
+		<ui:param name="view" value="#{diaUtilFormListView}" />
+
+		<h:form id="frm">
+
+			<p:panel id="panel" header="Dia Útil">
+
+				<p:spacer height="8" />
+
+				<fd:labelInput noLabel="true">
+					<p:selectOneMenu id="iMes" value="#{view.mes}">
+						<f:selectItems value="#{lmView.meses}" var="m"
+							itemLabel="#{m.nome}" itemValue="#{m.numero}" />
+						<p:ajax event="change" listener="#{view.loadList}"
+							process="iMes iAno" update=":frm:opnDtList" />
+					</p:selectOneMenu>
+					de
+					<p:selectOneMenu id="iAno" value="#{view.ano}">
+						<f:selectItems value="#{view.anos}" var="a" itemLabel="#{a}"
+							itemValue="#{a}" />
+						<p:ajax event="change" listener="#{view.loadList}"
+							process="iMes iAno" update=":frm:opnDtList" />
+					</p:selectOneMenu>
+
+				</fd:labelInput>
+
+				<fd:labelInput noLabel="true">
+					<p:commandButton icon="ui-icon-play-circle-outline"
+						value="Marcar todos como dia útil" process="@this :frm:opnDtList"
+						actionListener="#{view.marcarTodos(true)}" update=":frm:opnDtList" />
+					<p:commandButton icon="ui-icon-stop" process="@this :frm:opnDtList"
+						value="Marcar todos como dia NÃO útil"
+						actionListener="#{view.marcarTodos(false)}"
+						update=":frm:opnDtList" />
+				</fd:labelInput>
+
+				<p:spacer height="10px" />
+
+				<div style="clear: both;" />
+				
+				<p:outputPanel id="opnLoadList">
+					<p:remoteCommand id="rcLoadList" name="loadList"
+						actionListener="#{view.loadList}" autoRun="true"
+						update="opnDtList"
+						process="@this dtList" />
+				</p:outputPanel>
+
+				<p:outputPanel id="opnDtList">
+
+
+					<p:dataTable value="#{view.list}" var="_" rowKey="#{_.id}"
+						editable="true" editMode="cell" rowIndexVar="row"
+						selection="#{view.selecteds}" id="dtList">
+
+						<p:column selectionMode="multiple" style="width:2%" />
+
+						<p:ajax event="cellEdit" process="dtList" partialSubmit="true" listener="#{view.onCellEdit}" update=":frm:opnLoadList" />
+
+						<p:column headerText="Dia">
+							<h:outputText value="#{_.dia}">
+								<f:convertDateTime pattern="dd" />
+							</h:outputText>
+						</p:column>
+
+						<p:column headerText="Descrição" style="#{_.descricao ne null ? 'background-color: lightgreen;' : ''}">
+							
+
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{_.dia}">
+										<f:convertDateTime pattern="EEEE" />
+									</h:outputText>
+									
+									<h:outputText value=" - #{_.descricao}" rendered="#{_.descricao ne null}" />
+									
+								</f:facet>
+								<f:facet name="input">
+									<p:inputText value="#{_.descricao}" />
+								</f:facet>
+							</p:cellEditor>
+
+						</p:column>
+
+						<p:column styleClass="noWrapColBtns"
+							headerText="Dia Útil (Comercial)"
+							style="#{_.comercial ? 'background-color: gray;' : ''}">
+
+							<p:selectBooleanButton value="#{_.comercial}"
+								onLabel="Marcar como 'não' útil (comercial)"
+								offLabel="Marcar como útil (comercial)">
+								<p:ajax update=":frm:opnDtList" listener="#{view.save(_)}" />
+							</p:selectBooleanButton>
+
+						</p:column>
+
+						<p:column styleClass="noWrapColBtns"
+							style="#{_.financeiro ? 'background-color: gray;' : ''}"
+							headerText="Dia Útil (Financeiro)">
+
+							<p:selectBooleanButton value="#{_.financeiro}"
+								onLabel="Marcar como 'não' útil (financeiro)"
+								offLabel="Marcar como útil (financeiro)">
+								<p:ajax update=":frm:opnDtList" listener="#{view.save(_)}" />
+							</p:selectBooleanButton>
+
+						</p:column>
+
+
+						<p:columnGroup type="footer">
+							<p:row>
+								<p:column colspan="5"
+									footerText="Qtde. dias úteis (comercial): #{view.qtdeDiasUteisComerciais}" />
+							</p:row>
+							<p:row>
+								<p:column colspan="5"
+									footerText="Qtde. dias úteis (financeiro): #{view.qtdeDiasUteisFinanceiro}" />
+							</p:row>
+
+						</p:columnGroup>
+					</p:dataTable>
+
+
+				</p:outputPanel>
+
+
+				<p:spacer height="10px" />
+
+				<div style="clear: both;" />
+
+
+			</p:panel>
+
+
+		</h:form>
+
+
+	</ui:define>
+
+</ui:composition>

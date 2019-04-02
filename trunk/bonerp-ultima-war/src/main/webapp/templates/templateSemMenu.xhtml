@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<f:facet name="first">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta name="viewport"
+			content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="theme-color"
+			content="#{guestPreferences.themeColors[guestPreferences.theme]}" />
+		<link rel="icon" type="image/png"
+			href="#{request.contextPath}/images/favicon.png" />
+	</f:facet>
+	<title>BonERP v.${project.version}</title>
+	<h:outputScript name="js/nanoscroller.js" library="ultima-layout" />
+	<h:outputScript name="js/layout.js" library="ultima-layout" />
+	<h:outputScript name="js/ripple.js" library="ultima-layout" />
+	<h:outputScript name="js/swipe.js" library="ultima-layout" />
+
+	<h:outputScript name="js/helpers.js" library="ocabit" />
+	<h:outputScript name="js/utils.js" library="ocabit" />
+	<h:outputScript name="js/primefaces-portugues.js" library="ocabit" />
+	<h:outputScript name="js/jquery.maskMoney.js" library="ocabit" />
+	<h:outputScript name="js/jquery.maskedinput-1.3.js" library="ocabit" />
+	<h:outputScript name="js/jquery.hotkeys.js" library="ocabit" />
+
+	<script type="text/javascript">
+		j = jQuery.noConflict();
+		$ = jQuery.noConflict();
+
+		jQuery(document).ready(function() {
+			j = jQuery.noConflict();
+			$ = jQuery.noConflict();
+		});
+
+		// Já deixa setado qualquer campo que tenha estas classes suas máscaras
+		$(document).ready(function() {
+			aplicarMasks();
+			$(document).bind('keydown', 'esc', function() {
+				closeOnEsc();
+			});
+		});
+	</script>
+
+	<ui:insert name="head" />
+</h:head>
+
+<h:body styleClass="main-body layout-compact">
+
+	<p:growl id="mainGrowl" showDetail="false" autoUpdate="true"
+		showSummary="true" life="4000" />
+
+	<div class="layout-wrapper menu-layout-overlay">
+
+		<div class="layout-main">
+			<div id="divContent" style="top: -15px; position: relative">
+				<ui:insert name="content" />
+			</div>
+			<ui:include src="./footer.xhtml" />
+		</div>
+	</div>
+
+
+
+
+	<p:ajaxStatus onstart="PF('dlgStatusDialog').show()"
+		onsuccess="PF('dlgStatusDialog').hide();"
+		onerror="PF('dlgStatusDialog').hide(); PF('dlgStatusDialogError').show();" />
+
+	<h:form>
+	
+		<p:idleMonitor onidle="window.location.reload(true);"
+			timeout="#{10 * 60 * 1000 }" />
+	
+		<p:dialog modal="true" widgetVar="dlgStatusDialog"
+			id="dlgStatusDialog" resizable="false" width="250"
+			header="Carregando..." draggable="false" closable="false"
+			showHeader="false">
+			<h:graphicImage value="#{resource['images/ajaxloadingbar.gif']}" />
+		</p:dialog>
+
+		<p:dialog modal="true" widgetVar="dlgStatusDialogError"
+			id="dlgStatusDialogError" resizable="false" width="250" header="Erro"
+			draggable="false" closable="true" showHeader="true">
+				Ocorreu um erro ao processar a solicitação.
+			</p:dialog>
+
+		<p:confirmDialog global="true" widgetVar="cdlgGlobal" header="Atenção"
+			message="Confirmar operação?">
+			<p:commandButton value="Sim" type="button" id="btnCdlgGlobal_sim"
+				styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+			<p:commandButton value="Não" type="button" id="btnCdlgGlobal_nao"
+				styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+		</p:confirmDialog>
+
+		<p:outputPanel autoUpdate="true">
+			<script>aplicarMasks()</script>
+		</p:outputPanel>
+
+	</h:form>
+
+	<h:outputStylesheet name="css/nanoscroller.css" library="ultima-layout" />
+	<h:outputStylesheet name="css/animate.css" library="ultima-layout" />
+	<h:outputStylesheet name="css/ripple.css" library="ultima-layout" />
+	<h:outputStylesheet name="css/layout-#{guestPreferences.theme}.css"
+		library="ultima-layout" />
+
+	<h:outputStylesheet name="css/default-new_ultima.css" library="bonerp" />
+	<h:outputStylesheet name="css/bonerp.css" library="bonerp" />
+	<h:outputStylesheet name="css/messages.css" library="ocabit" />
+	<h:outputStylesheet name="css/labelInputComponent.css" library="ocabit" />
+	
+	
+
+
+</h:body>
+
+</html>

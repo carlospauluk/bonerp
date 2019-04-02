@@ -1,0 +1,141 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:p="http://primefaces.org/ui">
+
+
+	<ui:param name="view" value="#{movimentacaoListagemListView}" />
+
+
+	<h:form id="frmDlgBuscaMovimentacao">
+
+		<p:dialog id="dlgBuscaMovimentacao" widgetVar="dlgBuscaMovimentacao"
+			position="top" header="Buscar Movimentações" modal="true"
+			resizable="false" closeOnEscape="true" width="750px">
+
+			<p:outputPanel id="opnDlg">
+
+
+				<fd:labelInput label="Busca *:">
+					<p:inputText size="50" value="#{view.filtros['strPesquisa']}"
+						id="iDescricao" />
+				</fd:labelInput>
+
+
+				<fd:labelInput label="Registros:">
+					<p:selectOneMenu editable="true" value="#{view.qtdeRegistros}"
+						id="selQtdeRegistros">
+						<p:ajax event="change" listener="#{view.updateQtdeRegistros}"
+							update=":frm:opnDtList" process="@this" />
+						<f:selectItems value="#{lmView.qtdeRegistrosValues}" var="_"
+							itemLabel="#{_}" itemValue="#{_}" />
+					</p:selectOneMenu>
+
+				</fd:labelInput>
+
+
+				<fd:labelInput noLabel="true" alignRight="true" breakAfter="true">
+					<p:commandButton title="Pesquisar" icon="ui-icon-search"
+						action="#{view.pesquisar}" value="Pesquisar" process="opnDlg"
+						partialSubmit="false" update="opnDlg" style="width: 95%" />
+				</fd:labelInput>
+
+
+				<p:outputPanel id="opnDtList">
+
+					<p:scrollPanel style="height:350px" mode="native">
+
+						<p:dataTable id="dtList" var="_" rowIndexVar="row" rowKey="#{_}"
+							emptyMessage="Nenhum registro encontrado." value="#{view.list}"
+							rowStyleClass="#{view.getRowStyleClass(_)}">
+
+							<p:ajax event="sort" listener="#{view.onSort}" />
+
+							<p:column headerText="Código" sortBy="#{_.id}" width="50">
+								<h:outputText value="#{_.id}" id="otId" />
+							</p:column>
+
+							<p:column headerText="St" width="30">
+								<h:graphicImage
+									value="#{resource['images/'.concat(_.status.icone).concat('.png')]}"
+									title="#{_.status.label}" width="24" />
+							</p:column>
+
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Categoria" />
+									<br />
+									<h:outputText value="Carteira" />
+								</f:facet>
+
+								<h:outputText
+									value="#{_.categoria.codigoM} - #{_.categoria.descricao}" />
+								<br />
+								<h:outputText
+									value="#{_.carteira.codigo} - #{_.carteira.descricao}" />
+							</p:column>
+
+							<p:column sortBy="#{_.descricaoMontada}">
+								<f:facet name="header">
+									<h:outputText value="Descrição" />
+									<br />
+									<h:outputText value="Sacado/Cedente" />
+								</f:facet>
+								<div style="float: left">
+									<b> <h:outputText value="#{_.descricaoMontada}"
+											escape="false" style="white-space: pre-wrap;" /></b>
+									<p:outputPanel rendered="#{_.pessoa.nomeExibicao ne null}">
+										<h:outputText value="#{_.pessoa.nomeExibicao}" />
+									</p:outputPanel>
+								</div>
+
+
+							</p:column>
+
+							<p:column sortBy="#{_.dtUtil}" headerText="Data" width="50">
+								<div style="text-align: center">
+									<h:outputText value="#{_.dtUtil}" id="otDtUtil"
+										title="#{_.infoDatas()}">
+										<f:convertDateTime pattern="dd/MM/yyyy" />
+									</h:outputText>
+								</div>
+							</p:column>
+
+							<p:column headerText="Valor Total" sortBy="#{_.valorTotal}"
+								width="80">
+								<div style="text-align: right">
+									<h:outputText value="#{_.valorTotal}" id="otValorTotal"
+										converter="#{doubleConverter}" title="#{_.infoValores()}" />
+								</div>
+							</p:column>
+
+							<p:column headerText="#">
+								<p:commandButton icon="ui-icon-check" id="btnSelec"
+									process="@this" partialSubmit="true" update="#{update}"
+									actionListener="#{viewAction[action](_)}" title="Selecionar" />
+							</p:column>
+
+							<f:facet name="footer">Total de Registros: #{fn:length(view.list)}</f:facet>
+						</p:dataTable>
+
+					</p:scrollPanel>
+
+				</p:outputPanel>
+
+
+
+
+
+
+
+			</p:outputPanel>
+		</p:dialog>
+
+	</h:form>
+
+
+</ui:composition>

@@ -1,0 +1,87 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:param name="view" value="#{orcamentoConfeccaoListView}" />
+
+	<h:form id="frmDlgPesquisa">
+		<p:dialog id="dlgPesquisa" header="Pesquisar" widgetVar="dlgPesquisa"
+			resizable="false" width="700" modal="true" position="top">
+
+			<p:outputPanel id="opnDlgPesquisa">
+
+				<p:outputPanel id="opnAplicarMasks" autoUpdate="true">
+					<script type="text/javascript">
+						aplicarMasks();
+					</script>
+				</p:outputPanel>
+
+				<fd:labelInput label="Cliente: " labelWidth="120px"
+					breakAfter="true">
+					<p:inputText size="40" value="#{view.filtros['strPesquisa']}" />
+				</fd:labelInput>
+
+				<fd:labelInput label="Preenchido por: " labelWidth="120px"
+					breakAfter="true">
+					<p:inputText size="40" value="#{view.filtros['preenchidoPor']}" />
+				</fd:labelInput>
+
+				<fd:labelInput label="Status :" labelWidth="120px" breakAfter="true">
+					<p:selectManyMenu value="#{view.filtros['status']}"
+						converter="#{statusOrcamentoConverter}" showCheckbox="true"
+						style="width:300px">
+						<f:selectItems value="#{lmOrcamentos.statusOrcamento}" var="so"
+							itemLabel="#{so.label}" itemValue="#{so}" />
+					</p:selectManyMenu>
+				</fd:labelInput>
+
+				<fd:labelInput label="Dt Preenchimento :" labelWidth="120px"
+					breakAfter="true">
+					Entre 
+					<p:calendar styleClass="maskData"
+						value="#{view.filtros['dtPreenchimentoIni']}"
+						id="iDtPreenchimentoIni" locale="pt_BR" showOn="button"
+						pattern="dd/MM/yyyy" size="12" selectOtherMonths="true"
+						showOtherMonths="true" />
+					 e 
+					<p:calendar styleClass="maskData"
+						value="#{view.filtros['iDtPreenchimentoFim']}"
+						id="iDtPreenchimentoFim" locale="pt_BR" showOn="button"
+						pattern="dd/MM/yyyy" size="12" selectOtherMonths="true"
+						showOtherMonths="true" />
+				</fd:labelInput>
+
+
+				<div style="text-align: right; margin-bottom: 10px;">
+					<p:outputPanel>
+						<p:commandButton value="Pesquisar" title="Pesquisar"
+							icon="ui-icon-search" actionListener="#{view.pesquisar}"
+							onclick="PF('dlgPesquisa').hide()" update=":frm:opnDtList" />
+
+						<p:commandButton actionListener="#{view.limparPesquisa}"
+							value="Cancelar" title="Cancelar"
+							onclick="PF('dlgPesquisa').hide()" icon="ui-icon-cancel"
+							update=":frm:opnDtList, :frmDlgPesquisa:opnDlgPesquisa" />
+					</p:outputPanel>
+				</div>
+
+			</p:outputPanel>
+
+
+		</p:dialog>
+	</h:form>
+
+	<ui:include src="/pages/erp/crm/clienteDlgBusca.xhtml">
+		<ui:param name="update" value=":frmDlg:opnDlgPesquisa" />
+		<ui:param name="viewSelec" value="#{orcamentoConfeccaoListView}" />
+		<ui:param name="action" value="selCliente" />
+	</ui:include>
+
+
+
+
+</ui:composition>

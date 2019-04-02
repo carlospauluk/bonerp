@@ -1,0 +1,77 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:param name="view" value="#{cupomFormListView}" />
+
+	<div id="_slnm_cupomList" />
+
+	<ui:decorate template="/templates/list.xhtml">
+
+		<ui:param name="role" value="CRM" />
+
+		<ui:param name="titulo" value="Cupons" />
+		<ui:param name="viewForm" value="#{cupomFormListView}" />
+		<ui:param name="widgetDlgForm" value="dlgCupom" />
+		<ui:param name="updateDlg" value=":frmCupom:opnDlgCupom" />
+		<ui:param name="exibirColuna_btnsEditarDeletar" value="false" />
+
+		<ui:define name="cols">
+
+			<p:column headerText="Descrição"
+				sortBy="#{_.loteCupom.campanhaPromo.descricao}">
+				<h:outputText value="#{_.loteCupom.campanhaPromo.descricao}" />
+			</p:column>
+
+			<p:column headerText="Código" sortBy="#{_.codigo}">
+				<h:outputText value="#{_.codigo}" />
+			</p:column>
+
+			<p:column headerText="Cliente" sortBy="#{_.cliente.pessoa.nome}">
+				<h:outputText value="#{_.cliente.pessoa.nome}" />
+			</p:column>
+
+			<p:column headerText="Status" sortBy="#{_.status.label}">
+				<h:outputText value="#{_.status.label}" />
+			</p:column>
+
+			<p:column headerText="Dt Validade"
+				sortBy="#{_.loteCupom.campanhaPromo.dtFim}" style="width: 1px">
+				<div style="text-align: center;">
+					<h:outputText value="#{_.loteCupom.campanhaPromo.dtFim}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</div>
+			</p:column>
+
+			<p:column headerText="Dt Utilização" sortBy="#{_.dtUtilizacao}"
+				style="width: 1px">
+				<div style="text-align: center;">
+					<h:outputText value="#{_.dtUtilizacao}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</div>
+			</p:column>
+
+		</ui:define>
+	</ui:decorate>
+
+	<ui:include src="cupomDlg.xhtml">
+		<ui:param name="update" value=":frm:opnLoadList" />
+	</ui:include>
+
+	<ui:include src="cupomList_dlgPesquisa.xhtml" />
+
+
+	<ui:include src="/pages/erp/crm/clienteDlgBusca.xhtml">
+		<ui:param name="update" value=":frm:opnCliente" />
+		<ui:param name="viewSelec" value="#{view}" />
+		<ui:param name="action" value="selCliente" />
+	</ui:include>
+
+
+</ui:composition>

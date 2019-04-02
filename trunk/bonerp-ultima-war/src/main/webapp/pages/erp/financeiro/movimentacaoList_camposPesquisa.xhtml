@@ -1,0 +1,154 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:param name="view" value="#{movimentacaoListagemListView}" />
+
+
+	<p:outputPanel id="opnCamposPesquisa">
+
+		<div style="display: table; width: 100%"
+			class="labelInputComponent-outDiv">
+
+			<div class="labelInputComponent-label">Descrição:</div>
+
+			<br />
+
+			<div style="text-align: center">
+
+				<p:inputText value="#{view.filtros['strPesquisa']}"
+					id="iPesq_descricao" style="width: 95%" />
+				
+				<p:spacer height="20" />
+
+				<p:commandButton title="Pesquisar" icon="ui-icon-search"
+					action="#{view.pesquisar}" value="Pesquisar"
+					process=":frm:opnCamposPesquisa" partialSubmit="false"
+					update=":frm:opnDtList" style="width: 95%" />
+
+			</div>
+
+		</div>
+
+		<p:spacer height="15px" />
+
+
+
+		<div style="display: table; width: 100%"
+			class="labelInputComponent-outDiv">
+
+			<div class="labelInputComponent-label">Data:</div>
+
+			<p:spacer width="10px" />
+
+			<div style="float: left">
+				<div style="text-align: left">
+
+					<p:calendar styleClass="maskData" value="#{view.filtros['dtIni']}"
+						id="iDtIni" locale="pt" onfocus="atualizaCampos()"
+						pattern="dd/MM/yyyy" selectOtherMonths="true"
+						showOtherMonths="true" size="12" />
+					-
+
+					<p:calendar styleClass="maskData" value="#{view.filtros['dtFim']}"
+						id="iDtFim" locale="pt" onfocus="atualizaCampos()"
+						pattern="dd/MM/yyyy" selectOtherMonths="true"
+						showOtherMonths="true" size="12" />
+
+				</div>
+			</div>
+
+		</div>
+
+
+		<p:spacer height="15px" />
+
+		<div style="display: table; width: 100%"
+			class="labelInputComponent-outDiv">
+
+			<div class="labelInputComponent-label">Valor:</div>
+			<div>
+				<div style="text-align: right">
+					<p:inputText style="width: 95%" value="#{view.filtros['valorIni']}"
+						id="iValorIni" converter="#{doubleConverterAbsNull}"
+						styleClass="maskMoney" />
+					<p:watermark for="iValorIni" value="Maior/Igual a ..." />
+				</div>
+				<div style="text-align: right">
+					<p:inputText style="width: 95%" value="#{view.filtros['valorFim']}"
+						id="iValorFim" converter="#{doubleConverterAbsNull}"
+						styleClass="maskMoney"
+						onfocus="if (_$('iValorFim').val() == '') { _$('iValorFim').val(_$('iValorIni').val()) }" />
+					<p:watermark for="iValorFim" value="Menor/Igual a ..." />
+				</div>
+			</div>
+
+		</div>
+
+
+
+
+		<fd:labelInput label="Carteira: " breakTitulo="true" breakAfter="true">
+
+			<p:selectManyMenu id="iCarteira" value="#{view.filtros['carteiras']}"
+				style="width: 100%" converter="#{entityIdConverter}"
+				showCheckbox="true">
+				<f:selectItems value="#{lmFinanc.carteiraValues}" var="c"
+					itemLabel="#{c.codigo} - #{c.descricao}" itemValue="#{c}" />
+			</p:selectManyMenu>
+
+		</fd:labelInput>
+
+		<fd:labelInput label="Status: " breakTitulo="true" breakAfter="true">
+			<p:selectManyMenu id="iStatus" value="#{view.filtros['status']}"
+				converter="#{statusMovimentacaoConverter}" showCheckbox="true"
+				style="width: 100%">
+				<f:selectItems value="#{lmFinanc.statusValues}" var="s"
+					itemLabel="#{s.label}" itemValue="#{s}" />
+			</p:selectManyMenu>
+		</fd:labelInput>
+
+		<fd:labelInput label="Modo: " breakTitulo="true" breakAfter="true">
+			<p:selectManyMenu id="iModo" value="#{view.filtros['modo']}"
+				style="width: 100%" converter="#{entityIdConverter}"
+				showCheckbox="true">
+				<f:selectItems value="#{lmFinanc.modoValues}" var="_"
+					itemLabel="#{_.codigo} - #{_.descricao}" itemValue="#{_}" />
+			</p:selectManyMenu>
+		</fd:labelInput>
+
+		<p:spacer height="15px" />
+
+		<p:outputPanel id="opnCategoriaBusca">
+			<fd:labelInput breakTitulo="true" label="Categoria :"
+				breakAfter="true">
+
+				<p:autoComplete id="iCategoriaBusca" style="width: 99%"
+					value="#{view.filtros['categoria']}" var="cat"
+					itemLabel="#{cat.descricao}" itemValue="#{cat}"
+					forceSelection="false" completeMethod="#{categoriaFinder.findFolhasBy}"
+					minQueryLength="3" widgetVar="acCategoriaBusca"
+					converter="#{entityIdConverter}" />
+
+			</fd:labelInput>
+
+		</p:outputPanel>
+
+		<div style="text-align: right; margin-bottom: 10px;">
+			<p:outputPanel>
+				<p:defaultCommand target="btnPesquisar" />
+
+				<p:commandButton value="Pesquisar" title="Pesquisar"
+					icon="ui-icon-search" action="#{view.pesquisar}"
+					process=":frm:opnCamposPesquisa" partialSubmit="false"
+					update=":frm:opnDtList" id="btnPesquisar" />
+			</p:outputPanel>
+		</div>
+
+	</p:outputPanel>
+
+</ui:composition>

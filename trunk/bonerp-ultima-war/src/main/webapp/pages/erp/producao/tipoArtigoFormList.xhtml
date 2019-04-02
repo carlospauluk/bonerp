@@ -1,0 +1,189 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	template="/templates/template.xhtml">
+
+	<ui:define name="headFirst">
+		<script src="#{resource['js/helpers.js']}" type="text/javascript"></script>
+	</ui:define>
+
+	<ui:define name="content">
+	
+		<div id="_slnm_tipoArtigoFormList" />
+
+		<sec:authorize ifNotGranted="ROLE_PRODUCAO_ADMIN">
+			<div class="errorMsg">Usuário sem autorização para acessar este
+				recurso.</div>
+		</sec:authorize>
+
+		<sec:authorize ifAnyGranted="ROLE_PRODUCAO_ADMIN">
+
+			<ui:param name="view" value="#{tipoArtigoFormView}" />
+
+			<h:form id="frm">
+
+				<p:panel id="panel" header="Tipos de Artigos"
+					style="width: 1000px; margin: 0 auto;">
+
+					<p:toolbar>
+						<f:facet name="left">
+							<p:commandButton id="btnNovo" icon="ui-icon-document"
+								oncomplete="PF('dlgTipoArtigo').show()"
+								actionListener="#{view.novo}" process="@this"
+								title="Novo registro (N)" value="Novo Tipo de Artigo"
+								update="opnDlgTipoArtigo" />
+						</f:facet>
+					</p:toolbar>
+
+					<p:spacer height="10" />
+
+
+					<p:outputPanel id="opnLoadList">
+						<p:remoteCommand id="rcLoadList"
+							actionListener="#{view.loadList}" autoRun="true" name="loadList"
+							update="opnDtList" process="@this" />
+					</p:outputPanel>
+
+
+					<p:outputPanel id="opnDtList">
+
+
+						<p:dataTable id="dtList" var="_" rowIndexVar="row"
+							emptyMessage="Nenhum registro encontrado." value="#{view.list}"
+							binding="#{view.dataTable}"
+							sortOrder="#{view.orderByParam.orderByTypeStr}">
+
+							<p:ajax event="sort" listener="#{view.onSort}" />
+
+							<p:column headerText="Código" sortBy="#{_.codigo}">
+								<h:outputText value="#{_.codigo}" />
+							</p:column>
+
+							<p:column headerText="Descrição" sortBy="#{_.descricao}">
+								<h:outputText value="#{_.descricao}" />
+							</p:column>
+
+							<p:column headerText="Depto/Subdepto">
+								<h:outputText
+									value="#{_.subdepto.depto.nome} - #{_.subdepto.nome} " />
+							</p:column>
+							
+							<p:column headerText="Modo Cálculo">
+								<h:outputText
+									value="#{_.modoCalculo.label} " />
+							</p:column>
+
+							<p:column styleClass="noWrapColBtns">
+								<p:commandButton title="Editar registro" icon="ui-icon-build"
+									id="btnEditar" actionListener="#{view.setE(_)}" process="@this"
+									onclick="PF('dlgTipoArtigo').show();"
+									update=":frm:opnDlgTipoArtigo" />
+
+								<p:commandButton title="Deletar registro" icon="ui-icon-trash"
+									actionListener="#{view.deletar(_)}" process="@this"
+									update=":frm:opnDtList" styleClass="red-btn">
+									<p:confirm />
+								</p:commandButton>
+
+							</p:column>
+
+							<f:facet name="footer"> Total de Registros: #{fn:length(view.list)}</f:facet>
+						</p:dataTable>
+					</p:outputPanel>
+
+				</p:panel>
+
+
+				<p:dialog id="dlgTipoArtigo" widgetVar="dlgTipoArtigo"
+					header="Tipo de Artigo" modal="true" width="600" resizable="false"
+					closeOnEscape="true" position="top">
+					<p:outputPanel id="opnDlgTipoArtigo">
+
+						<p:messages severity="warn,error" />
+
+						<p:focus context="opnDlgTipoArtigo" />
+
+						<f:validateBean disabled="true">
+							<fd:labelInput label="Código *:" labelWidth="120px"
+								breakAfter="true">
+								<p:inputText size="10" value="#{view.e.codigo}" id="iLabel"
+									styleClass="maskInt">
+									<f:convertNumber integerOnly="true" />
+								</p:inputText>
+								* Em branco para preenchimento automático.
+							</fd:labelInput>
+						</f:validateBean>
+
+						<fd:labelInput label="Descrição *:" labelWidth="120px"
+							breakAfter="true">
+							<p:inputText size="50" value="#{view.e.descricao}"
+								id="iDescricao" />
+						</fd:labelInput>
+
+						<fd:labelInput label="Depto :" labelWidth="120px"
+							breakAfter="true">
+							<p:selectOneMenu id="iDepto" value="#{lmEstoque.depto}"
+								converter="#{entityIdConverter}">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems value="#{lmEstoque.deptos}" var="d"
+									itemLabel="#{d.nome} - #{d.codigo}" itemValue="#{d}" />
+								<p:ajax event="change" update="opnSubdepto" process="@this" />
+							</p:selectOneMenu>
+						</fd:labelInput>
+
+						<p:outputPanel id="opnSubdepto">
+							<fd:labelInput label="Subdepto :" labelWidth="120px"
+								breakAfter="true">
+								<p:selectOneMenu id="iSubdepto" value="#{view.e.subdepto}"
+									converter="#{entityIdConverter}">
+									<f:selectItem itemLabel="" itemValue="" />
+									<f:selectItems value="#{lmEstoque.depto.subdeptos}" var="sd"
+										itemLabel="#{sd.nome} - #{sd.codigo}" itemValue="#{sd}" />
+								</p:selectOneMenu>
+							</fd:labelInput>
+						</p:outputPanel>
+
+
+						<fd:labelInput label="Modo Cálculo :" labelWidth="120px"
+							breakAfter="true">
+							<p:selectOneMenu id="iModoCalculo" value="#{view.e.modoCalculo}">
+								<f:selectItems value="#{lmProducao.modoCalculoPrecoConfeccaos}"
+									var="_" itemLabel="#{_}" itemValue="#{_}" itemDescription="#{_.label}" />
+							</p:selectOneMenu>
+						</fd:labelInput>
+
+						<p:spacer width="20" />
+
+
+						<!-- BUTTONS -->
+						<div style="text-align: right;">
+
+							<p:commandButton title="Salvar o registro atual" id="btnSalvar"
+								update="opnLoadList" process="opnDlgTipoArtigo"
+								oncomplete="afterFormSubmit(xhr, status, args);"
+								icon="ui-icon-save" value="Salvar" style="width: 110px"
+								actionListener="#{view.save}" />
+
+							<p:defaultCommand target="btnSalvar" scope=":frm" />
+
+							<p:spacer width="20" />
+
+						</div>
+
+					</p:outputPanel>
+				</p:dialog>
+
+			</h:form>
+
+
+		</sec:authorize>
+
+	</ui:define>
+
+
+</ui:composition>

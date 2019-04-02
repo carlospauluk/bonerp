@@ -1,0 +1,254 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags">
+
+	<ui:param name="view"
+		value="#{produtosProvaveisArtigosCortinaFormListView}" />
+
+
+
+	<h:form id="frmArtigoCortina">
+
+		<p:dialog id="dlgArtigoCortina" header="Artigo de Cortina"
+			position="top" widgetVar="dlgArtigoCortina" resizable="false"
+			dynamic="true" width="900" modal="true" closable="true"
+			closeOnEscape="true">
+
+			<p:remoteCommand name="updateOpnDlgArtigoCortina" update="opnDlg"
+				process="@none" />
+
+			<p:defaultCommand target="btnSalvar" scope="frmArtigoCortina" />
+
+			<p:outputPanel id="opnDlg">
+
+
+				<ui:include src="/pages/erp/estoque/produtoInfo.xhtml">
+					<ui:param name="p" value="#{view.artigoCortina.produto}" />
+				</ui:include>
+
+				<fd:labelInput label="Tipo :" labelWidth="100px" breakAfter="true">
+					<p:selectOneMenu id="iTipo"
+						value="#{view.artigoCortina.tipoArtigoCortina}">
+						<f:selectItems value="#{lmCortinas.tiposArtigoCortina}"
+							itemDescription="#{_.label}" var="_" itemLabel="#{_.label}"
+							itemValue="#{_}" />
+						<p:ajax partialSubmit="true" update=":frmArtigoCortina:opnTecido"
+							process="@this" listener="#{view.updateTipoArtigoCortina}" />
+					</p:selectOneMenu>
+				</fd:labelInput>
+
+				<p:outputPanel id="opnTecido">
+					<p:fieldset legend="Tecido"
+						rendered="#{view.artigoCortina.tipoArtigoCortina eq 'TECIDO'}">
+
+						<fd:labelInput label="Largura :" labelWidth="100px">
+							<p:inputText size="15"
+								value="#{view.artigoCortina.tecido.largura}"
+								styleClass="maskMoney">
+								<f:convertNumber maxFractionDigits="2" minFractionDigits="2" />
+							</p:inputText>m
+						</fd:labelInput>
+
+						<fd:labelInput label="Orientação Padrão :" alignRight="true"
+							breakAfter="true">
+							<p:selectOneMenu id="iOrientacaoPadrao"
+								value="#{view.artigoCortina.tecido.orientacaoPadrao}">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems value="#{lmCortinas.orientacoesTecido}"
+									itemDescription="#{_.descricao}" var="_"
+									itemLabel="#{_.descricao}" itemValue="#{_}" />
+							</p:selectOneMenu>
+						</fd:labelInput>
+
+						<fd:labelInput label="Fator Padrão :" labelWidth="100px">
+							<p:inputText size="8"
+								value="#{view.artigoCortina.tecido.fatorPadrao}"
+								styleClass="maskMoney">
+								<f:convertNumber maxFractionDigits="2" minFractionDigits="2" />
+							</p:inputText>
+						</fd:labelInput>
+
+						<fd:labelInput label="Altura Barra :">
+							<p:inputText size="8"
+								value="#{view.artigoCortina.tecido.alturaBarraPadrao}"
+								styleClass="maskMoney">
+								<f:convertNumber maxFractionDigits="2" minFractionDigits="2" />
+							</p:inputText>m
+								</fd:labelInput>
+
+						<fd:labelInput label="Altura Máx Horiz :" breakAfter="true"
+							alignRight="true">
+							<p:inputText size="8"
+								value="#{view.artigoCortina.tecido.alturaMaxHorizontal}"
+								styleClass="maskMoney">
+								<f:convertNumber maxFractionDigits="2" minFractionDigits="2" />
+							</p:inputText>m
+						</fd:labelInput>
+
+						<fd:labelInput noLabel="true">
+							<p:commandButton value="Carregar Padrões"
+								actionListener="#{artigoCortinaFormView.carregarPadroesTecido(e)}"
+								process="@this" update="opnTecido" />
+						</fd:labelInput>
+
+					</p:fieldset>
+				</p:outputPanel>
+				<p:spacer height="10px" />
+
+				<div style="clear: both;" />
+
+
+				<fd:labelInput alignRight="true" breakAfter="true">
+					<p:commandButton id="btnSalvar" update="opnDlg :frm"
+						icon="ui-icon-save" value="Salvar" style="width: 180px"
+						actionListener="#{view.saveArtigoCortina}"
+						oncomplete="afterFormSubmit(xhr, status, args);" />
+				</fd:labelInput>
+
+
+				<p:spacer height="10px" />
+
+				<div style="clear: both;" />
+
+			</p:outputPanel>
+
+
+		</p:dialog>
+
+	</h:form>
+
+	<!-- FORM ALTERAR EM LOTE -->
+	<h:form id="frmAlterarEmLote">
+
+		<p:dialog id="dlgAlterarEmLote" header="Alterar em Lote" dynamic="true"
+			position="top" widgetVar="dlgAlterarEmLote" resizable="false"
+			width="850" modal="true" closable="true" closeOnEscape="true">
+
+			<p:outputPanel id="opnDlgAlterarEmLote">
+
+				<p:outputPanel autoUpdate="true">
+					<script type="text/javascript">
+						aplicarMasks();
+					</script>
+				</p:outputPanel>
+
+				<f:validateBean disabled="true">
+
+					<fd:labelInput label="Tipo :" labelWidth="100px" breakAfter="true">
+						<p:selectOneMenu id="iTipo"
+							value="#{view.artigoCortina.tipoArtigoCortina}">
+							<f:selectItem itemLabel="" itemValue="" />
+							<f:selectItems value="#{lmCortinas.tiposArtigoCortina}"
+								itemDescription="#{_.label}" var="_" itemLabel="#{_.label}"
+								itemValue="#{_}" />
+							<p:ajax event="change" partialSubmit="true" update="opnTecido"
+								process="@this" listener="#{view.updateTipoArtigoCortina}" />
+						</p:selectOneMenu>
+					</fd:labelInput>
+
+					<p:outputPanel id="opnTecido">
+						<p:fieldset legend="Tecido"
+							rendered="#{view.artigoCortina.tipoArtigoCortina eq 'TECIDO'}">
+
+							<fd:labelInput label="Largura :" labelWidth="100px">
+								<p:inputText size="15"
+									value="#{view.artigoCortina.tecido.largura}"
+									styleClass="maskDec2">
+									<f:convertNumber maxFractionDigits="3" minFractionDigits="3" />
+								</p:inputText>
+							</fd:labelInput>
+
+							<fd:labelInput label="Orientação Padrão :" alignRight="true"
+								breakAfter="true">
+								<p:selectOneMenu id="iStatus"
+									value="#{view.artigoCortina.tecido.orientacaoPadrao}">
+									<f:selectItem itemLabel="" itemValue="" />
+									<f:selectItems value="#{lmCortinas.orientacoesTecido}"
+										itemDescription="#{_.descricao}" var="_"
+										itemLabel="#{_.descricao}" itemValue="#{_}" />
+								</p:selectOneMenu>
+							</fd:labelInput>
+
+							<fd:labelInput label="Fator Padrão :" labelWidth="100px">
+								<p:inputText size="15"
+									value="#{view.artigoCortina.tecido.fatorPadrao}"
+									styleClass="maskDec1">
+									<f:convertNumber maxFractionDigits="3" minFractionDigits="3" />
+								</p:inputText>
+							</fd:labelInput>
+
+							<fd:labelInput label="Altura Barra Padrão :">
+								<p:inputText size="15"
+									value="#{view.artigoCortina.tecido.alturaBarraPadrao}"
+									styleClass="maskDec2">
+									<f:convertNumber maxFractionDigits="3" minFractionDigits="3" />
+								</p:inputText>m
+								</fd:labelInput>
+
+							<fd:labelInput label="Altura Máx Horizontal :">
+								<p:inputText size="15"
+									value="#{view.artigoCortina.tecido.alturaMaxHorizontal}"
+									styleClass="maskDec2">
+									<f:convertNumber maxFractionDigits="3" minFractionDigits="3" />
+								</p:inputText>m
+								</fd:labelInput>
+
+
+							<script type="text/javascript">
+								aplicarMasks();
+							</script>
+
+						</p:fieldset>
+					</p:outputPanel>
+
+
+					<fd:labelInput noLabel="true" alignRight="true" breakAfter="true">
+						<p:defaultCommand target="btnSaveLote" scope="frmAlterarEmLote" />
+						<p:commandButton id="btnSaveLote" icon="ui-icon-save"
+							actionListener="#{view.saveLote}" update=":frm"
+							value="Salvar Lote" oncomplete="PF('dlgAlterarEmLote').hide();">
+							<p:confirm />
+						</p:commandButton>
+
+					</fd:labelInput>
+
+
+				</f:validateBean>
+
+
+			</p:outputPanel>
+
+			<p:spacer height="10px" />
+
+			<div style="clear: both;" />
+
+		</p:dialog>
+
+
+	</h:form>
+
+
+
+
+	<ui:include src="/pages/erp/estoque/fornecedorDlg.xhtml">
+		<ui:param name="update" value=":frmArtigoCortina:opnDlg" />
+		<ui:param name="viewAction" value="#{artigoCortinaFormView}" />
+		<ui:param name="action" value="saveFornecedor" />
+		<ui:param name="sufix" value="ArtigoCortina" />
+	</ui:include>
+
+	<ui:include src="/pages/erp/estoque/fornecedorDlgBusca.xhtml">
+		<ui:param name="sufix" value="ArtigoCortina" />
+		<ui:param name="update" value=":frmArtigoCortina:opnFornecedor" />
+		<ui:param name="viewSelec" value="#{artigoCortinaFormView}" />
+		<ui:param name="action" value="updateFornecedorSelec" />
+	</ui:include>
+
+
+
+
+</ui:composition>

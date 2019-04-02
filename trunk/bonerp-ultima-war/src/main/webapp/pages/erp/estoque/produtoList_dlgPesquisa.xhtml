@@ -1,0 +1,95 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:param name="view" value="#{produtoListView}" />
+	
+
+	<h:form id="frmDlgPesquisa">
+		<p:dialog id="dlgPesquisa" header="Pesquisar" widgetVar="dlgPesquisa"
+			resizable="false" width="700" modal="true" position="top">
+
+			<p:outputPanel id="opnDlgPesquisa">
+
+				<fd:labelInput label="Descrição: " labelWidth="90px"
+					breakAfter="true">
+					<p:inputText size="40" value="#{view.filtros['descricao']}" />
+				</fd:labelInput>
+				
+				<fd:labelInput label="Reduzido :" labelWidth="90px" breakAfter="true">
+					<p:inputText size="15" value="#{view.filtros['reduzido']}" styleClass="maskInt">
+						<f:convertNumber integerOnly="true" />
+					</p:inputText>
+				</fd:labelInput>
+				
+				<fd:labelInput label="Fornecedor: " labelWidth="90px"
+					breakAfter="true">
+					<p:inputText size="30" value="#{view.filtros['fornecedor']}" />
+				</fd:labelInput>
+				
+				<fd:labelInput label="Depto: " labelWidth="90px" breakAfter="true">
+					<p:selectOneMenu id="iDepto" value="#{view.filtros['subdepto.depto']}" converter="#{entityIdConverter}">
+						<f:selectItem itemLabel="" itemValue="" />
+						<f:selectItems value="#{lmEstoque.deptos}"
+							var="d" itemLabel="#{d.nome} - #{d.codigo}" itemValue="#{d}" />
+						<p:ajax event="change" update="opnSubdepto" process="@this" listener="#{view.updateDepto}"  />
+					</p:selectOneMenu>
+				</fd:labelInput>
+				
+				<p:outputPanel id="opnSubdepto">
+					<fd:labelInput label="Subdepto: " labelWidth="90px" breakAfter="true">
+						<p:selectOneMenu id="iSubdepto" value="#{view.filtros['subdepto']}"
+							converter="#{entityIdConverter}">
+							<f:selectItem itemLabel="" itemValue="" />
+							<f:selectItems value="#{view.filtros['subdepto.depto'].subdeptos}"
+								var="sd" itemLabel="#{sd.nome} - #{sd.codigo}" itemValue="#{sd}" />
+						</p:selectOneMenu>
+					</fd:labelInput>
+				</p:outputPanel>
+				
+				<fd:labelInput label="Artigo de Cortina :"
+					breakAfter="true" >
+					<p:selectOneMenu value="#{view.filtros['artigoCortina']}" converter="#{booleanConverter}">
+						<f:selectItem itemLabel="---" itemValue="#{null}" />
+						<f:selectItem itemLabel="Sim" itemValue="#{true}" />
+						<f:selectItem itemLabel="Não" itemValue="#{false}" />
+					</p:selectOneMenu>
+				</fd:labelInput>
+				
+				<fd:labelInput label="Somente atuais :"
+					breakAfter="true" >
+					<p:selectOneMenu value="#{view.filtros['reduzidoEktAte']}" converter="#{booleanConverter}">
+						<f:selectItem itemLabel="---" itemValue="#{null}" />
+						<f:selectItem itemLabel="Sim" itemValue="#{true}" />
+						<f:selectItem itemLabel="Não" itemValue="#{false}" />
+					</p:selectOneMenu>
+				</fd:labelInput>
+				
+				
+
+
+				<div style="text-align: right; margin-bottom: 10px;">
+					<p:outputPanel>
+						<p:commandButton value="Pesquisar" title="Pesquisar"
+							icon="ui-icon-search" actionListener="#{view.pesquisar}"
+							onclick="PF('dlgPesquisa').hide()" update=":frm:opnDtList" />
+
+						<p:commandButton actionListener="#{view.limparPesquisa}" value="Cancelar"
+							title="Cancelar" onclick="PF('dlgPesquisa').hide()"
+							icon="ui-icon-cancel"
+							update=":frm:opnDtList, :frmDlgPesquisa:opnDlgPesquisa" />
+					</p:outputPanel>
+				</div>
+
+			</p:outputPanel>
+
+
+		</p:dialog>
+	</h:form>
+
+	
+</ui:composition>

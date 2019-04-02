@@ -1,0 +1,122 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags">
+
+
+
+	<!-- exibição de mensagem caso usuário não tenha permissão de acesso -->
+	<sec:authorize ifNotGranted="ROLE_ESTOQUE">
+		<div class="errorMsg">Usuário sem autorização para acessar este
+			recurso.</div>
+	</sec:authorize>
+
+	<sec:authorize ifAnyGranted="ROLE_ESTOQUE">
+
+		<ui:param name="view" value="#{notaFiscalEntradaFormView}" />
+
+		<h:form id="frmDlgItem">
+
+			<p:dialog id="dlgItem" header="Item" position="top"
+				widgetVar="dlgItem" resizable="false" modal="true" closable="true"
+				closeOnEscape="true">
+
+				<p:outputPanel id="opnDlg">
+
+					<p:focus for="iCodigo" context="opnDlg" />
+
+					<fd:labelInput label="Código :" labelWidth="100px">
+						<p:inputText id="iCodigo" value="#{view.item.codigo}" size="10" />
+					</fd:labelInput>
+
+					<fd:labelInput label="Descrição :" breakAfter="true"
+						alignRight="true">
+						<p:inputText size="55" id="iDescricao"
+							value="#{view.item.descricao}" />
+					</fd:labelInput>
+
+					<fd:labelInput label="NCM :" labelWidth="100px">
+						<p:inputText size="10" value="#{view.item.ncm}"
+							styleClass="maskInt" />
+					</fd:labelInput>
+
+					<fd:labelInput label="CFOP :">
+						<p:inputText size="10" value="#{view.item.cfop}"
+							styleClass="maskInt" />
+					</fd:labelInput>
+
+					<fd:labelInput label="Unidade :">
+						<p:inputText size="5" value="#{view.item.unidade}" />
+					</fd:labelInput>
+
+					<fd:labelInput label="ICMS :" alignRight="true" breakAfter="true">
+						<p:inputText value="#{view.item.icms}" size="11"
+							styleClass="maskMoney" id="iICMS"
+							converter="#{doubleConverterAbsNull}" />
+					</fd:labelInput>
+
+					<fd:labelInput label="Qtde :" labelWidth="100px">
+						<p:inputText value="#{view.item.qtde}" id="iQtde"
+							styleClass="maskQtde" size="10">
+							<f:convertNumber maxFractionDigits="3" minFractionDigits="3" />
+						</p:inputText>
+					</fd:labelInput>
+
+					<fd:labelInput label="Valor Unit. :" labelWidth="100px">
+						<p:inputText value="#{view.item.valorUnit}" size="11"
+							styleClass="maskMoney" id="iValorUnit"
+							converter="#{doubleConverterAbsNull}">
+							<p:ajax event="blur" process="iQtde iValorUnit" global="false"
+								update="iValorTotal" listener="#{view.updateValorTotalItem}"
+								onstart="PF('asValorTotal').trigger('start')"
+								oncomplete="PF('asValorTotal').trigger('complete')" />
+						</p:inputText>
+					</fd:labelInput>
+
+					<div class="fieldsRight">
+						<fd:labelInput noLabel="true">
+							<p:ajaxStatus widgetVar="asValorTotal">
+								<f:facet name="start">
+									<h:graphicImage value="#{resource['images/ajaxloading.gif']}" />
+								</f:facet>
+								<f:facet name="complete">
+									<h:outputText value="" />
+								</f:facet>
+							</p:ajaxStatus>
+						</fd:labelInput>
+						<fd:labelInput label="Valor Total :">
+							<p:inputText value="#{view.item.valorTotal}" readonly="true"
+								size="11" id="iValorTotal" styleClass="maskMoney"
+								converter="#{doubleConverterAbsNull}" />
+						</fd:labelInput>
+					</div>
+					
+					<fd:labelInput noLabel="true" breakAfter="true" />
+
+
+
+
+					<!-- BOTÃO SALVAR -->
+					<fd:labelInput noLabel="true" breakAfter="true" alignRight="true">
+						<p:commandButton title="Salvar o registro atual" id="btnSalvar"
+							update=":frm" icon="ui-icon-save" value="Salvar"
+							style="width: 90px"
+							actionListener="#{view.saveItem}"
+							oncomplete="afterFormSubmit(xhr, status, args);" />
+
+					</fd:labelInput>
+
+				</p:outputPanel>
+
+			</p:dialog>
+
+		</h:form>
+
+
+	</sec:authorize>
+
+
+</ui:composition>

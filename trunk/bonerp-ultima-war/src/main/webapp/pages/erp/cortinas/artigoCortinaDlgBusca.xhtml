@@ -1,0 +1,131 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags">
+
+
+	<h:form id="frmDlgBuscaArtigoCortina">
+		<p:dialog id="dlgBuscaArtigoCortina" header="Buscar ArtigoCortinas"
+			widgetVar="dlgBuscaArtigoCortina" resizable="false" position="top"
+			modal="true"   closable="true"
+			closeOnEscape="true" width="900px" >
+
+			<p:outputPanel id="opnDlgBuscaArtigoCortina">
+			
+				<p:defaultCommand target="btnBuscarArtigoCortina" scope="frmDlgBuscaArtigoCortina" />
+
+				<fd:labelInput noLabel="true">
+					<p:inputText id="iBuscaArtigoCortina" size="65"
+						value="#{artigoCortinaDlgBuscaView.filtros['strPesquisa']}" />
+					<p:watermark value="Pesquisar..." for="iBuscaArtigoCortina" />
+				</fd:labelInput>
+
+				<fd:labelInput noLabel="true" breakAfter="true" alignRight="true">
+					<p:commandButton actionListener="#{artigoCortinaDlgBuscaView.pesquisar}"
+						id="btnBuscarArtigoCortina"
+						icon="ui-icon-search" update="opnDlgBuscaArtigoCortina" />
+				</fd:labelInput>
+
+				<p:scrollPanel style="height:400px" mode="native">  
+					<p:dataTable id="dtListBuscaArtigoCortina" var="_" rowIndexVar="row"
+						emptyMessage="Nenhum registro encontrado."
+						value="#{artigoCortinaDlgBuscaView.list}">
+	
+						<p:column style="width: 20px" headerText="#">
+							<h:outputText value="#{row + 1}" />
+						</p:column>
+	
+						<p:column headerText="Tipo" 
+							sortBy="#{_.tipoArtigoCortina.descricao}"
+							style="white-space: normal">
+							<h:outputText value="#{_.tipoArtigoCortina.label}" />
+						</p:column>
+
+						<p:column headerText="Reduzido" 
+							sortBy="#{_.reduzido}"
+							style="width: 1px ; white-space: normal">
+							<h:outputText value="#{_.produto.reduzido}" />
+						</p:column>
+
+						<p:column headerText="Descrição" 
+							sortBy="#{_.descricao}" style="white-space: normal">
+							<h:outputText value="#{_.produto.descricao}" />
+							<p:outputPanel rendered="#{_.tipoArtigoCortina eq 'TECIDO'}">
+								<br />
+								<br />
+
+								<h:outputText value="Largura: " style="font-weight: bold" />
+								<h:outputText value="#{_.tecido.largura}">
+									<f:convertNumber maxFractionDigits="3" minFractionDigits="3" />
+								</h:outputText>
+								<br />
+
+								<h:outputText value="Orientação Padrão: "
+									style="font-weight: bold" />
+								<h:outputText value=" #{_.tecido.orientacaoPadrao.descricao}" />
+								<br />
+
+								<h:outputText value="Fator Padrão: " style="font-weight: bold" />
+								<h:outputText value="#{_.tecido.fatorPadrao}">
+									<f:convertNumber maxFractionDigits="3" minFractionDigits="3" />
+								</h:outputText>x
+								<br />
+								<h:outputText value="Alt Barra Padrão: "
+									style="font-weight: bold" />
+								<h:outputText value=" #{_.tecido.alturaBarraPadrao}">
+									<f:convertNumber maxFractionDigits="3" minFractionDigits="3" />
+								</h:outputText>m
+								<br />
+								<h:outputText value="Alt Máx Horiz: " style="font-weight: bold" />
+								<h:outputText value="#{_.tecido.alturaMaxHorizontal}">
+									<f:convertNumber maxFractionDigits="3" minFractionDigits="3" />
+								</h:outputText>m
+								<br />
+
+							</p:outputPanel>
+						</p:column>
+
+						<p:column headerText="Fornecedor" 
+							sortBy="#{_.fornecedor.pessoa.nomeFantasia}"
+							style="white-space: normal">
+							<h:outputText value="#{_.produto.fornecedor.pessoa.nomeFantasia}" />
+							(<h:outputText value="#{_.produto.fornecedor.representante}" />)
+						</p:column>
+
+						
+						<p:column headerText="Preço Prazo" 
+							sortBy="#{_.produto.precoAtual.precoPrazo}" style="width: 80px">
+							<div style="text-align: right;">
+								R$
+								<h:outputText value="#{_.produto.precoAtual.precoPrazo}"
+									converter="#{doubleConverterNull}" />
+							</div>
+						</p:column>
+						
+						<p:column headerText="Preço Promo" 
+							sortBy="#{_.produto.precoAtual.precoPromo}" style="width: 80px">
+							<div style="text-align: right;">
+								R$
+								<h:outputText value="#{_.produto.precoAtual.precoPromo}"
+									converter="#{doubleConverterNull}" />
+							</div>
+						</p:column>
+	
+	
+						<p:column headerText="" width="1%">
+							<p:commandButton actionListener="#{view.selArtigoCortina(_)}"
+								icon="ui-icon-check" process="@this"
+								update="#{update}"
+								oncomplete="PF('dlgBuscaArtigoCortina').hide()" />
+						</p:column>
+					</p:dataTable>
+				</p:scrollPanel>
+				
+			</p:outputPanel>
+		</p:dialog>
+	</h:form>
+
+</ui:composition>

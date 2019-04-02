@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rpCupomPromo" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="565" leftMargin="15" rightMargin="15" topMargin="12" bottomMargin="12" uuid="96ad2a98-7eb9-49d9-a130-2ab92c1f2290">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="loteId" class="java.lang.Long"/>
+	<queryString>
+		<![CDATA[SELECT
+	campanha.`dt_inicio`,
+    campanha.`dt_fim`,
+    campanha.`msg_cupom`,
+    lote.`num_lote`,
+    cupom.`codigo`,
+	cupom.`ordem`
+FROM
+	`crm_promo_campanha` campanha,
+    `crm_promo_lote_cupom` `lote`,
+    `crm_promo_cupom` cupom
+WHERE
+	lote.`campanha_promo_id` = campanha.`id` AND
+	cupom.`lote_cupom_id` = lote.`id` AND
+	lote.`id` = $P{loteId}]]>
+	</queryString>
+	<field name="dt_inicio" class="java.sql.Timestamp">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="dt_fim" class="java.sql.Timestamp">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="msg_cupom" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="num_lote" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="codigo" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="ordem" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<variable name="dtInicio" class="java.lang.String">
+		<variableExpression><![CDATA[new SimpleDateFormat("dd/MM/yyyy").format($F{dt_inicio})]]></variableExpression>
+	</variable>
+	<variable name="dtFim" class="java.lang.String">
+		<variableExpression><![CDATA[new SimpleDateFormat("dd/MM/yyyy").format($F{dt_fim})]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="145" splitType="Stretch">
+			<rectangle radius="15">
+				<reportElement uuid="b745fb19-c81d-4977-8bb4-edaeb2ba4dba" mode="Transparent" x="0" y="0" width="565" height="145"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<componentElement>
+				<reportElement uuid="6a1fca17-7693-430c-94d3-3c0f2ab1c2d8" x="450" y="85" width="109" height="57"/>
+				<jr:Code39 xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" textPosition="bottom">
+					<jr:codeExpression><![CDATA[$F{codigo}]]></jr:codeExpression>
+				</jr:Code39>
+			</componentElement>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="338ce071-69c4-46dc-9e7a-108f8a8c0b23" x="10" y="115" width="403" height="15"/>
+				<textElement verticalAlignment="Middle" markup="html">
+					<font fontName="Lucida Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Válido de <b>" + $V{dtInicio} + "</b> até <b>" + $V{dtFim} + "</b>. "]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="4f239ec3-2e59-4946-b89f-c511d89dfe0e" x="450" y="65" width="45" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="5"/>
+				</textElement>
+				<text><![CDATA[Lote nº:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="e612ab3f-1016-4f9d-a2af-8e9985300304" x="495" y="65" width="64" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{num_lote}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="f997e319-e5c8-40cd-bb8e-1f020220dd8a" x="8" y="64" width="424" height="20"/>
+				<textElement verticalAlignment="Middle" markup="html">
+					<font fontName="Lucida Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{msg_cupom}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement uuid="71aceaa4-f7f4-4976-8df1-eb68f4cecfd3" x="11" y="7" width="210" height="50"/>
+				<imageExpression><![CDATA["../LOGO_COMPLETO_400px.jpg"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement uuid="eccb14c9-cd0a-4fd5-b683-ac198e31c345" x="268" y="6" width="292" height="50"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="24" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Cupom de Desconto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2e905c2a-c2e4-42e0-8554-7bbbd3bf21b1" x="10" y="127" width="403" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="8"/>
+				</textElement>
+				<text><![CDATA[(e somente para o CPF vinculado ao cupom previamente em nosso sistema).]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>

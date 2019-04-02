@@ -1,0 +1,118 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	template="/templates/template.xhtml">
+
+	<ui:define name="content">
+	
+		<div id="_slnm_calculoPrecoForm" />
+
+		<!-- exibição de mensagem caso usuário não tenha permissão de acesso -->
+		<sec:authorize ifNotGranted="ROLE_ESTOQUE">
+			<div class="errorMsg">Usuário sem autorização para acessar este
+				recurso.</div>
+		</sec:authorize>
+
+		<sec:authorize ifAnyGranted="ROLE_ESTOQUE">
+
+			<ui:param name="view" value="#{calculoPrecoFormView}" />
+
+			<h:form id="frm">
+
+				<p:panel id="panel" header="Cálculo de Preço"
+					style="width: 700px; margin: 0 auto;">
+
+
+
+					<p:spacer height="10" />
+
+					<p:defaultCommand target="btnSalvar" />
+
+
+					<p:focus for="iPrazo" context="frm" />
+
+					<fd:labelInput label="Prazo :" labelWidth="120px" breakAfter="true">
+						<p:inputText size="10" value="#{view.preco.prazo}" id="iPrazo" />
+					</fd:labelInput>
+					
+					<fd:labelInput label="Margem :" labelWidth="120px" breakAfter="true">
+						<p:inputText size="15" value="#{view.preco.margem}"
+							styleClass="maskMoney" converter="#{doubleConverterNull}" />%
+					</fd:labelInput>
+					
+					<fd:labelInput label="Custo Operacional :" labelWidth="120px" breakAfter="true">
+						<p:inputText size="15"
+							value="#{view.preco.custoOperacional}"
+							styleClass="maskMoney" converter="#{doubleConverterNull}" />%
+					</fd:labelInput>
+					
+					
+					<fd:labelInput label="Preço Custo :" labelWidth="120px" breakAfter="true">
+						<p:inputText styleClass="maskMoney" size="20"
+							value="#{view.preco.precoCusto}"
+							style="text-align: right;" converter="#{doubleConverterAbs}">
+						</p:inputText>
+					</fd:labelInput>
+					
+					<!-- BUTTONS -->
+					<div style="text-align: right">
+
+						<p:commandButton id="btnSalvar"
+							update=":frm"
+							icon="ui-icon-save" value="Calcular" style="width: 120px"
+							actionListener="#{view.calcular}" />
+
+						<p:spacer width="20" />
+
+						<p:commandButton id="btnLimpar"
+							update=":frm"
+							icon="ui-icon-save" value="Limpar" style="width: 120px"
+							actionListener="#{view.limpar}" />
+					</div>
+					
+					<fd:labelInput label="Coeficiente :" labelWidth="120px" breakAfter="true">
+						<p:inputText styleClass="maskQtde" size="15"
+							value="#{view.preco.coeficiente}" readonly="true"
+							style="text-align: right;">
+							<f:convertNumber maxFractionDigits="3" minFractionDigits="3" />
+						</p:inputText>
+					</fd:labelInput>
+					
+					<fd:labelInput label="Preço Prazo :" labelWidth="120px" breakAfter="true">
+						<p:inputText styleClass="maskMoney" size="20"
+							value="#{view.preco.precoPrazo}" readonly="true"
+							style="text-align: right;" converter="#{doubleConverterAbs}">
+						</p:inputText>
+					</fd:labelInput>
+					
+					<fd:labelInput label="Preço Vista :" labelWidth="120px" breakAfter="true">
+						<p:inputText styleClass="maskMoney" size="20"
+							value="#{view.preco.precoVista}" readonly="true"
+							style="text-align: right;" converter="#{doubleConverterAbs}">
+						</p:inputText>
+					</fd:labelInput>
+
+
+
+
+
+
+
+					<p:spacer height="15" />
+
+				</p:panel>
+
+
+
+			</h:form>
+
+
+		</sec:authorize>
+
+	</ui:define>
+
+</ui:composition>

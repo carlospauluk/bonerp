@@ -1,0 +1,366 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	template="/templates/template.xhtml">
+
+	<ui:define name="headFirst">
+		<script src="#{resource['js/helpers.js']}" type="text/javascript"></script>
+	</ui:define>
+
+	<ui:define name="content">
+
+		<style>
+.ui-menu.ui-menu-dynamic {
+	width: 300px;
+}
+</style>
+
+		<div id="_slnm_notaFiscalEntradaForm" />
+
+
+		<ui:param name="view" value="#{notaFiscalEntradaFormView}" />
+
+		<f:metadata>
+			<f:viewParam
+				valueChangeListener="#{notaFiscalEntradaFormView.updateId}"
+				name="id" />
+		</f:metadata>
+
+		<h:form id="frm">
+
+			<p:panel id="panel" header="Nota Fiscal de Entrada"
+				style="width: 1000px; margin: 0 auto;">
+
+				<!-- Declarado para que não dê erro de javascript quando algum dos MBs chame o JSFUtils.execute("loadList()"); -->
+				<p:remoteCommand name="loadList" process="@none" update="@none" />
+
+				<!-- Só exibe se não tiver sido informado o arquivo da nota -->
+				<p:outputPanel
+					rendered="#{view.e.xmlNota eq null and view.e.id eq null}">
+					<fd:labelInput label="Cadastro Manual :" alignRight="true"
+						breakAfter="true">
+
+						<p:selectBooleanButton id="iCadastroManual"
+							value="#{view.cadastroManual}" onLabel="SIM" offLabel="NÃO"
+							style="width:60px">
+							<p:ajax update=":frm" process="@this" />
+						</p:selectBooleanButton>
+					</fd:labelInput>
+
+				</p:outputPanel>
+
+
+				<p:outputPanel rendered="#{view.cadastroManual eq false}">
+					<p:outputPanel rendered="#{view.e.id eq null}">
+						<fd:labelInput label="Arquivo XML :" labelWidth="100px"
+							breakAfter="true">
+							<p:fileUpload fileUploadListener="#{view.uploadArquivoXML}"
+								allowTypes="/(\.|\/)(xml)$/" update=":frm"
+								dragDropSupport="true" auto="true" cancelLabel="Cancelar"
+								label="Selecionar arquivo..." />
+						</fd:labelInput>
+					</p:outputPanel>
+				</p:outputPanel>
+
+				<fd:labelInput label="Número NF:" labelWidth="100px">
+					<p:inputText size="10" value="#{view.e.numero}"
+						styleClass="maskInt" disabled="#{view.cadastroManual eq false}">
+						<f:convertNumber integerOnly="true" />
+					</p:inputText>
+				</fd:labelInput>
+
+				<fd:labelInput label="Dt Emissão :">
+					<p:calendar styleClass="maskData" value="#{view.e.dtEmissao}"
+						id="iDtEmissao" locale="pt" pages="1" pattern="dd/MM/yyyy"
+						showOn="button" widgetVar="iDtEmissao" size="12"
+						selectOtherMonths="true" showOtherMonths="true"
+						disabled="#{view.cadastroManual eq false}" />
+				</fd:labelInput>
+
+				<fd:labelInput label="Valor Total :" alignRight="true"
+					breakAfter="true">
+					<p:inputText size="10" value="#{view.e.valorTotal}"
+						styleClass="maskMoney" id="iValorTotal" style="text-align: right;"
+						converter="#{doubleConverterAbsNull}"
+						disabled="#{view.cadastroManual eq false}">
+					</p:inputText>
+				</fd:labelInput>
+
+				<p:fieldset legend="Fornecedor" id="opnFornecedor">
+
+					<f:validateBean disabled="true">
+						<fd:labelInput label="Código :" labelWidth="100px">
+							<p:inputText value="#{view.e.fornecedor.codigo}" size="10"
+								disabled="true" />
+						</fd:labelInput>
+					</f:validateBean>
+
+					<script type="text/javascript">
+						function checkCnpj() {
+							if (_$('iCnpj').val() == '__.___.___/____-__') {
+								return false;
+							}
+							return true;
+						}
+					</script>
+
+
+					<fd:labelInput label="CNPJ :">
+						<p:inputMask size="20" id="iCnpj"
+							value="#{view.e.fornecedor.pessoa.documento}"
+							mask="99.999.999/9999-99" converter="#{docConverter}"
+							disabled="#{view.cadastroManual eq false}">
+							<p:ajax event="blur" update="opnFornecedor"
+								listener="#{view.updateDoc}" onstart="return checkCnpj()" />
+						</p:inputMask>
+					</fd:labelInput>
+
+					<fd:labelInput label="Inscr Est :" alignRight="true"
+						breakAfter="true">
+						<p:inputText size="15" id="iInscrEst"
+							value="#{view.e.fornecedor.inscricaoEstadual}"
+							disabled="#{view.cadastroManual eq false}" />
+					</fd:labelInput>
+
+					<fd:labelInput label="Razão Social :" labelWidth="100px"
+						breakAfter="true">
+						<p:inputText value="#{view.e.fornecedor.pessoa.nome}" size="50"
+							disabled="#{view.cadastroManual eq false}" />
+
+						<p:spacer width="4" />
+
+						<p:commandButton id="btnBuscaFornecedor" title="Buscar Fornecedor"
+							rendered="#{view.cadastroManual eq false}"
+							oncomplete="PF('dlgBuscaFornecedor_NOTAFISCALENTRADA').show()"
+							update=":frmDlgBuscaFornecedor_NOTAFISCALENTRADA:opnDlg"
+							process="@this" icon="ui-icon-search" />
+
+					</fd:labelInput>
+
+					<fd:labelInput label="Nome Fantasia :" alignRight="true"
+						breakAfter="true">
+						<p:inputText value="#{view.e.fornecedor.pessoa.nomeFantasia}"
+							size="50" disabled="#{view.cadastroManual eq false}" />
+					</fd:labelInput>
+
+					<p:outputPanel id="opnEndereco">
+
+						<fd:labelInput label="CEP :" labelWidth="100px" breakAfter="true">
+							<p:inputMask mask="99999-999" size="10" id="iCep"
+								value="#{view.e.fornecedor.endereco.cep}"
+								disabled="#{view.cadastroManual eq false}" />
+							<p:commandButton icon="ui-icon-search" update="opnEndereco"
+								process="@this iCep"
+								actionListener="#{viaCEP2Endereco.convert(view.e.fornecedor.endereco)}" />
+						</fd:labelInput>
+
+						<div style="clear: both;" />
+
+						<fd:labelInput label="Logradouro :" labelWidth="100px">
+							<p:inputText size="50"
+								value="#{view.e.fornecedor.endereco.logradouro}" id="logradouro"
+								disabled="#{view.cadastroManual eq false}" />
+						</fd:labelInput>
+
+						<fd:labelInput label="Número :">
+							<p:inputText size="5"
+								value="#{view.e.fornecedor.endereco.numero}" id="numero"
+								disabled="#{view.cadastroManual eq false}" />
+						</fd:labelInput>
+
+						<fd:labelInput label="Complemento :" alignRight="true"
+							breakAfter="true">
+							<p:inputText size="13"
+								value="#{view.e.fornecedor.endereco.complemento}"
+								id="complemento" disabled="#{view.cadastroManual eq false}" />
+						</fd:labelInput>
+
+						<fd:labelInput label="Bairro :" labelWidth="100px"
+							breakAfter="true">
+							<p:inputText size="40"
+								value="#{view.e.fornecedor.endereco.bairro}" id="bairro"
+								disabled="#{view.cadastroManual eq false}" />
+						</fd:labelInput>
+
+						<fd:labelInput label="Cidade :" labelWidth="100px">
+							<p:inputText size="40"
+								value="#{view.e.fornecedor.endereco.cidade}" id="cidade"
+								disabled="#{view.cadastroManual eq false}" />
+						</fd:labelInput>
+
+						<fd:labelInput label="Estado :">
+							<p:selectOneMenu value="#{view.e.fornecedor.endereco.estado}"
+								id="uf" style="width: 180px"
+								disabled="#{view.cadastroManual eq false}">
+								<f:selectItem itemValue="" itemLabel="Selecione" />
+								<f:selectItems value="#{lmBase.ufValues}" var="uf"
+									itemLabel="#{uf.sigla}" itemValue="#{uf}" />
+							</p:selectOneMenu>
+						</fd:labelInput>
+
+
+					</p:outputPanel>
+
+					<fd:labelInput label="Fone :" breakAfter="true" alignRight="true">
+						<p:inputMask size="18" value="#{view.e.fornecedor.fone1}"
+							id="iFone1" mask="(99) 9999-9999?9"
+							disabled="#{view.cadastroManual eq false}" />
+					</fd:labelInput>
+
+				</p:fieldset>
+
+				<div style="clear: both" />
+				<p:spacer height="20px" />
+				<div style="clear: both" />
+
+
+				<p:outputPanel
+					rendered="#{view.cadastroManual eq true or (view.cadastroManual eq false and view.e.id eq null)}">
+
+					<p:defaultCommand target="btnSalvar" />
+
+					<fd:labelInput noLabel="true" alignRight="true" breaAfter="true">
+						<p:commandButton title="Salvar o registro atual" id="btnSalvar"
+							icon="ui-icon-save" value="Salvar" style="width: 110px"
+							actionListener="#{view.save}" update=":frm"
+							oncomplete="afterFormSubmit(xhr, status, args);" />
+					</fd:labelInput>
+
+				</p:outputPanel>
+
+				<div style="clear: both" />
+				<p:spacer height="20px" />
+				<div style="clear: both" />
+
+
+
+				<p:outputPanel id="opnDtListItens">
+					<p:outputPanel
+						rendered="#{view.e.id ne null or !view.e.itens.isEmpty()}">
+
+						<p:toolbar>
+							<f:facet name="left">
+								<h:outputText value="Itens" style="font-size: 18px; margin: 5px" />
+							</f:facet>
+							<f:facet name="right">
+								<p:commandButton icon="ui-icon-document"
+									oncomplete="PF('dlgItem').show()" id="btnNovo"
+									update=":frmDlgItem:opnDlg" actionListener="#{view.novoItem}"
+									title="Novo Item" style="width: 26; height: 26;"
+									process="@this" value="Novo"
+									rendered="#{view.cadastroManual eq true}" />
+							</f:facet>
+						</p:toolbar>
+
+
+						<p:dataTable var="item" value="#{view.e.itens}" id="dtItens"
+							rowKey="#{item}" rowIndexVar="row" sortBy="#{item.ordem}">
+
+							<p:column style="width: 1px" headerText="#">
+								<h:outputText value="#{item.ordem}" />
+							</p:column>
+
+							<p:column style="width: 60px" headerText="Código">
+								<h:outputText value="#{item.codigo}" />
+							</p:column>
+
+							<p:column headerText="Descrição">
+								<h:outputText value="#{item.descricao}" />
+							</p:column>
+
+							<p:column headerText="NCM">
+								<h:outputText value="#{item.ncm}" />
+							</p:column>
+
+							<p:column headerText="CFOP">
+								<h:outputText value="#{item.cfop}" />
+							</p:column>
+
+							<p:column headerText="Unidade">
+								<div style="text-align: center">
+									<h:outputText value="#{item.unidade}" />
+								</div>
+							</p:column>
+
+							<p:column style="width: 60px" headerText="Valor Unit"
+								styleClass="noWrap">
+								<div style="text-align: right;">
+									R$
+									<h:outputText value="#{item.valorUnit}"
+										converter="#{doubleConverterNull}" />
+								</div>
+							</p:column>
+
+							<p:column style="width: 40px" headerText="Qtde"
+								styleClass="noWrap">
+								<div style="text-align: center;">
+									<h:outputText value="#{item.qtde}"
+										converter="#{doubleConverterNull}" />
+								</div>
+							</p:column>
+
+							<p:column style="width: 70px" headerText="Total item"
+								styleClass="noWrap">
+								<div style="text-align: right;">
+									R$
+									<h:outputText value="#{item.valorTotal}"
+										converter="#{doubleConverterNull}" />
+								</div>
+							</p:column>
+
+							<p:column style="width: 80px" headerText="ICMS"
+								styleClass="noWrap">
+								<div style="text-align: right;">
+									R$
+									<h:outputText value="#{item.icms}"
+										converter="#{doubleConverterNull}" />
+								</div>
+							</p:column>
+
+							<p:column styleClass="noWrapColBtns">
+								<p:commandButton actionListener="#{view.setItem(item)}"
+									process="@this" icon="ui-icon-build"
+									update=":frmDlgItem:opnDlg" oncomplete="PF('dlgItem').show()"
+									title="Editar registro" />
+
+								<p:commandButton actionListener="#{view.deleteItem(item)}"
+									update=":frm" rendered="#{view.cadastroManual eq true}"
+									styleClass="red-btn" process="@this" title="Deletar Item"
+									icon="ui-icon-trash">
+									<p:confirm header="Atenção" message="Confirmar deleção?"
+										icon="ui-icon-alert" />
+								</p:commandButton>
+							</p:column>
+						</p:dataTable>
+
+
+					</p:outputPanel>
+				</p:outputPanel>
+
+
+
+
+			</p:panel>
+
+		</h:form>
+
+
+		<ui:include src="notaFiscalEntradaForm_dlg.xhtml" />
+
+		<ui:include src="/pages/erp/estoque/fornecedorDlgBusca.xhtml">
+			<ui:param name="sufix" value="_NOTAFISCALENTRADA" />
+			<ui:param name="update" value=":frm:opnFornecedor" />
+			<ui:param name="viewSelec" value="#{notaFiscalEntradaFormView}" />
+			<ui:param name="action" value="updateFornecedorSelec" />
+		</ui:include>
+
+
+
+	</ui:define>
+
+
+</ui:composition>

@@ -1,0 +1,278 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	template="/templates/template.xhtml">
+
+	<ui:define name="headFirst">
+		<script src="#{resource['js/helpers.js']}" type="text/javascript"></script>
+	</ui:define>
+
+	<ui:define name="content">
+
+		<div id="_slnm_deptoSubdeptoForm" />
+
+		<sec:authorize ifNotGranted="ROLE_ESTOQUE_ADMIN">
+			<div class="errorMsg">Usuário sem autorização para acessar este
+				recurso.</div>
+		</sec:authorize>
+
+		<sec:authorize ifAnyGranted="ROLE_ESTOQUE_ADMIN">
+
+			<ui:param name="view" value="#{deptoFormView}" />
+
+			<h:form id="frm">
+
+				<p:panel id="panel" header="Departamentos"
+					style="width: 1000px; margin: 0 auto;">
+
+					<p:toolbar>
+						<f:facet name="left">
+							<p:commandButton id="btnNovo" icon="ui-icon-document"
+								oncomplete="PF('dlgCadastro').show()"
+								actionListener="#{view.novo}" process="@this"
+								title="Novo registro (N)" value="Novo Departamento"
+								update=":frm:opnDlg" />
+
+							<p:commandButton id="btnAtualizar" title="Atualizar dados (A)"
+								update=":frm:opnDtList" process="@this" value="Atualizar"
+								icon="ui-icon-refresh"
+								actionListener="#{view.limparFiltrosECarregar}" />
+						</f:facet>
+					</p:toolbar>
+
+					<p:spacer height="10" />
+
+
+					<p:outputPanel id="opnDtList">
+						<p:dataTable id="dtList" var="_" rowIndexVar="row"
+							emptyMessage="Nenhum registro encontrado." rowKey="#{_.id}"
+							value="#{view.dtList}" selection="#{view.e}"
+							selectionMode="single">
+
+							<p:ajax event="rowSelect" listener="#{view.onRowSelect}"
+								update=":frm:opnDtListSubdeptos " />
+
+							<p:column headerText="Código" sortBy="#{_.codigo}">
+								<h:outputText value="#{_.codigo}" />
+							</p:column>
+
+							<p:column headerText="Nome" sortBy="#{_.nome}">
+								<h:outputText value="#{_.nome}" />
+							</p:column>
+
+							<p:column styleClass="noWrapColBtns">
+
+								<p:commandButton title="Editar registro" icon="ui-icon-build"
+									id="btnEditar" actionListener="#{view.setE(_)}" process="@this"
+									onclick="PF('dlgCadastro').show();" update=":frm:opnDlg" />
+
+								<p:commandButton title="Excluir registro" icon="ui-icon-trash"
+									styleClass="red-btn" id="btnExcluir"
+									actionListener="#{view.deletar(_)}" process="@this"
+									update=":frm:panel">
+									<p:confirm />
+								</p:commandButton>
+
+							</p:column>
+
+							<f:facet name="footer"> Total de Registros: #{fn:length(view.dtList)}</f:facet>
+						</p:dataTable>
+					</p:outputPanel>
+
+					<p:spacer height="15" />
+
+					<p:panel id="opnDtListSubdeptos" header="Subdepartamentos">
+
+						<p:toolbar>
+							<f:facet name="left">
+								<p:commandButton icon="ui-icon-document"
+									oncomplete="PF('dlgCadastroSubdepto').show()"
+									actionListener="#{view.novoSubdepto}" process="@this"
+									title="Novo registro (N)" value="Novo Subdepartamento"
+									update=":frmSubdepto:opnDlgSubdepto" />
+
+								<p:commandButton title="Atualizar dados (A)"
+									update=":frm:opnDtListSubdeptos" process="@this"
+									value="Atualizar" icon="ui-icon-refresh"
+									actionListener="#{view.limparFiltrosECarregar}" />
+							</f:facet>
+						</p:toolbar>
+
+						<p:spacer height="10" />
+
+						<p:dataTable id="dtListSubdeptos" var="_" rowIndexVar="row"
+							emptyMessage="Nenhum registro encontrado."
+							value="#{view.e.subdeptos}">
+
+							<p:column headerText="#" style="width: 20px">
+								<h:outputText value="#{row + 1}" />
+							</p:column>
+
+							<p:column headerText="Código" sortBy="#{_.codigo}">
+								<h:outputText value="#{stringUtils.zerofill(_.codigo,3)}" />
+							</p:column>
+
+							<p:column headerText="Nome" sortBy="#{_.nome}">
+								<h:outputText value="#{_.nome}" />
+							</p:column>
+
+							<p:column styleClass="noWrapColBtns">
+
+								<p:commandButton title="Editar registro" icon="ui-icon-build"
+									id="btnEditar" actionListener="#{view.setSubdepto(_)}"
+									process="@this" onclick="PF('dlgCadastroSubdepto').show();"
+									update=":frmSubdepto:opnDlgSubdepto" />
+
+								<p:commandButton title="Excluir registro" icon="ui-icon-trash"
+									id="btnExcluir" process="@this" styleClass="red-btn"
+									actionListener="#{view.deletarSubdepto(_)}" update=":frm:panel">
+									<p:confirm />
+								</p:commandButton>
+
+							</p:column>
+
+							<f:facet name="footer"> Total de Registros: #{fn:length(view.e.subdeptos)}</f:facet>
+						</p:dataTable>
+					</p:panel>
+
+					<p:messages />
+
+				</p:panel>
+
+
+				<p:dialog id="dlgCadastro" widgetVar="dlgCadastro" position="top"
+					header="Departamento" modal="true" width="600" resizable="false"
+					closeOnEscape="true">
+					<p:outputPanel id="opnDlg">
+
+						<p:messages severity="warn,error" />
+
+						<p:focus context="opnDlg" />
+
+						<fd:labelInput label="Código *:" breakAfter="true"
+							labelWidth="80px">
+							<p:inputText size="10" value="#{view.e.codigo}" id="iCodigoDepto" />
+							<div style="float: right;">
+								<p:message for="iCodigoDepto" display="icon" />
+							</div>
+						</fd:labelInput>
+
+						<fd:labelInput label="Descrição *:" breakAfter="true"
+							labelWidth="80px">
+							<p:inputText size="50" value="#{view.e.nome}" id="iNome" />
+							<div style="float: right;">
+								<p:message for="iNome" display="icon" />
+							</div>
+						</fd:labelInput>
+
+						<p:spacer width="20" />
+
+
+						<!-- BUTTONS -->
+						<div style="text-align: right;">
+
+							<p:commandButton title="Salvar o registro atual" id="btnSalvar"
+								widgetVar="btnSalvar" update=":frm"
+								oncomplete="afterFormSubmit(xhr, status, args);"
+								icon="ui-icon-save" value="Salvar" style="width: 110px"
+								actionListener="#{view.save}" />
+
+							<p:defaultCommand target="btnSalvar" scope=":frm" />
+
+							<p:spacer width="20" />
+
+						</div>
+
+					</p:outputPanel>
+				</p:dialog>
+
+
+
+
+			</h:form>
+
+			<h:form id="frmSubdepto">
+
+				<p:dialog id="dlgCadastroSubdepto" widgetVar="dlgCadastroSubdepto"
+					position="top" header="Subdepartamento" modal="true" width="600"
+					resizable="false" closeOnEscape="true">
+
+					<p:outputPanel id="opnDlgSubdepto">
+
+						<p:messages severity="warn,error" />
+
+						<p:focus context="opnDlgSubdepto" />
+
+						<fd:labelInput label="Código *:" breakAfter="true"
+							labelWidth="80px">
+							<p:inputText size="10" value="#{view.subdepto.codigo}"
+								id="iCodigoSubDepto" />
+							<div style="float: right;">
+								<p:message for="iCodigoSubDepto" display="icon" />
+							</div>
+						</fd:labelInput>
+
+						<fd:labelInput label="Depto *:" labelWidth="80px">
+							<p:selectOneMenu id="iDepto" value="#{view.e}"
+								converter="#{entityIdConverter}">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems value="#{lmEstoque.deptos}" var="d"
+									itemLabel="#{d.nome} - #{d.codigo}" itemValue="#{d}" />
+							</p:selectOneMenu>
+						</fd:labelInput>
+
+						<fd:labelInput label="Descrição *:" labelWidth="80px"
+							breakAfter="true">
+							<p:inputText size="50" value="#{view.subdepto.nome}" id="iNome" />
+							<div style="float: right;">
+								<p:message for="iNome" display="icon" />
+							</div>
+						</fd:labelInput>
+
+						<fd:labelInput label="Margem Padrão *:" labelWidth="80px"
+							breakAfter="true">
+							<p:inputText size="8" value="#{view.subdepto.margem}"
+								styleClass="maskMoney" converter="#{doubleConverter}" />%
+				</fd:labelInput>
+
+						<p:spacer width="20" />
+
+
+						<!-- BUTTONS -->
+						<div style="text-align: right;">
+
+							<p:commandButton title="Salvar o registro atual"
+								id="btnSalvarSubdepto" update=":frm:opnDtListSubdeptos"
+								oncomplete="afterFormSubmit(xhr, status, args);"
+								icon="ui-icon-save" value="Salvar" style="width: 110px"
+								actionListener="#{view.saveSubdepto}" />
+
+							<p:defaultCommand target="btnSalvarSubdepto" scope=":frmSubdepto" />
+
+							<p:spacer width="20" />
+
+						</div>
+
+					</p:outputPanel>
+				</p:dialog>
+
+
+
+			</h:form>
+
+
+		</sec:authorize>
+
+	</ui:define>
+
+
+
+
+
+
+</ui:composition>

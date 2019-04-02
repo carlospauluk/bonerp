@@ -1,0 +1,80 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:p="http://primefaces.org/ui">
+
+	<sec:authorize ifNotGranted="ROLE_RH,ROLE_RH_ADMIN">
+		<div class="errorMsg">Usuário sem autorização para acessar este
+			recurso.</div>
+	</sec:authorize>
+
+	<sec:authorize ifAnyGranted="ROLE_RH,ROLE_RH_ADMIN">
+
+		<ui:param name="view" value="#{funcionarioFormListView}" />
+
+		<div id="_slnm_funcionarioList" />
+
+
+
+		<ui:decorate template="/templates/list.xhtml">
+		
+			<ui:param name="role" value="RH" />
+
+
+			<ui:param name="titulo" value="Funcionários" />
+			<ui:param name="viewForm" value="#{funcionarioFormListView}" />
+			<ui:param name="updateDlg" value=":frmFuncionario:opnDlg" />
+
+
+			<ui:define name="camposPesquisaToolbar">
+
+				<h:outputText value="Atuais: " />
+				<p:selectOneMenu value="#{view.filtros['aindaTrabalhando']}"
+					style="vertical-align: bottom" converter="#{booleanConverter}">
+					<f:selectItem itemLabel="---" itemValue="#{null}" />
+					<f:selectItem itemLabel="Sim" itemValue="true" />
+					<f:selectItem itemLabel="Não" itemValue="false" />
+					<p:ajax listener="#{view.pesquisar}" update="opnDtList opnToolbar" />
+				</p:selectOneMenu>
+
+
+
+			</ui:define>
+
+			<ui:define name="cols">
+
+				<p:column headerText="Código"
+					style="width: 1px ; white-space: normal" sortBy="#{_.codigo}">
+					<h:outputText value="#{_.codigo}" title="Id: #{_.id} | P.Id: #{_.pessoa.id}" />
+				</p:column>
+
+				<p:column headerText="CPF" style="width: 1px ; white-space: nowrap">
+					<h:outputText value="#{_.pessoa.documento}"
+						converter="#{docConverter}" />
+				</p:column>
+
+				<p:column headerText="Nome" style="white-space: normal"
+					sortBy="#{_.pessoa.nome}">
+					<h:outputText value="#{_.pessoa.nome}" />
+				</p:column>
+
+				
+
+			</ui:define>
+		</ui:decorate>
+
+		<ui:include src="funcionarioDlg.xhtml">
+			<ui:param name="e" value="#{funcionarioFormListView.e}" />
+			<ui:param name="action" value="save" />
+			<ui:param name="update" value=" :frm:opnDtList :frm:opnLoadList" />
+		</ui:include>
+
+		<ui:include src="funcionarioList_dlgPesquisa.xhtml" />
+
+	</sec:authorize>
+
+</ui:composition>

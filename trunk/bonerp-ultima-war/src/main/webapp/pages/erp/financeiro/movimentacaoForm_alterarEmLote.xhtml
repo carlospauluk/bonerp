@@ -1,0 +1,257 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:sec="http://www.springframework.org/security/tags">
+
+
+	<sec:authorize ifAnyGranted="ROLE_FINANCEIRO">
+
+		<c:if test="#{empty viewForm}">
+			<ui:param name="viewForm" value="#{movimentacaoFormView}" />
+		</c:if>
+
+		<ui:param name="tipoLancto" value="lote" />
+
+		<h:form id="frmMovimentacao_lote">
+
+			<p:dialog id="dlgMovimentacaoLote" widgetVar="dlgMovimentacaoLote" dynamic="true"
+				position="top" header="Movimentação - Alterar em Lote" modal="true"
+				resizable="false" closeOnEscape="true" width="950">
+
+
+
+				<p:outputPanel id="opnDlgMovimentacaoLote">
+					<f:validateBean disabled="true">
+
+						<p:defaultCommand target="btnAlterarLote" />
+
+						<fd:labelInput label="Tipo Lancto: " labelWidth="120px"
+							breakAfter="true">
+							<p:selectOneMenu id="iTipoLancto" value="#{viewForm.e.tipoLancto}">
+								<f:selectItem />
+								<f:selectItems value="#{lmFinanc.tiposLancto}" var="_" itemLabel="#{_.label}" itemValue="#{_}" />
+							</p:selectOneMenu>
+						</fd:labelInput>
+
+
+						<fd:labelInput label="Carteira :" labelWidth="120px">
+							<p:selectOneMenu id="iCarteira" value="#{viewForm.e.carteira}"
+								converter="#{entityIdConverter}">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems value="#{lmFinanc.carteiraValues}" var="c"
+									itemLabel="#{c.codigo} - #{c.descricao}" itemValue="#{c}" />
+							</p:selectOneMenu>
+						</fd:labelInput>
+						
+						<fd:labelInput label="Carteira Destino :" breakAfter="true" alignRight="true">
+							<p:selectOneMenu id="iCarteiraDestino" value="#{viewForm.e.carteiraDestino}"
+								converter="#{entityIdConverter}">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems value="#{lmFinanc.carteiraValues}" var="c"
+									itemLabel="#{c.codigo} - #{c.descricao}" itemValue="#{c}" />
+							</p:selectOneMenu>
+						</fd:labelInput>
+
+						<fd:labelInput label="Modo Moviment :" labelWidth="120px" breakAfter="true">
+							<p:selectOneMenu id="iModoMoviment" value="#{viewForm.e.modo}"
+								converter="#{entityIdConverter}">
+								<f:selectItem />
+								<f:selectItems value="#{lmFinanc.modoValues}" var="mm"
+									itemLabel="#{mm.codigo} - #{mm.descricao}" itemValue="#{mm}" />
+							</p:selectOneMenu>
+						</fd:labelInput>
+
+
+						<p:outputPanel id="opnCategoria">
+							<fd:labelInput labelWidth="120px" label="Categoria :">
+
+								<p:inputText converter="#{categoriaCodigoConverter}"
+									value="#{viewForm.e.categoria.codigo}" size="10"
+									readonly="true" />
+
+								<h:outputText value="-" />
+
+								<p:autoComplete id="iCategoria" size="40"
+									value="#{viewForm.e.categoria}" var="cat"
+									itemLabel="#{cat.descricao}" itemValue="#{cat}"
+									forceSelection="false"
+									completeMethod="#{categoriaFinder.findFolhasBy}" minQueryLength="3"
+									widgetVar="acCategoria" converter="#{entityIdConverter}">
+									<p:ajax event="itemSelect" process="@this" update="opnCategoria"
+										oncomplete="_$('iCentroCusto').focus()" />
+								</p:autoComplete>
+
+								<p:spacer width="4" />
+
+								<p:commandButton id="btnBuscaCateg" title="Buscar Categoria"
+									actionListener="#{categoriaFormListView.categoriaFormListView}"
+									oncomplete="PF('dlgBuscaCateg').show()"
+									update=":frmDlgBuscaCateg:opnTree" partialSubmit="true"
+									process="@none" icon="ui-icon-search" />
+
+							</fd:labelInput>
+						</p:outputPanel>
+
+						<fd:labelInput label="Centro Custo:" breakAfter="true"
+							alignRight="true">
+							<p:selectOneMenu id="iCentroCusto"
+								value="#{viewForm.e.centroCusto}"
+								converter="#{entityIdConverter}">
+								<f:selectItem />
+								<f:selectItems value="#{lmFinanc.centroCustoValues}" var="cc"
+									itemLabel="#{cc.codigo} - #{cc.descricao}" itemValue="#{cc}" />
+							</p:selectOneMenu>
+						</fd:labelInput>
+
+						<fd:labelInput labelWidth="120px" label="Dt Moviment :">
+
+							<p:calendar styleClass="maskData"
+								value="#{viewForm.e.dtMoviment}" id="iDtMoviment" locale="pt"
+								pages="1" pattern="dd/MM/yyyy" showOn="button"
+								widgetVar="iDtMoviment" size="12" selectOtherMonths="true"
+								showOtherMonths="true"
+								onfocus="$(''#frmMovimentacao_lote\\:iDtMoviment_input').select()" />
+
+						</fd:labelInput>
+
+						<p:outputPanel id="opnDtVencto">
+							<fd:labelInput label="Dt Vencto :">
+								<p:calendar styleClass="maskData" value="#{viewForm.e.dtVencto}"
+									id="iDtVencto" locale="pt" showOn="button" pattern="dd/MM/yyyy"
+									size="12" selectOtherMonths="true" showOtherMonths="true"
+									widgetVar="iDtVencto" />
+							</fd:labelInput>
+						</p:outputPanel>
+
+						<p:outputPanel id="opnDtVenctoEfetiva">
+							<f:validateBean disabled="true">
+								<fd:labelInput label="Dt Vcto Efet :">
+									<p:calendar styleClass="maskData"
+										value="#{viewForm.e.dtVenctoEfetiva}" id="iDtVenctoEfetiva"
+										locale="pt" showOn="button" pattern="dd/MM/yyyy" size="10"
+										selectOtherMonths="true" showOtherMonths="true"
+										widgetVar="iDtVenctoEfetiva">
+										<p:ajax event="focus" process="@this iDtVencto"
+											update="opnDtVenctoEfetiva"
+											onstart="return triggerListener('#{tipoLancto}', 'iDtVenctoEfetiva')"
+											partialSubmit="true"
+											listener="#{viewForm.updateDtVenctoEfetiva}" />
+									</p:calendar>
+								</fd:labelInput>
+							</f:validateBean>
+						</p:outputPanel>
+
+
+						<fd:labelInput label="Dt Pagto :" alignRight="true">
+							<p:calendar styleClass="maskData" value="#{viewForm.e.dtPagto}"
+								id="iDtPagto" locale="pt" widgetVar="iDtPagto" showOn="button"
+								pattern="dd/MM/yyyy" size="10" selectOtherMonths="true"
+								showOtherMonths="true" />
+						</fd:labelInput>
+
+						<fd:labelInput labelWidth="120px" label="Descrição :"
+							breakAfter="true">
+							<p:inputText id="iDescricao" size="65"
+								value="#{viewForm.e.descricao}" />
+						</fd:labelInput>
+
+
+						<p:outputPanel id="opnBanco">
+							<fd:labelInput labelWidth="120px" label="Banco (origem) :"
+								breakAfter="true">
+
+								<p:inputText value="#{viewForm.e.documentoBanco.codigoBanco}"
+									size="10" readonly="true" />
+
+								<h:outputText value=" - " />
+
+								<p:autoComplete id="iDocumentoBanco" size="70"
+									value="#{viewForm.e.documentoBanco}" var="_"
+									itemLabel="#{_.nome}" itemValue="#{_}" forceSelection="false"
+									dropdown="true" completeMethod="#{lmFinanc.acBanco}"
+									minQueryLength="1" widgetVar="acDocumentoBanco"
+									converter="#{entityIdConverter}">
+									<p:ajax event="itemSelect" process="@this" update="opnBanco" />
+								</p:autoComplete>
+
+								<p:spacer width="4" />
+
+							</fd:labelInput>
+
+						</p:outputPanel>
+
+						<p:outputPanel id="opnGrupo">
+							<fd:labelInput labelWidth="120px" label="Grupo Moviment :"
+								breakAfter="true">
+
+								<p:selectOneMenu id="iGrupo" value="#{lmFinanc.grupo}"
+									converter="#{entityIdConverter}">
+									<f:selectItem itemValue="" itemLabel="" />
+									<f:selectItems value="#{lmFinanc.grupoValues}" var="gm"
+										itemLabel="#{gm.descricao}" itemValue="#{gm}" />
+									<p:ajax event="change" process="@this" update="opnGrupo"
+										partialSubmit="true" />
+								</p:selectOneMenu>
+
+
+								<p:selectOneMenu id="iGrupoItem" value="#{viewForm.e.grupoItem}"
+									rendered="#{lmFinanc.grupo ne null}"
+									converter="#{entityIdConverter}">
+									<p:ajax event="change" update="opnDtVencto opnGrupo"
+										process="iDtVencto" />
+									<f:selectItem itemValue="" itemLabel="-- Selecione" />
+									<f:selectItems value="#{lmFinanc.grupo.itens}" var="gi"
+										itemLabel="#{gi.descricao}" itemValue="#{gi}" />
+								</p:selectOneMenu>
+
+							</fd:labelInput>
+
+
+							<!-- utilizado quando seleciona uma categoria no dlgBuscaCateg -->
+							<p:remoteCommand name="updateOpnCategoria_#{tipoLancto}"
+								update="opnCategoria" process="@none" />
+
+							<fd:labelInput breakAfter="true" alignRight="true">
+								<p:commandButton value="Alterar Lote" style="width: 180px"
+									actionListener="#{viewForm.alterarLote}" icon="ui-icon-save"
+									id="btnAlterarLote" process=":frmMovimentacao_lote"
+									oncomplete="afterFormSubmit(xhr, status, args);">
+									<p:confirm />
+								</p:commandButton>
+
+								<p:spacer width="30px" />
+
+								<p:commandButton actionListener="#{viewForm.deletarLote}"
+									process="@this" id="btnDeletarLote"
+									oncomplete="afterFormSubmit(xhr, status, args);"
+									value="Deletar lote" icon="ui-icon-trash" styleClass="red-btn">
+									<p:confirm />
+								</p:commandButton>
+							</fd:labelInput>
+
+						</p:outputPanel>
+
+
+
+
+					</f:validateBean>
+
+				</p:outputPanel>
+
+
+			</p:dialog>
+
+
+		</h:form>
+
+
+
+	</sec:authorize>
+
+
+
+</ui:composition>

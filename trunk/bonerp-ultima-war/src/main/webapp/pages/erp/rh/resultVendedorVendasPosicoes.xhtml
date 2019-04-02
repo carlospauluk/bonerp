@@ -1,0 +1,173 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/templates/template.xhtml">
+
+
+	<ui:define name="content">
+
+		<div id="_slnm_resultVendasPosicoes" />
+
+		<ui:param name="view" value="#{resultVendasPosicoesView}" />
+
+		<h:form id="frm">
+
+			<p:panel id="panel" header="Resultado - Vendas/Posições">
+
+				<p:spacer height="8" />
+
+				<p:outputPanel id="opnVendedores">
+					<fd:labelInput label="Vendedor :" labelWidth="100px"
+						breakAfter="true">
+						<p:selectOneMenu value="#{view.vendedor}" id="iFuncionario"
+							converter="#{entityIdConverter}">
+
+							<f:selectItem itemValue="" itemLabel="" />
+							<f:selectItems value="#{view.getVendedores()}" var="f"
+								itemLabel="#{f.pessoa.nome}" itemValue="#{f}" />
+						</p:selectOneMenu>
+						<p:spacer width="10px" />
+						<p:selectBooleanCheckbox value="#{view.somenteVendedoresAtuais}">
+							<p:ajax event="change" update="opnVendedores" process="@this" />
+						</p:selectBooleanCheckbox> Somente atuais
+					</fd:labelInput>
+				</p:outputPanel>
+
+				<fd:labelInput label="Período :" labelWidth="100px">
+
+					<p:outputPanel id="opnPeriodo">
+
+						<p:selectOneRadio id="iPeriodo" value="#{view.periodo}">
+							<f:selectItems value="#{view.periodosSelect}" var="_"
+								itemValue="#{_}" itemLabel="#{_.label}" />
+							<p:ajax partialSubmit="true" process="@this" global="false"
+								update="opnPeriodo" />
+						</p:selectOneRadio>
+
+						<p:outputPanel rendered="#{view.periodo eq 'ESPECIFICO'}">
+							<fd:labelInput label="Entre :">
+								<p:inputText styleClass="maskData" size="9"
+									value="#{view.periodoIni}">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</p:inputText> e 
+								<p:inputText styleClass="maskData" size="9"
+									value="#{view.periodoFim}">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</p:inputText>
+							</fd:labelInput>
+
+						</p:outputPanel>
+
+					</p:outputPanel>
+
+				</fd:labelInput>
+
+				<fd:labelInput noLabel="true" breakAfter="true">
+					<p:commandButton id="btnGerar" update="pnResultMensal"
+						actionListener="#{view.gerarDtListResultMensal}"
+						icon="ui-icon-gear" value="Gerar" style="width: 200px" />
+				</fd:labelInput>
+
+				<p:spacer height="10px" />
+				<div style="clear: both;" />
+
+				<p:panel header="Resultados Mensais" id="pnResultMensal">
+
+
+
+					<p:dataTable id="dtResultMensal" var="_" rowIndexVar="row"
+						value="#{view.dtListResultMensal}" editable="true" editMode="cell"
+						sortBy="#{_.mesVenda.mesAno}" sortOrder="descending">
+
+						<p:column headerText="Mês/Ano" sortBy="#{_.mesAno}">
+							<h:outputText value="#{_.mesVenda.mesAno}">
+								<f:convertDateTime pattern="MMM/yyyy" />
+							</h:outputText>
+						</p:column>
+
+						<p:column headerText="Posição" sortBy="#{_.posicao}">
+							<div style="text-align: right;">
+								<h:outputText value="#{_.posicao}" />
+							</div>
+						</p:column>
+
+
+						<p:column headerText="Total/Mês">
+							<div style="text-align: right;">
+								<h:outputText value="#{_.totalVendido}"
+									converter="#{doubleConverterNull}" />
+							</div>
+						</p:column>
+
+						<p:column headerText="% Ating Meta Mín">
+							<div style="text-align: right;">
+								<h:outputText value="#{_.porcentMetaMinima}"
+									converter="#{doubleConverterNull}" />
+								%
+							</div>
+						</p:column>
+
+						<p:column headerText="% Ating Meta Comis">
+							<div style="text-align: right;">
+								<h:outputText value="#{_.porcentMetaComissao}"
+									converter="#{doubleConverterNull}" />
+								%
+							</div>
+						</p:column>
+
+						<p:column headerText="% Ating Meta Esp">
+							<div style="text-align: right;">
+								<h:outputText value="#{_.porcentMetaEsperada}"
+									converter="#{doubleConverterNull}" />
+								%
+							</div>
+						</p:column>
+
+						<p:column headerText="Qtde Vendas" sortBy="#{_.qtdeVendas}">
+							<div style="text-align: right;">
+								<h:outputText value="#{_.qtdeVendas}" />
+							</div>
+						</p:column>
+
+						<p:column headerText="Valor Médio Venda">
+							<div style="text-align: right;">
+								<h:outputText value="#{_.mediaValorVenda}"
+									converter="#{doubleConverterNull}" />
+							</div>
+						</p:column>
+
+						<p:column>
+							<f:facet name="header">
+										Qtde Vendas<br />
+										Meta Qtde Vendas<br />
+										% Meta Qtde Vendas
+									</f:facet>
+							<div style="text-align: right;">
+								<h:outputText value="#{_.qtdeVendas}" />
+								<br />
+								<h:outputText value="#{_.mesVenda.metaQtdeVendasVendedor}" />
+								<br />
+								<h:outputText value="#{_.porcentQtdeVendas}" />
+								%
+							</div>
+						</p:column>
+
+
+					</p:dataTable>
+				</p:panel>
+
+				<p:spacer height="10px" />
+				<div style="clear: both;" />
+
+
+			</p:panel>
+
+		</h:form>
+
+
+	</ui:define>
+
+</ui:composition>

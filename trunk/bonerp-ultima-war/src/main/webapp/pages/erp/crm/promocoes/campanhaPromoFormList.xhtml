@@ -1,0 +1,343 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	template="/templates/template.xhtml">
+
+	<ui:define name="headFirst">
+		<script src="#{resource['js/helpers.js']}" type="text/javascript"></script>
+	</ui:define>
+
+	<ui:define name="content">
+	
+		<div id="_slnm_campanhaPromoFormList" />
+
+		<sec:authorize ifNotGranted="ROLE_CRM_ADMIN">
+			<div class="errorMsg">Usuário sem autorização para acessar este
+				recurso.</div>
+		</sec:authorize>
+
+		<sec:authorize ifAnyGranted="ROLE_CRM_ADMIN">
+
+			<ui:param name="view" value="#{campanhaPromoFormListView}" />
+
+			<h:form id="frm">
+
+				<p:panel id="panel" header="Campanhas Promocionais">
+
+					<p:outputPanel id="opnToolbar">
+
+						<p:toolbar>
+							<f:facet name="left">
+								<p:commandButton id="btnNovo" icon="ui-icon-document"
+									oncomplete="PF('dlgForm').show()" actionListener="#{view.novo}"
+									process="@this" title="Novo registro (N)"
+									value="Nova Campanha Promocional" update="opnDlgForm" />
+
+								<p:commandButton id="btnAtualizar" title="Atualizar dados (A)"
+									update=":frm:opnDtList :frm:opnToolbar" process="@this"
+									icon="ui-icon-refresh"
+									actionListener="#{view.limparFiltrosECarregar}" />
+
+							</f:facet>
+							<f:facet name="right">
+								<div style="display: table; float: right;">
+									<p:inputText value="#{view.filtros['strPesquisa']}"
+										id="iStrPesquisa" />
+									<p:watermark value="Pesquisar..." for="iStrPesquisa" />
+									<p:commandButton actionListener="#{view.pesquisar}"
+										process="@this iStrPesquisa" update="opnDtList"
+										id="btnStrPesquisa" icon="ui-icon-search" />
+									<p:defaultCommand scope=":frm:panel"
+										target=":frm:btnStrPesquisa" />
+								</div>
+							</f:facet>
+						</p:toolbar>
+
+					</p:outputPanel>
+
+					<p:spacer height="10" />
+
+					<p:outputPanel id="opnLoadList">
+						<p:remoteCommand id="rcLoadList"
+							actionListener="#{view.loadList}" autoRun="true" name="loadList"
+							update="opnDtList" process="@this" />
+					</p:outputPanel>
+
+
+					<p:outputPanel id="opnDtList">
+
+						<p:dataTable id="dtList" var="_" rowIndexVar="row"
+							emptyMessage="Nenhum registro encontrado." value="#{view.list}"
+							sortOrder="#{view.orderByParam.orderByTypeStr}"
+							binding="#{view.dataTable}">
+
+							<p:ajax event="sort" listener="#{view.onSort}" />
+
+							<p:column headerText="#">
+								<h:outputText value="#{row + 1}" />
+							</p:column>
+
+							<p:column sortBy="#{_.descricao}" headerText="Descrição">
+								<h:outputText value="#{_.descricao}" />
+							</p:column>
+
+							<p:column sortBy="#{_.dtValidade}" style="width: 1px"
+								headerText="Início">
+								<div style="text-align: center;">
+									<h:outputText value="#{_.dtInicio}">
+										<f:convertDateTime pattern="dd/MM/yyyy" />
+									</h:outputText>
+								</div>
+							</p:column>
+
+							<p:column sortBy="#{_.dtFim}" style="width: 1px" headerText="Fim">
+								<div style="text-align: center;">
+									<h:outputText value="#{_.dtFim}">
+										<f:convertDateTime pattern="dd/MM/yyyy" />
+									</h:outputText>
+								</div>
+							</p:column>
+
+
+							<p:column styleClass="noWrapColBtns" headerText="">
+								<p:menuButton value="Exemplo">
+									<p:menuitem icon="ui-icon-print" value="PDF" 
+										actionListener="#{view.submitFormCupomExemplo(_, 'PDF')}"
+										title="Imprimir cupons" process="@this"
+										oncomplete="afterFormSubmit(xhr, status, args)" />
+										
+									<p:menuitem icon="ui-icon-print" value="Tela" 
+										actionListener="#{view.submitFormCupomExemplo(_, 'HTML')}"
+										title="Imprimir cupons" process="@this"
+										oncomplete="afterFormSubmit(xhr, status, args)" />
+									
+								</p:menuButton>
+
+								<p:commandButton title="Editar registro" icon="ui-icon-build"
+									id="btnEditar" actionListener="#{view.setE(_)}" process="@this"
+									onclick="PF('dlgForm').show();" update=":frm:opnDlgForm" />
+
+								<p:commandButton title="Deletar registro" icon="ui-icon-trash"
+									update=":frm:opnDtList" id="btnExcluir" styleClass="red-btn"
+									actionListener="#{view.deletar(_)}" process="@this">
+									<p:confirm />
+								</p:commandButton>
+
+							</p:column>
+
+							<f:facet name="footer"> Total de Registros: #{fn:length(view.list)}</f:facet>
+						</p:dataTable>
+					</p:outputPanel>
+
+				</p:panel>
+
+
+				<p:dialog id="dlgForm" widgetVar="dlgForm" position="top"
+					header="Campanha Promocional" modal="true" width="1000"
+					resizable="false" closeOnEscape="true">
+
+					<p:outputPanel id="opnDlgForm">
+
+						<p:messages severity="warn,error" />
+
+
+						<fd:labelInput label="Descrição :" labelWidth="140px"
+							breakAfter="true">
+							<p:inputText size="60" value="#{view.e.descricao}" />
+						</fd:labelInput>
+
+						<fd:labelInput label="Dt Início :" labelWidth="140px">
+							<p:calendar styleClass="maskData" value="#{view.e.dtInicio}"
+								locale="pt_BR" showOn="button" pattern="dd/MM/yyyy" size="12"
+								selectOtherMonths="true" showOtherMonths="true" />
+						</fd:labelInput>
+
+						<fd:labelInput label="Dt Fim :" breakAfter="true">
+							<p:calendar styleClass="maskData" value="#{view.e.dtFim}"
+								locale="pt_BR" showOn="button" pattern="dd/MM/yyyy" size="12"
+								selectOtherMonths="true" showOtherMonths="true" />
+						</fd:labelInput>
+
+						<p:spacer height="30px" />
+
+						<p:fieldset legend="Mensagem do Cupom">
+							<fd:labelInput breakAfter="true">
+								<p:editor id="iMsgsCupom" value="#{view.e.msgCupom}" />
+							</fd:labelInput>
+						</p:fieldset>
+
+						<p:spacer height="30px" />
+
+						<fd:labelInput label="Obs. :" labelWidth="100px" breakAfter="true">
+							<p:inputTextarea id="iObs" rows="4" cols="160"
+								value="#{view.e.obs}" />
+						</fd:labelInput>
+
+						<fd:labelInput breakAfter="true" alignRight="true">
+							<p:commandButton value="Salvar" update=":frm:opnDtList"
+								style="width: 180px" actionListener="#{view.save}"
+								oncomplete="afterFormSubmit(xhr, status, args)" id="btnSalvar"
+								icon="ui-icon-save" />
+						</fd:labelInput>
+
+
+
+						<p:spacer height="30px" />
+
+
+
+
+						<p:outputPanel id="opnDtListLotes" rendered="#{view.e.id ne null}">
+
+							<p:toolbar>
+								<f:facet name="left">
+									<h:outputText value="Lotes de Cupons"
+										style="font-size: 18px; margin: 5px" />
+								</f:facet>
+								<f:facet name="right">
+									<p:commandButton icon="ui-icon-document"
+										oncomplete="PF('dlgLote').show()" id="btnNovoLote"
+										update=":frmLote:opnDlgLote" actionListener="#{view.novoLote}"
+										title="Novo Lote de Cupons" style="width: 26; height: 26;"
+										process="@this" value="Novo Lote" />
+								</f:facet>
+							</p:toolbar>
+
+							<p:spacer height="10px" />
+
+
+							<p:dataTable id="dtLotes" var="lote" value="#{view.e.lotes}"
+								emptyMessage="Nenhum registro encontrado." rowIndexVar="row">
+
+
+								<p:column style="width: 1px" headerText="#">
+									<h:outputText value="#{row + 1}" />
+								</p:column>
+
+								<p:column headerText="Lote">
+									<h:outputText value="#{lote.numLote}" />
+								</p:column>
+
+								<p:column headerText="Emitido por">
+									<h:outputText value="#{lote.emitidoPor}" />
+								</p:column>
+
+								<p:column headerText="Dt Emissão" 
+									sortBy="#{_.dtEmissao}">
+									<div style="text-align: center;">
+										<h:outputText value="#{lote.dtEmissao}">
+											<f:convertDateTime pattern="dd/MM/yyyy" />
+										</h:outputText>
+									</div>
+								</p:column>
+
+								<p:column headerText="Qtde Cupons">
+									<div style="text-align: right;">
+										<h:outputText value="#{lote.cupons.size()}" />
+									</div>
+								</p:column>
+
+								<p:column headerText="" 
+									styleClass="noWrapColBtns">
+									<p:commandButton
+										actionListener="#{view.submitFormRelatorio(lote)}"
+										icon="ui-icon-print" title="Imprimir cupons" process="@this"
+										oncomplete="afterFormSubmit(xhr, status, args)" />
+
+									<p:commandButton actionListener="#{view.deleteLote(lote)}"
+										title="Deletar Item" icon="ui-icon-trash" styleClass="red-btn"
+										update=":frm:opnDtListLotes" process="@this">
+										<p:confirm />
+									</p:commandButton>
+
+								</p:column>
+
+
+
+							</p:dataTable>
+
+
+						</p:outputPanel>
+					</p:outputPanel>
+				</p:dialog>
+
+			</h:form>
+
+
+
+
+			<h:form id="frmLote">
+
+				<p:dialog id="dlgLote" widgetVar="dlgLote" header="Lote de Cupons"
+					position="top" modal="true" width="600" resizable="false"
+					closeOnEscape="true">
+
+					<p:outputPanel id="opnDlgLote">
+
+						<p:focus for="iNumCuponsGerar" />
+
+						<p:defaultCommand target="btnSalvarLote" />
+
+						<fd:labelInput label="Lote :" labelWidth="130px" breakAfter="true">
+							<p:inputText size="60" value="#{view.lote.numLote}"
+								readonly="true" />
+						</fd:labelInput>
+
+						<fd:labelInput label="Emitido por :" labelWidth="130px"
+							breakAfter="true">
+							<p:inputText size="60" value="#{view.lote.emitidoPor}"
+								readonly="true" />
+						</fd:labelInput>
+
+						<fd:labelInput label="Dt Emissão :" labelWidth="130px"
+							breakAfter="true">
+							<p:calendar styleClass="maskData" value="#{view.lote.dtEmissao}"
+								locale="pt_BR" showOn="button" pattern="dd/MM/yyyy" size="12"
+								selectOtherMonths="true" showOtherMonths="true" />
+						</fd:labelInput>
+
+						<fd:labelInput label="Número de Cupons :" labelWidth="130px">
+							<p:inputText size="6" value="#{view.numCuponsGerar}"
+								id="iNumCuponsGerar" styleClass="maskInt">
+								<f:convertNumber integerOnly="true" />
+							</p:inputText>
+						</fd:labelInput>
+
+
+						<fd:labelInput breakAfter="true" alignRight="true">
+							<p:commandButton value="Salvar" update=":frm:opnDtListLotes"
+								style="width: 180px" actionListener="#{view.saveLote}"
+								oncomplete="afterFormSubmit(xhr, status, args)"
+								id="btnSalvarLote" icon="ui-icon-save" />
+						</fd:labelInput>
+
+
+
+					</p:outputPanel>
+
+				</p:dialog>
+
+			</h:form>
+
+			<h:form target="_blank">
+				<p:commandButton action="#{view.imprimir}" id="btnRelatorio"
+					ajax="false" styleClass="botaoInvisivel" />
+			</h:form>
+
+			<h:form target="_blank">
+				<p:commandButton action="#{view.imprimirCupomExemplo}"
+					id="btnCupomExemplo" ajax="false" styleClass="botaoInvisivel" />
+			</h:form>
+
+
+		</sec:authorize>
+
+	</ui:define>
+
+
+</ui:composition>

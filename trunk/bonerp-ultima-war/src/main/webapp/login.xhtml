@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<f:metadata>
+	<f:event type="preRenderView" listener="#{loginView.onPageLoad}" />
+</f:metadata>
+
+<h:head>
+	<f:facet name="first">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta name="viewport"
+			content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<link rel="icon" type="image/png"
+			href="#{request.contextPath}/images/favicon.png" />
+	</f:facet>
+	<title>BonERP v.${project.version}</title>
+	<h:outputScript name="js/ripple.js" library="ultima-layout" />
+	<h:outputScript name="js/layout.js" library="ultima-layout" />
+</h:head>
+
+<h:body styleClass="login-body">
+
+	<h:form prependId="false" id="frm">
+	
+		<p:idleMonitor onidle="window.location.reload(true);"
+			timeout="#{60 * 1000 }" />
+
+		<input type="hidden" name="${_csrf.parameterName}"
+			value="${_csrf.token}" />
+
+
+
+		<div class="card login-panel ui-fluid">
+			<div class="ui-g">
+
+				<p:outputPanel rendered="#{param['errodelogin']}">
+					<div id="j_idt88:messages" class="ui-messages ui-widget"
+						aria-live="polite" data-global="false" data-summary="data-summary"
+						data-detail="data-detail" data-severity="all,error"
+						data-redisplay="true">
+						<div class="ui-messages-error ui-corner-all">
+							<a href="#" class="ui-messages-close"
+								onclick="$(this).parent().slideUp();return false;">
+								<span class="ui-icon ui-icon-close"></span>
+							</a>
+							<span class="ui-messages-error-icon"></span>
+							<ul>
+								<li>
+									<span class="ui-messages-error-summary">Erro:</span><span
+										class="ui-messages-error-detail">Nome de usuário ou
+										senha inválido.</span>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</p:outputPanel>
+
+
+				<div class="ui-g-12">
+					<h:graphicImage url="/images/logo_bonsucesso.jpg" />
+				</div>
+				<div class="ui-g-12">
+
+					<label for="username"
+						style="top: -20px; font-size: 12px; color: #03A9F4; text-align: left">Usuário</label>
+
+					<script>
+						$(function() {
+							$("#username").focus();
+						});
+					</script>
+
+					<input id="username" name="username" type="text" size="25"
+						style="text-transform: lowercase"
+						class="ui-inputfield ui-inputtext ui-widget ui-state-default ui-corner-all"
+						role="textbox" aria-disabled="false" aria-readonly="false" />
+
+				</div>
+				<div class="ui-g-12">
+
+					<label for="password"
+						style="top: -20px; font-size: 12px; color: #03A9F4; text-align: left">Senha</label>
+					<input id="password" name="password" type="password"
+						class="ui-inputfield ui-password ui-widget ui-state-default ui-corner-all"
+						style="outline-offset: -2px;" size="20" role="textbox"
+						aria-disabled="false" aria-readonly="false" />
+
+				</div>
+				<div class="ui-g-12">
+
+					<label for="password"
+						style="top: -20px; font-size: 12px; color: #03A9F4; text-align: left">Lembre-se
+						de mim</label> <input type="checkbox" id="remember-me" name="remember-me" />
+
+				</div>
+				<div class="ui-g-12">
+
+					<p:commandButton ajax="false" id="btnLogin"
+						actionListener="#{loginView.login}" icon="ui-icon-person"
+						value="Login" />
+					<!-- 
+					<p:button value="Esqueci minha senha" icon="ui-icon-help"
+						styleClass="secondary" />  -->
+				</div>
+			</div>
+		</div>
+
+		<div class="login-footer">
+
+			<table class="bottomTable">
+
+			</table>
+
+		</div>
+
+		<h:outputStylesheet name="css/ripple.css" library="ultima-layout" />
+		<h:outputStylesheet name="css/layout-#{guestPreferences.theme}.css"
+			library="ultima-layout" />
+
+	</h:form>
+</h:body>
+
+</html>

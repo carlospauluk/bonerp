@@ -1,0 +1,66 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags">
+
+
+	<!-- BUSCA DE FORNECEDORES -->
+	
+	<!-- Passar como parâmetro a variável 'update' -->
+		
+	<h:form id="frmDlgBuscaFuncionario">
+		<p:dialog id="dlgBuscaFuncionario" header="Buscar Funcionario"
+			widgetVar="dlgBuscaFuncionario" resizable="false"
+			modal="true"   closable="true"
+			closeOnEscape="true" position="top">
+
+			<p:outputPanel id="opnDlgBuscaFuncionario">
+			
+				<p:defaultCommand target="btnBuscarFuncionario" scope="frmDlgBuscaFuncionario" />
+
+				<fd:labelInput noLabel="true">
+					<p:inputText id="iBuscaFuncionario" size="65"
+						value="#{funcionarioFormListView.strBusca}" />
+					<p:watermark value="Pesquisar..." for="iBuscaFuncionario" />
+				</fd:labelInput>
+
+				<fd:labelInput noLabel="true" breakAfter="true" alignRight="true">
+					<p:commandButton actionListener="#{funcionarioFormListView.buscar}"
+						id="btnBuscarFuncionario"
+						icon="ui-icon-search" update="opnDlgBuscaFuncionario" />
+				</fd:labelInput>
+
+				<p:scrollPanel style="width:600px;height:400px" mode="native">  
+					<p:dataTable id="dtListBuscaFuncionario" var="_" rowIndexVar="row"
+						emptyMessage="Nenhum registro encontrado."
+						value="#{funcionarioFormListView.dtListBusca}">
+	
+						<p:column headerText="#" style="width: 20px">
+							<h:outputText value="#{row + 1}" />
+						</p:column>
+	
+						<p:column headerText="Código" sortBy="#{_.codigo}">
+							<h:outputText value="#{_.codigo}" />
+						</p:column>
+						
+						<p:column headerText="Nome" sortBy="#{_.nome}">
+							<h:outputText value="#{_.nome}" />
+						</p:column>
+						
+						<p:column width="1%">
+							<p:commandButton actionListener="#{view.selFuncionario(_)}"
+								icon="ui-icon-check" process="@this"
+								update="#{update}"
+								oncomplete="PF('dlgBuscaFuncionario').hide()" />
+						</p:column>
+					</p:dataTable>
+				</p:scrollPanel>
+				
+			</p:outputPanel>
+		</p:dialog>
+	</h:form>
+
+</ui:composition>

@@ -1,0 +1,195 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:param name="view" value="#{grupoFormListView}" />
+
+	<h:form id="frmDlg">
+
+		<p:dialog id="dlgGrupo" widgetVar="dlgGrupo" position="top"
+			header="Grupo de Movimentações" modal="true" resizable="false"
+			closeOnEscape="true" width="750px">
+			<p:outputPanel id="opnDlgGrupo">
+
+				<p:defaultCommand target="btnSalvarGrupo" />
+
+
+				<fd:labelInput label="Descrição *:" breakAfter="true"
+					labelWidth="130px">
+					<p:inputText size="50" value="#{view.e.descricao}" id="iDescricao" />
+				</fd:labelInput>
+
+				<p:outputPanel id="opnCategoria">
+					<fd:labelInput labelWidth="130px" label="Categoria :"
+						breakAfter="true">
+
+						<p:inputText converter="#{categoriaCodigoConverter}"
+							value="#{view.e.categoriaPadrao.codigo}" size="10"
+							readonly="true" />
+
+						<h:outputText value="-" />
+
+						<p:autoComplete id="iCategoria" size="60"
+							value="#{view.e.categoriaPadrao}" var="cat"
+							itemLabel="#{cat.descricao}" itemValue="#{cat}"
+							forceSelection="false" completeMethod="#{categoriaFinder.findFolhasBy}"
+							minQueryLength="3" widgetVar="acCategoria"
+							converter="#{entityIdConverter}">
+							<p:ajax event="itemSelect" process="@this" update="opnCategoria"
+								oncomplete="_$('iModoMoviment').focus()" />
+						</p:autoComplete>
+
+						<p:spacer width="4" />
+
+						<p:commandButton id="btnBuscaCateg" title="Buscar Categoria"
+							actionListener="#{categoriaFormListView.categoriaFormListView}"
+							oncomplete="PF('dlgBuscaCateg').show()"
+							update=":frmDlgBuscaCateg:opnTree" partialSubmit="true"
+							process="@none" icon="ui-icon-search" />
+
+
+					</fd:labelInput>
+
+
+				</p:outputPanel>
+
+				<fd:labelInput label="Dia Vencto *:" breakAfter="true"
+					labelWidth="130px">
+
+					<p:inputText id="iDiaVencto" styleClass="maskInt"
+						value="#{view.e.diaVencto}" size="8">
+						<f:convertNumber integerOnly="true" />
+					</p:inputText>
+						* Dia 32 = último dia do mês.
+
+					</fd:labelInput>
+
+				<fd:labelInput label="Dia Início (aprox) *:" breakAfter="true"
+					labelWidth="130px">
+
+					<p:inputText id="iDiaInicioAprox" styleClass="maskInt"
+						value="#{view.e.diaInicioAprox}" size="8">
+						<f:convertNumber integerOnly="true" />
+					</p:inputText>
+
+				</fd:labelInput>
+
+
+				<fd:labelInput label="Ativo:" labelWidth="130px" breakAfter="true">
+					<p:selectBooleanCheckbox value="#{view.e.ativo}" />
+				</fd:labelInput>
+
+
+				<fd:labelInput label="Carteira Pagto Padrão:" labelWidth="130px"
+					breakAfter="true">
+					<p:selectOneMenu id="iCarteiraPagtoPadrao"
+						value="#{view.e.carteiraPagantePadrao}"
+						converter="#{entityIdConverter}">
+						<f:selectItem itemLabel="" itemValue="" />
+						<f:selectItems value="#{lmFinanc.carteiraConcretaValues}" var="c"
+							itemLabel="#{c.codigo} - #{c.descricao}" itemValue="#{c}" />
+					</p:selectOneMenu>
+				</fd:labelInput>
+
+
+
+
+
+				<p:spacer height="20px" />
+
+				<fd:labelInput noLabel="true" alignRight="true">
+					<p:commandButton title="Salvar o registro atual"
+						id="btnSalvarGrupo" update=":frm" icon="ui-icon-save"
+						value="Salvar" style="width: 110px" actionListener="#{view.save}"
+						oncomplete="afterFormSubmit(xhr, status, args);"
+						process="dlgGrupo" />
+				</fd:labelInput>
+
+			</p:outputPanel>
+		</p:dialog>
+
+
+
+
+
+
+		<p:dialog id="dlgGrupoItem" widgetVar="dlgGrupoItem" position="top"
+			header="Item de Grupo" modal="true" resizable="false"
+			closeOnEscape="true" width="600px">
+			
+			<p:outputPanel id="opnDlgGrupoItem">
+
+				<p:defaultCommand target="btnSalvarGrupoItem" />
+
+				<fd:labelInput label="Descrição *:" breakAfter="true"
+					labelWidth="130px">
+					<p:inputText size="50" value="#{view.grupoItem.descricao}"
+						id="iDescricaoItem" />
+
+					<p:contextMenu for="iDescricaoItem">
+						<p:menuitem value="Gerar automaticamente"
+							process="@this iDtVencto"
+							actionListener="#{view.gerarDescricaoGrupoItem}"
+							update="iDescricaoItem" icon="ui-icon-refresh" />
+					</p:contextMenu>
+
+				</fd:labelInput>
+
+
+				<fd:labelInput label="Valor Informado:" labelWidth="130px"
+					breakAfter="true">
+					<p:inputText size="10" value="#{view.grupoItem.valorInformado}"
+						id="iValorInf" styleClass="maskMoney" style="text-align: right;"
+						converter="#{doubleConverterAbs}">
+					</p:inputText>
+				</fd:labelInput>
+
+				<fd:labelInput label="Fechado:" labelWidth="130px" breakAfter="true">
+					<p:selectBooleanCheckbox value="#{view.grupoItem.fechado}" />
+				</fd:labelInput>
+
+				<fd:labelInput label="Carteira Pagto:" labelWidth="130px"
+					breakAfter="true">
+					<p:selectOneMenu id="iCarteiraPagto"
+						value="#{view.grupoItem.carteiraPagante}"
+						converter="#{entityIdConverter}">
+						<f:selectItem itemLabel="" itemValue="" />
+						<f:selectItems value="#{lmFinanc.carteiraConcretaValues}" var="c"
+							itemLabel="#{c.codigo} - #{c.descricao}" itemValue="#{c}" />
+					</p:selectOneMenu>
+				</fd:labelInput>
+
+				<fd:labelInput label="Dt Vencto :" labelWidth="130px"
+					breakAfter="true">
+					<p:calendar styleClass="maskData"
+						value="#{view.grupoItem.dtVencto}" id="iDtVencto" locale="pt"
+						showOn="button" pattern="dd/MM/yyyy" size="12"
+						selectOtherMonths="true" showOtherMonths="true"
+						widgetVar="iDtVencto">
+					</p:calendar>
+				</fd:labelInput>
+
+				<p:spacer height="20px" />
+
+				<fd:labelInput noLabel="true" alignRight="true">
+					<p:commandButton title="Salvar o registro atual"
+						process="opnDlgGrupoItem" id="btnSalvarGrupoItem" partialSubmit="true"
+						update=":frm" icon="ui-icon-save" value="Salvar"
+						style="width: 110px" actionListener="#{view.saveGrupoItem}"
+						oncomplete="afterFormSubmit(xhr, status, args);" />
+				</fd:labelInput>
+
+			</p:outputPanel>
+		</p:dialog>
+
+
+
+	</h:form>
+
+
+</ui:composition>

@@ -1,0 +1,167 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:p="http://primefaces.org/ui">
+
+
+
+
+	<p:dataTable id="dtList" var="_" rowIndexVar="row" rowKey="#{_}"
+		widgetVar="dataTable1Widget" selection="#{viewForm.selecteds}"
+		emptyMessage="Nenhum registro encontrado."
+		value="#{viewForm.importadas}"
+		rowStyleClass="#{movimentacaoExtratoListView.getRowStyleClass(_)}"
+		sortMode="multiple">
+
+		<p:column selectionMode="multiple" style="width:2%" />
+
+		<p:column style="width: 1px" headerText="#">
+			<h:outputText value="#{row + 1}" />
+			<h:outputText rendered="#{_.id ne null}" value=" (#{_.id})" />
+		</p:column>
+
+		<p:column headerText="Tipo Lancto" sortBy="#{_.tipoLancto.label}">
+			<h:outputText value="#{_.tipoLancto.label}" />
+		</p:column>
+
+		<p:column rendered="#{true}" headerText="Carteira"
+			sortBy="#{_.carteira}">
+			<h:outputText value="#{_.carteira.codigo} - #{_.carteira.descricao}" />
+			<p:outputPanel rendered="#{_.carteiraDestino ne null}"
+				style="text-align: right">
+				<h:outputText
+					value=">> PARA: #{_.carteiraDestino.codigo} - #{_.carteiraDestino.descricao}" />
+			</p:outputPanel>
+		</p:column>
+
+		<p:column rendered="#{true}" style="#{viewForm.getBgColor(_)}">
+			<f:facet name="header">
+				<h:outputText value="Categoria" />
+				<br />
+				<h:outputText value="Modo" />
+			</f:facet>
+			<h:outputText
+				value="#{_.categoria.codigoM} - #{_.categoria.descricao}" />
+			<br />
+			<h:outputText value="#{_.modo.codigo} - #{_.modo.descricao}" />
+		</p:column>
+
+		<p:column>
+			<f:facet name="header">
+				<h:outputText value="Descrição" />
+			</f:facet>
+			<h:outputText value="#{_.descricaoMontada}" escape="false"
+				style="white-space: pre-wrap;" />
+
+		</p:column>
+
+		<p:column sortBy="#{_.dtVencto}">
+			<f:facet name="header">
+				Dt Vencto<br />
+				Dt Pagto
+			</f:facet>
+			<h:outputText value="#{_.dtVenctoEfetiva}">
+				<f:convertDateTime pattern="dd/MM/yyyy" />
+			</h:outputText>
+			<br />
+			<h:outputText value="#{_.dtPagto}">
+				<f:convertDateTime pattern="dd/MM/yyyy" />
+			</h:outputText>
+		</p:column>
+
+
+		<p:column headerText="Valor Total" sortBy="#{_.valorTotal}">
+			<div style="text-align: right">
+				<h:outputText value="#{_.valorTotal}"
+					converter="#{doubleConverter}" />
+			</div>
+		</p:column>
+
+		<p:column headerText="Sit" styleClass="noWrapColBtns">
+			<h:outputText value="#{_.id ne null ? 'Editando' : 'Nova'}" />
+		</p:column>
+
+		<p:column headerText="" styleClass="noWrapColBtns">
+
+
+			<p:splitButton value="Editar"
+				id="btnEditar"
+				actionListener="#{viewForm.iniEdit(_, 'GERAL')}" process="@this"
+				partialSubmit="true"
+				update=":frmMovimentacao_GERAL:opnDlgMovimentacao"
+				oncomplete="PF('dlgMovimentacao_GERAL').show()"
+				title="Editar registro" icon="ui-icon-build">
+				
+				<p:menuitem value="Editar Cheque Próprio"
+					id="btnEditarChequeProprio"
+					actionListener="#{viewForm.iniEdit(_, 'CHEQUE_PROPRIO')}"
+					oncomplete="PF('dlgMovimentacao_CHEQUE_PROPRIO').show()"
+					process="@this"
+					update=":frmMovimentacao_CHEQUE_PROPRIO:opnDlgMovimentacao"
+					icon="ui-icon-document" />
+
+				<p:menuitem value="Editar Cheque de Terceiro"
+					id="btnEditarChequeTerceiro"
+					actionListener="#{viewForm.iniEdit(_, 'CHEQUE_TERCEIROS')}"
+					title="Lançar uma movimentação realizada com cheque de terceiros"
+					oncomplete="PF('dlgMovimentacao_CHEQUE_TERCEIROS').show()"
+					process="@this"
+					update=":frmMovimentacao_CHEQUE_TERCEIROS:opnDlgMovimentacao"
+					icon="ui-icon-document" />
+
+				<p:menuitem value="Editar Transferência Própria"
+					id="btnEditarTransferenciaPropria"
+					actionListener="#{viewForm.iniEdit(_, 'TRANSF_PROPRIA')}"
+					title="Lançar uma transferência entre carteiras próprias"
+					oncomplete="PF('dlgMovimentacao_TRANSF_PROPRIA').show()"
+					process="@this"
+					update=":frmMovimentacao_TRANSF_PROPRIA:opnDlgMovimentacao"
+					icon="ui-icon-document" />
+					
+				<p:menuitem value="Selecionar movimentação existente"
+					id="btnSelecionarMovimentacaoExistente"
+					actionListener="#{viewForm.iniEdit(_, 'GERAL')}"
+					title="Seleciona uma movimentação já existente para esta linha importada"
+					oncomplete="PF('dlgBuscaMovimentacao').show()"
+					process="@this"
+					update=":frmDlgBuscaMovimentacao:opnDlg"
+					icon="ui-icon-search" />
+
+			</p:splitButton>
+
+
+			<p:commandButton actionListener="#{viewForm.remover(_)}"
+				id="btnDeletar" styleClass="red-btn"
+				title="Deletar registro" process="@this" icon="ui-icon-trash"
+				update=":frm">
+				<p:confirm />
+			</p:commandButton>
+		</p:column>
+
+
+		<p:columnGroup type="footer">
+			<p:row>
+				<p:column colspan="7" footerText="Total (R$): "
+					style="text-align: right; font-weight: bold" />
+				<p:column style="text-align: right; font-weight: bold">
+					<f:facet name="footer">
+						<h:outputText value="#{viewForm.total}"
+							converter="#{doubleConverter}" />
+					</f:facet>
+				</p:column>
+				<p:column />
+				<p:column />
+			</p:row>
+		</p:columnGroup>
+
+
+
+	</p:dataTable>
+
+
+
+</ui:composition>

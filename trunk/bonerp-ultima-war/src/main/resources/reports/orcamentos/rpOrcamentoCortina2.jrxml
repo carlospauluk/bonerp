@@ -1,0 +1,570 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.0.1.final using JasperReports Library version 6.0.0  -->
+<!-- 2016-06-18T13:50:53 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rpOrcamento" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isSummaryWithPageHeaderAndFooter="true" uuid="2a67a703-1e4b-425d-9d18-40e739567676">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="647"/>
+	<property name="ireport.callouts" value="##Mon Nov 10 10:25:51 BRST 2014"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="bonerp_prod"/>
+	<parameter name="orcamentoId" class="java.lang.String"/>
+	<parameter name="totalizarGrupo" class="java.lang.Boolean">
+		<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
+	</parameter>
+	<parameter name="agrupar_por_reduzido" class="java.lang.Boolean">
+		<defaultValueExpression><![CDATA[Boolean.FALSE]]></defaultValueExpression>
+	</parameter>
+	<queryString language="SQL">
+		<![CDATA[SELECT
+    orc.id as id,
+    orc.cabecalho,
+    orc.desconto,
+    orc.dt_preenchimento,
+    orc.dt_validade,
+    orc.obs,
+    orc.exibir_totais,
+    orc.preenchido_por,
+    orc.status as status_orcamento,
+    cliente_pessoa.nome_fantasia,
+    cliente_pessoa.nome as nome_cliente,
+    orc_grupo.id as grupo_id,
+    orc_grupo.ordem as grupo_ordem,
+    orc_grupo.titulo,
+    orc_item.descricao as item_descricao,
+    orc_item.ordem as item_ordem,
+    orc_item.valor_unit,
+    orc_item.obs as item_obs,
+    cortina.id as cortina_id,
+    cortina.altura,
+    cortina.largura,
+    cortina.altura_janela,
+    cortina.largura_janela,
+    (
+    SELECT round(truncate(( SUM(i_.qtde * i_.valor_unit ) ), 3) + 0.0001, 2)
+    FROM
+        orc_orcamento o_,
+        orc_orcamento_grupo_item g_,
+        orc_orcamento_item i_
+    WHERE
+        o_.id = orc.id AND
+        i_.orcamento_grupo_id = g_.id AND g_.orcamento_id = o_.id
+        ) as sub_total,
+    (
+    SELECT round(truncate(( SUM(i_.qtde * i_.valor_unit * ((100-o_.desconto)/100) ) ), 3) + 0.0001, 2)
+    FROM
+        orc_orcamento o_,
+        orc_orcamento_grupo_item g_,
+        orc_orcamento_item i_
+    WHERE
+        o_.id = orc.id AND
+        i_.orcamento_grupo_id = g_.id AND g_.orcamento_id = o_.id
+        ) as valor_total
+FROM
+    orc_orcamento orc
+    LEFT JOIN crm_cliente cliente ON orc.cliente_id = cliente.id
+    LEFT JOIN bon_pessoa cliente_pessoa ON cliente.pessoa_id = cliente_pessoa.id
+    JOIN orc_orcamento_grupo_item orc_grupo ON orc_grupo.orcamento_id = orc.id
+    JOIN orc_orcamento_item orc_item ON orc_item. orcamento_grupo_id  = orc_grupo.id
+    JOIN crtn_cortina cortina ON cortina.orcamento_item_id = orc_item.id
+WHERE
+    orc.id = $P{orcamentoId}
+ORDER BY
+    orc_grupo. ordem ,
+    orc_item. ordem]]>
+	</queryString>
+	<field name="id" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="cabecalho" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="desconto" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="dt_preenchimento" class="java.sql.Timestamp">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="dt_validade" class="java.sql.Timestamp">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="obs" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="exibir_totais" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="preenchido_por" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="status_orcamento" class="java.lang.String"/>
+	<field name="nome_fantasia" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="grupo_id" class="java.lang.Long"/>
+	<field name="grupo_ordem" class="java.lang.Integer"/>
+	<field name="titulo" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="item_descricao" class="java.lang.String"/>
+	<field name="item_ordem" class="java.lang.Integer"/>
+	<field name="valor_unit" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="item_obs" class="java.lang.String"/>
+	<field name="sub_total" class="java.lang.Double"/>
+	<field name="valor_total" class="java.lang.Double"/>
+	<field name="altura" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="largura" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="altura_janela" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="largura_janela" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="cortina_id" class="java.lang.Long"/>
+	<field name="nome_cliente" class="java.lang.String"/>
+	<variable name="total_grupo" class="java.lang.Double" resetType="Group" resetGroup="grupo" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_total}]]></variableExpression>
+	</variable>
+	<variable name="horizontal" class="java.lang.Boolean" resetType="Column">
+		<variableExpression><![CDATA[$F{altura_janela}.doubleValue() <= $F{largura_janela}.doubleValue()]]></variableExpression>
+	</variable>
+	<group name="grupo">
+		<groupExpression><![CDATA[$F{grupo_id}]]></groupExpression>
+		<groupHeader>
+			<band height="23">
+				<textField isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="555" height="23" backcolor="#CCCCCC" uuid="9130ccf1-4bd1-4ff2-acd6-6a2591f26a38"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="12" isBold="true" isItalic="false" isUnderline="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{titulo}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="30">
+				<printWhenExpression><![CDATA[$P{totalizarGrupo} == true]]></printWhenExpression>
+				<textField pattern="#,###,##0.00">
+					<reportElement mode="Opaque" x="447" y="0" width="108" height="20" backcolor="#CCCCCC" uuid="0035da50-eaf7-4fbb-99bf-1f4d8c9c37f1"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Lucida Sans"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{total_grupo}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="447" height="20" backcolor="#CCCCCC" uuid="d1560fb7-9196-4388-9714-d1d3f83af117"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="10" isBold="true" isItalic="false" isUnderline="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA["TOTAL (" + $F{titulo} + "):"]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="0" y="24" width="555" height="1" uuid="9c5d033f-d1b1-4109-80ea-b436c0c173af"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="69" splitType="Prevent">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement isPrintRepeatedValues="false" x="0" y="63" width="555" height="1" uuid="185fa0cd-c078-47ee-acaf-7212e38f2216"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Lucida Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cabecalho}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="0" y="0" width="190" height="55" uuid="9b39bbdf-6c49-475a-8cba-99a8ca043cf1"/>
+				<imageExpression><![CDATA["../LOGO_COMPLETO_400px.jpg"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="263" y="0" width="292" height="32" uuid="7c87a2c9-af2d-484e-a824-32fd537abe1e"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="24" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Orçamento de Cortinas]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="59" width="555" height="1" uuid="9a7ff124-7392-4313-95da-59e5fc154a23"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<textField pattern="0000000">
+				<reportElement x="499" y="36" width="56" height="20" uuid="5d18f100-4eb0-4f0a-abc9-af79185055af"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{id}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="399" y="36" width="100" height="20" uuid="ba42ba61-3b22-43f6-8fec-8025c1a406fd"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Lucida Sans"/>
+				</textElement>
+				<text><![CDATA[Nº:]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="196">
+			<image scaleImage="FillFrame" isLazy="true" evaluationTime="Auto">
+				<reportElement positionType="Float" x="40" y="35" width="143" height="161" uuid="9ab71b29-307e-475a-b38f-a68eb5911cb3">
+					<property name="local_mesure_unitx" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="local_mesure_unitwidth" value="pixel"/>
+					<printWhenExpression><![CDATA[$F{altura}.doubleValue() > $F{largura}.doubleValue()]]></printWhenExpression>
+				</reportElement>
+				<imageExpression><![CDATA["/etc/tomcat/webapps/bonerp/WEB-INF/classes/reports/orcamentos/janela_vert.png"]]></imageExpression>
+			</image>
+			<image scaleImage="FillFrame">
+				<reportElement x="1" y="31" width="237" height="165" uuid="e1d6dbc3-6f95-453e-a773-86efa9ac702d">
+					<printWhenExpression><![CDATA[$F{altura}.doubleValue() <= $F{largura}.doubleValue()]]></printWhenExpression>
+				</reportElement>
+				<imageExpression><![CDATA["/etc/tomcat/webapps/bonerp/WEB-INF/classes/reports/orcamentos/janela_horiz.png"]]></imageExpression>
+			</image>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="0" y="0" width="244" height="30" uuid="aedec295-1887-49b3-9167-8de3b58a8d84"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.2"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="12" isBold="true" isItalic="true" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{item_descricao}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,###,##0.00" isBlankWhenNull="true">
+				<reportElement x="165" y="96" width="35" height="15" uuid="c3349566-3ce8-4e26-b5dd-b045dc8790b5"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{altura}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,###,##0.00">
+				<reportElement x="112" y="30" width="35" height="15" uuid="03c8f954-c378-4d50-9c11-062a667d08d0"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{largura}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="200" y="96" width="15" height="15" uuid="6a1e531a-d09a-4457-a9dc-4581d320b5af"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[m]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="147" y="30" width="15" height="15" uuid="e3a770fb-042d-4685-a7e3-3d594aa3a516"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[m]]></text>
+			</staticText>
+			<subreport>
+				<reportElement x="245" y="0" width="310" height="188" uuid="9ee16364-f2e4-452e-a507-a4a9b514ffc2">
+					<property name="local_mesure_unitwidth" value="cm"/>
+					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
+				</reportElement>
+				<subreportParameter name="cortinaId">
+					<subreportParameterExpression><![CDATA[$F{cortina_id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{agrupar_por_reduzido} ? "rpOrcamentoCortina2_cortina_AGRUPAR_POR_REDUZIDO.jasper" : "rpOrcamentoCortina2_cortina.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="63">
+			<staticText>
+				<reportElement x="525" y="42" width="15" height="12" uuid="351d9b87-113f-4c94-90d0-76334a5f2303"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[de]]></text>
+			</staticText>
+			<textField pattern="00">
+				<reportElement x="510" y="42" width="15" height="12" uuid="0593f3e3-6f2e-4e78-96e7-7dbe4741e68f"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="00">
+				<reportElement x="540" y="42" width="15" height="12" uuid="87933d26-6425-4bb1-8212-f735913d6f80"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="7" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="14" width="246" height="10" uuid="c0255e42-8890-4989-abc2-95371ed60e28"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="8"/>
+				</textElement>
+				<text><![CDATA[COMERCIAL DE TECIDOS PAULUK LTDA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="309" y="14" width="246" height="10" uuid="7312aa30-e0c4-4818-bad9-aab31dc8e01c"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="8"/>
+				</textElement>
+				<text><![CDATA[I.E.: 20103024-23          CNPJ: 77.498.442/0001-34]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="24" width="246" height="10" uuid="a8a778b9-6838-4a90-9fd9-f0adb6d3a1fe"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="8"/>
+				</textElement>
+				<text><![CDATA[Av. Dom Pedro II, 337  .  Nova Rússia  .  Ponta Grossa-PR  .  CEP 84053-000]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="246" y="24" width="309" height="10" uuid="df5daca7-befa-4e10-b45e-e446f6275dd8"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="8"/>
+				</textElement>
+				<text><![CDATA[(42) 3227.6657   (42) 3227.6650     contato@casabonsucesso.com.br]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="11" width="555" height="1" uuid="062d8f98-acf3-4676-bb6a-ac9a2b0eeec5"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<textField>
+				<reportElement x="0" y="42" width="378" height="12" uuid="dbb9b888-d16f-4750-9fe8-c0c1c3b8f121"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="6" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Preenchido por " + $F{preenchido_por} + " em " + new SimpleDateFormat("dd/MM/YYYY").format($F{dt_preenchimento})]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="258" splitType="Immediate">
+			<printWhenExpression><![CDATA[$P{agrupar_por_reduzido} == Boolean.FALSE]]></printWhenExpression>
+			<textField>
+				<reportElement positionType="Float" x="0" y="149" width="555" height="20" uuid="b6560f54-f469-43a4-a20b-b7ab6f7eebc5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="8" isBold="true" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("'PONTA GROSSA,' dd 'de' MMMM 'de' YYYY").format(new Date())]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="0" y="128" width="555" height="18" uuid="696a1fd8-4c65-497b-aed9-a1aa33825d4e"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{obs}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="88" width="56" height="16" uuid="edc215bd-43c5-424d-987f-9b56afa9bb8e"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="8" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Válido até:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="56" y="88" width="100" height="16" uuid="d58340b6-e483-4149-ac48-41bebdd0f332"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{dt_validade}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="108" width="100" height="20" uuid="412f3323-cad3-4a5e-9d0a-e04be4e8622c">
+					<printWhenExpression><![CDATA[$F{obs} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="8" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Observações:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1" y="169" width="257" height="67" uuid="5a044fc9-d125-4b33-ba26-24ef6094e519"/>
+				<box>
+					<bottomPen lineWidth="0.25"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<frame>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="555" height="32" isRemoveLineWhenBlank="true" uuid="17ced22a-75e0-4396-bc78-6b4474c49bad"/>
+				<textField pattern="#,##0.00" isBlankWhenNull="false">
+					<reportElement mode="Opaque" x="447" y="0" width="108" height="16" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#CCCCCC" uuid="8329c795-d9c7-4e94-986a-92dee3f5cfc6">
+						<printWhenExpression><![CDATA[$F{exibir_totais}.equals( true ) && $F{desconto} != 0.0]]></printWhenExpression>
+					</reportElement>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Lucida Sans" size="10" isBold="true" isItalic="true" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{sub_total}]]></textFieldExpression>
+				</textField>
+				<textField pattern="">
+					<reportElement mode="Opaque" x="447" y="16" width="108" height="16" isRemoveLineWhenBlank="true" backcolor="#CCCCCC" uuid="d5483aeb-4cda-4aa4-9359-b5720196fe65">
+						<printWhenExpression><![CDATA[$F{exibir_totais}.equals( true ) && $F{desconto} != 0.0]]></printWhenExpression>
+					</reportElement>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="10" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[new java.text.DecimalFormat( "#,###,###,##0.00" ).format($F{desconto}) + "%"]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement mode="Opaque" x="0" y="16" width="447" height="16" isRemoveLineWhenBlank="true" backcolor="#CCCCCC" uuid="c45e4405-1182-4380-a3cd-c7ba687f2ec8">
+						<printWhenExpression><![CDATA[$F{exibir_totais}.equals( true ) && $F{desconto} != 0.0]]></printWhenExpression>
+					</reportElement>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="10" isItalic="true"/>
+					</textElement>
+					<text><![CDATA[Desconto (%):]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="0" y="0" width="447" height="16" isRemoveLineWhenBlank="true" backcolor="#CCCCCC" uuid="e13eca84-8c4b-4185-99fb-9a6ae4c018e0">
+						<printWhenExpression><![CDATA[$F{exibir_totais}.equals( true ) && $F{desconto} != 0.0]]></printWhenExpression>
+					</reportElement>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="10" isItalic="true"/>
+					</textElement>
+					<text><![CDATA[SUB-TOTAL (R$):]]></text>
+				</staticText>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="0" y="32" width="555" height="25" uuid="d2de5c7c-9d59-4565-a3a1-d877434fba03"/>
+				<staticText>
+					<reportElement mode="Opaque" x="0" y="0" width="447" height="25" backcolor="#CCCCCC" uuid="b8bac16b-f733-40ed-af73-99fa5f123645">
+						<printWhenExpression><![CDATA[$F{exibir_totais}.equals( true )]]></printWhenExpression>
+					</reportElement>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="10" isItalic="true"/>
+					</textElement>
+					<text><![CDATA[TOTAL (R$):]]></text>
+				</staticText>
+				<textField pattern="#,##0.00">
+					<reportElement mode="Opaque" x="447" y="0" width="108" height="25" backcolor="#CCCCCC" uuid="f8eff9fd-3b9d-4366-92b7-10fb42314cbd">
+						<printWhenExpression><![CDATA[$F{exibir_totais}.equals( true )]]></printWhenExpression>
+					</reportElement>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="10" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{valor_total}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<staticText>
+				<reportElement x="298" y="169" width="257" height="67" uuid="a6afd9a9-62ca-45d5-8cef-9545eb74ccf6"/>
+				<box>
+					<bottomPen lineWidth="0.25"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="318" y="169" width="217" height="82" uuid="393fb07e-a049-4814-bd84-e48f7b49813b"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Lucida Sans"/>
+				</textElement>
+				<text><![CDATA[COMERCIAL DE TECIDOS PAULUK LTDA]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="13" y="169" width="232" height="82" uuid="4291f975-7b66-4273-ad36-fbeda69040db"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Lucida Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA["CLIENTE: " + ($F{nome_cliente} == null ? "" : $F{nome_cliente})]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

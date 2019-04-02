@@ -1,0 +1,106 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:sec="http://www.springframework.org/security/tags">
+
+
+	<!-- 
+	
+		Este é um arquivo de template. Deve ser "decorado" pelos vários tipos de arquivos de movimentações 
+		que constam no enum <<MovimentacaoBusiness.TipoLancto>>
+	
+		PARAMS:
+			tipoLancto: utilizado como sufixo
+			tituloDlg: título do dialog
+	-->
+
+	<c:if test="#{empty viewForm}">
+		<ui:param name="viewForm" value="#{movimentacaoFormView}" />
+	</c:if>
+
+	<p:outputPanel id="opnPessoa">
+
+		<fd:labelInput labelWidth="130px" label="Sacado/Cedente :">
+
+			<p:autoComplete id="iPessoa" size="50" value="#{viewForm.e.pessoa}"
+				var="pessoa" itemLabel="#{pessoa.nomeExibicao}"
+				itemValue="#{pessoa}" forceSelection="false" maxResults="50"
+				completeMethod="#{viewForm.acPessoa}" minQueryLength="1"
+				widgetVar="acPessoa" converter="#{entityIdConverter}">
+				<p:ajax event="itemSelect" process="@this" update="opnPessoa" />
+			</p:autoComplete>
+
+			<p:tooltip id="ttPessoa" for="iPessoa"
+				value="#{viewForm.e.pessoa.nomeExibicao}" trackMouse="true" />
+
+			<div style="float: right">
+				<p:selectOneRadio value="#{viewForm.pessoaCadastro}">
+					<f:selectItems value="#{lmBase.pessoaCadastroValues}" var="_"
+						itemLabel="#{_.label}" itemValue="#{_}" />
+					<p:ajax event="change" process="@this" />
+				</p:selectOneRadio>
+			</div>
+
+
+			<p:spacer width="4" />
+			<p:commandButton id="btnBuscaPessoa"
+				title="Buscar Pessoa Sacado/Cedente"
+				oncomplete="PF('dlgBuscaPessoaMovimentacao_#{tipoLancto}').show()"
+				update=":frmDlgBuscaPessoaMovimentacao_#{tipoLancto}:opnDlg"
+				process="@this" icon="ui-icon-search" />
+
+		</fd:labelInput>
+	</p:outputPanel>
+
+	<fd:labelInput label="Descrição :" labelWidth="130px">
+		<p:inputText id="iDescricao" size="65" value="#{viewForm.e.descricao}" />
+	</fd:labelInput>
+
+	<fd:labelInput label="Dt Pagto :" breakAfter="true" alignRight="true">
+		<p:calendar styleClass="maskData" value="#{viewForm.e.dtPagto}"
+			id="iDtPagto" locale="pt" widgetVar="iDtPagto" showOn="button"
+			pattern="dd/MM/yyyy" size="12" selectOtherMonths="true"
+			showOtherMonths="true">
+		</p:calendar>
+	</fd:labelInput>
+
+	<fd:labelInput label="Carteira :" labelWidth="130px">
+		<p:selectOneMenu id="iCarteira" value="#{viewForm.e.carteira}"
+			converter="#{entityIdConverter}">
+			<f:selectItem itemLabel="" itemValue="" />
+			<f:selectItems value="#{lmFinanc.carteiraConcretaValues}" var="c"
+				itemLabel="#{c.codigo} - #{c.descricao}" itemValue="#{c}" />
+		</p:selectOneMenu>
+	</fd:labelInput>
+
+	<fd:labelInput label="Modo Moviment :" alignRight="true"
+		breakAfter="true">
+		<p:selectOneMenu id="iModoMoviment" value="#{viewForm.e.modo}"
+			converter="#{entityIdConverter}">
+			<f:selectItem />
+			<f:selectItems value="#{lmFinanc.modoValues}" var="mm"
+				itemLabel="#{mm.codigo} - #{mm.descricao}" itemValue="#{mm}" />
+			<p:ajax event="change" process="@this" partialSubmit="true"
+				update="opnCheque" />
+		</p:selectOneMenu>
+	</fd:labelInput>
+
+
+
+
+	<p:outputPanel id="opnCategoria" />
+
+	<ui:include src="movimentacaoForm_campos_obs-valores.xhtml" />
+
+	<p:outputPanel id="opnCheque">
+		<ui:include src="movimentacaoForm_campos_cheque.xhtml" />
+	</p:outputPanel>
+
+
+
+
+</ui:composition>

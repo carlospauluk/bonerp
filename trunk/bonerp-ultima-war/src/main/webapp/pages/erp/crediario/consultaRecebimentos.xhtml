@@ -1,0 +1,218 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/templates/template.xhtml">
+
+
+	<ui:define name="content">
+	
+		<div id="_slnm_consultaRecebimentos" />
+
+		<!-- exibição de mensagem caso usuário não tenha permissão de acesso -->
+		<sec:authorize ifNotGranted="ROLE_CREDIARIO">
+			<div class="errorMsg">Usuário sem autorização para acessar este
+				recurso.</div>
+		</sec:authorize>
+
+		<sec:authorize ifAnyGranted="ROLE_CREDIARIO">
+
+
+			<ui:param name="view" value="#{recebimentosView}" />
+
+			<h:form id="frm">
+
+				<p:panel id="panel1" header="Consultar Recebimentos - Servipa">
+
+					<fd:labelInput label="Período :" labelWidth="100px">
+					De: 
+						<p:calendar mode="popup" styleClass="maskData" id="iPeriodoIni"
+							value="#{view.periodoIni}" locale="pt_BR" pattern="dd/MM/yyyy"
+							size="12" selectOtherMonths="true" showOtherMonths="true" /> até 
+						<p:calendar mode="popup" styleClass="maskData" id="iPeriodoFim"
+							value="#{view.periodoFim}" locale="pt_BR" pattern="dd/MM/yyyy"
+							size="12" selectOtherMonths="true" showOtherMonths="true" />
+					</fd:labelInput>
+
+					<fd:labelInput label="Exibir somente recebimentos externos :"
+						labelWidth="100px">
+						<p:selectBooleanCheckbox value="#{view.exibirSomenteExternos}" />
+					</fd:labelInput>
+
+					<fd:labelInput noLabel="true" breakAfter="true">
+						<p:defaultCommand target="btnConsultar" scope="frm" />
+
+						<p:commandButton id="btnConsultar" update=":frm"
+							icon="ui-icon-save" value="Consultar" style="width: 200px"
+							actionListener="#{view.consultar}" />
+					</fd:labelInput>
+
+					<p:spacer height="10px" />
+
+					<div style="clear: both;" />
+
+					<p:outputPanel id="opnList" rendered="#{view.listDatas ne null}">
+
+
+						<p:panel header="Recebimentos" id="pnRecebimentos">
+
+
+							<ui:repeat var="data" value="#{view.listDatas}">
+
+
+								<p:dataTable value="#{view.listRecebimentos[data]}"
+									rendered="#{fn:length(view.listRecebimentos[data]) > 0}"
+									rowIndexVar="row" var="_"
+									emptyMessage="Nenhum registro encontrado."
+									rowKey="#{_.id}">
+
+									<f:facet name="header">
+										Data: <h:outputText value="#{data}">
+											<f:convertDateTime pattern="dd/MM/yyyy" />
+										</h:outputText>
+									</f:facet>
+
+									<p:column headerText="#">
+										<h:outputText value="#{row+1}" />
+									</p:column>
+
+									<p:column headerText="Situação">
+										<h:outputText value="#{_.situacao}" />
+									</p:column>
+
+									<p:column headerText="Contrato/Documento">
+										<h:outputText value="#{_.contrato}/#{_.documento}" />
+									</p:column>
+
+									<p:column headerText="Cliente">
+										<h:outputText value="#{_.cpf} - #{_.nome}" />
+									</p:column>
+
+									<p:column headerText="Núm Prestação">
+										<h:outputText value="#{_.numPrestacao}" />
+									</p:column>
+
+									<p:column headerText="Receb.">
+										<h:outputText value="#{_.recebidoLoja ? 'LOJA' : 'EXTERNO'}" />
+									</p:column>
+
+									<p:column headerText="Vencto">
+										<h:outputText value="#{_.dtVencto}">
+											<f:convertDateTime pattern="dd/MM/yyyy" />
+										</h:outputText>
+									</p:column>
+
+									<p:column headerText="Atraso">
+										<h:outputText value="#{_.atraso}" />
+									</p:column>
+
+									<p:column headerText="Juros" style="width: 80px"
+										styleClass="noWrap">
+										<div style="text-align: right;">
+											R$
+											<h:outputText value="#{_.juros}"
+												converter="#{doubleConverterNull}" />
+										</div>
+									</p:column>
+
+									<p:column headerText="Multa" style="width: 80px"
+										styleClass="noWrap">
+										<div style="text-align: right;">
+											R$
+											<h:outputText value="#{_.multa}"
+												converter="#{doubleConverterNull}" />
+										</div>
+									</p:column>
+
+									<p:column headerText="Desconto" style="width: 80px"
+										styleClass="noWrap">
+										<div style="text-align: right;">
+											R$
+											<h:outputText value="#{_.desconto}"
+												converter="#{doubleConverterNull}" />
+										</div>
+									</p:column>
+
+									<p:column headerText="Vlr Prestação" style="width: 80px"
+										styleClass="noWrap">
+										<div style="text-align: right;">
+											R$
+											<h:outputText value="#{_.vlrPrestacao}"
+												converter="#{doubleConverterNull}" />
+										</div>
+									</p:column>
+
+									<p:column headerText="Total" style="width: 80px"
+										styleClass="noWrap">
+										<div style="text-align: right;">
+											R$
+											<h:outputText value="#{_.total}"
+												converter="#{doubleConverterNull}" />
+										</div>
+									</p:column>
+
+									<p:column headerText="Situação PREV2000" style="width: 80px"
+										styleClass="noWrap">
+										<div style="text-align: right;">
+											<h:outputText value="#{_.vendaParcela.situacao}" />
+										</div>
+									</p:column>
+
+									<p:column styleClass="noWrapColBtns">
+
+										<p:commandButton actionListener="#{view.setRecebimentoDia(_)}"
+											update=":frmDlg:opnDlg" oncomplete="PF('dlgForm').show()"
+											process="@this" title="Visualizar" icon="ui-icon-folder-open"
+											 />
+
+									</p:column>
+
+									<p:summaryRow
+										listener="#{view.calculateTotal(data, _.recebidoLoja)}">
+										<p:column colspan="12" style="text-align:right">
+											<h:outputText value="Total Recebido:" />
+										</p:column>
+										<p:column>
+											<div style="text-align: right;">
+												R$
+												<h:outputText value="#{view.totalSummary}"
+													converter="#{doubleConverterNull}" />
+											</div>
+										</p:column>
+										<p:column />
+										<p:column />
+									</p:summaryRow>
+
+								</p:dataTable>
+
+							</ui:repeat>
+
+
+						</p:panel>
+
+					</p:outputPanel>
+
+
+
+				</p:panel>
+
+
+
+
+
+			</h:form>
+
+
+		</sec:authorize>
+
+		<ui:include src="consultaRecebimentosDlg.xhtml">
+			<ui:param name="e" value="#{view.recebimentoDia}" />
+		</ui:include>
+
+
+	</ui:define>
+
+</ui:composition>

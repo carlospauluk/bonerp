@@ -1,0 +1,139 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:sec="http://www.springframework.org/security/tags">
+
+	<ui:define name="headFirst">
+		<script src="#{resource['js/helpers.js']}" type="text/javascript"></script>
+	</ui:define>
+
+	<sec:authorize ifNotGranted="ROLE_PRODUCAO">
+		<div class="errorMsg">Usuário sem autorização para acessar este
+			recurso.</div>
+	</sec:authorize>
+
+	<sec:authorize ifAnyGranted="ROLE_PRODUCAO">
+
+		<ui:param name="view" value="#{insumoFormListView}" />
+
+		<c:if test="#{empty viewSave}">
+			<ui:param name="viewSave" value="#{insumoFormListView}" />
+		</c:if>
+
+		<c:if test="#{empty actionSave}">
+			<ui:param name="actionSave" value="save" />
+		</c:if>
+
+		<c:if test="#{empty update}">
+			<ui:param name="update" value=":frm:opnLoadList" />
+		</c:if>
+
+
+		<h:form id="frmInsumo">
+
+
+			<p:dialog id="dlgInsumo" widgetVar="dlgInsumo" header="Insumo"
+				modal="true" width="700" resizable="false" closeOnEscape="true">
+				<p:outputPanel id="opnDlgInsumo" position="top">
+
+					<p:outputPanel id="opnAplicarMasks" autoUpdate="true">
+						<script type="text/javascript">
+							aplicarMasks();
+						</script>
+					</p:outputPanel>
+
+					<p:messages severity="warn,error" />
+
+					<p:focus for="iDescricao" context="opnDlgInsumo" />
+
+					<f:validateBean disabled="true">
+						<fd:labelInput label="Código *:" labelWidth="120px"
+							breakAfter="true">
+							<p:inputText size="10" value="#{view.e.codigo}" id="iLabel"
+								styleClass="maskInt">
+								<f:convertNumber integerOnly="true" />
+							</p:inputText>
+								 *Em branco para preenchimento automático
+						</fd:labelInput>
+					</f:validateBean>
+
+					<fd:labelInput label="Descrição *:" labelWidth="120px"
+						breakAfter="true">
+						<p:inputText size="70" value="#{view.e.descricao}" id="iDescricao" />
+					</fd:labelInput>
+
+					<fd:labelInput label="Tipo :" labelWidth="120px" breakAfter="true">
+						<p:selectOneMenu id="iTipo" value="#{view.e.tipoInsumo}"
+							converter="#{entityIdConverter}">
+							<f:selectItem itemLabel="" itemValue="" />
+							<f:selectItems value="#{lmProducao.tiposInsumo}"
+								itemDescription="#{_.descricao}" var="_"
+								itemLabel="#{_.descricao}" itemValue="#{_}" />
+						</p:selectOneMenu>
+					</fd:labelInput>
+
+					<fd:labelInput label="Unidade Produto :" labelWidth="120px"
+						breakAfter="true">
+						<p:selectOneMenu value="#{view.e.unidadeProduto}"
+							id="iUnidadeProduto" converter="#{entityIdConverter}">
+							<f:selectItem itemLabel="" itemValue="" />
+							<f:selectItems value="#{lmEstoque.unidadesProduto}" var="_"
+								itemLabel="#{_.label}" itemValue="#{_}" />
+						</p:selectOneMenu>
+					</fd:labelInput>
+
+					<fd:labelInput label="Preço Custo :" labelWidth="120px">
+								R$ <p:inputText styleClass="maskMoney" size="11"
+							value="#{view.preco.precoCusto}" style="text-align: right;"
+							converter="#{doubleConverterAbsNull}" />
+
+					</fd:labelInput>
+
+					<fd:labelInput label="Prazo :">
+						<p:inputText size="6" value="#{view.preco.prazo}"
+							styleClass="maskInt">
+							<f:convertNumber integerOnly="true" />
+						</p:inputText> dias
+						</fd:labelInput>
+
+					<fd:labelInput label="Dt Custo :" alignRight="true"
+						breakAfter="true">
+						<p:calendar styleClass="maskData" value="#{view.preco.dtCusto}"
+							locale="pt_BR" showOn="button" pattern="dd/MM/yyyy" size="12"
+							selectOtherMonths="true" showOtherMonths="true" />
+					</fd:labelInput>
+
+					<p:spacer width="20" />
+
+
+					<!-- BUTTONS -->
+					<div style="text-align: right;">
+
+						<p:commandButton title="Salvar o registro atual" id="btnSalvar"
+							widgetVar="btnSalvar" update="#{update}" process="opnDlgInsumo"
+							oncomplete="afterFormSubmit(xhr, status, args);"
+							icon="ui-icon-save" value="Salvar" style="width: 110px"
+							actionListener="#{viewSave[actionSave]}" />
+
+						<p:defaultCommand target="btnSalvar"
+							scope=":frmInsumo:opnDlgInsumo" />
+
+						<p:spacer width="20" />
+
+					</div>
+
+				</p:outputPanel>
+			</p:dialog>
+
+		</h:form>
+
+
+	</sec:authorize>
+
+
+</ui:composition>

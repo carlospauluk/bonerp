@@ -1,0 +1,49 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags">
+
+	<ui:param name="view" value="#{loteConfeccaoFormListView}" />
+
+	<h:form id="frmDlgRelatorios">
+
+
+		<p:outputPanel id="opnDlgRelatorios">
+
+
+			<p:panel header="Tipos de Insumos">
+
+				<script>
+					
+				</script>
+
+				<p:selectManyCheckbox columns="1" layout="grid" id="cbTiposInsumo"
+					styleClass="checkboxTiposInsumo" converter="#{entityIdConverter}"
+					value="#{view.tiposInsumosRelatorios}">
+					<f:selectItems value="#{view.tiposInsumosSelectItems}" />
+				</p:selectManyCheckbox>
+
+				<p:spacer height="20px" />
+
+				<fd:labelInput noLabel="true" breakAfter="true" alignRight="true">
+					<p:commandButton title="Imprimir" icon="ui-icon-print"
+						value="Gerar relatório"
+						actionListener="#{view.validateImprimirRelatorios}"
+						oncomplete="afterFormSubmit(xhr, status, args);"/>
+
+				</fd:labelInput>
+			</p:panel>
+		</p:outputPanel>
+
+	</h:form>
+
+
+
+
+
+
+
+</ui:composition>

@@ -1,0 +1,46 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:p="http://primefaces.org/ui">
+
+	<!-- 
+		Parâmetros:
+		
+		- for : componente que receberá o tooltip
+		- _ : objeto entityId
+	-->
+
+	<h:form id="frmEntityId">
+		<p:dialog modal="true" header="Info" widgetVar="dlgEntityId">
+			<p:outputPanel id="opnEntityId">
+
+				<fd:labelInput label="Id :" labelWidth="100px" breakAfter="true">
+					<h:outputText value="#{entityIdView.e.id}" />
+				</fd:labelInput>
+
+				<fd:labelInput label="Criado em :" labelWidth="100px"
+					breakAfter="true">
+					<h:outputText value="#{entityIdView.e.iudt.inserted}">
+						<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+					</h:outputText> por 
+			<h:outputText value="#{entityIdView.e.userInfo.userInserted.nome}" />
+				</fd:labelInput>
+
+				<fd:labelInput label="Alterado em :" labelWidth="100px"
+					breakAfter="true">
+					<h:outputText value="#{entityIdView.e.iudt.updated}">
+						<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+					</h:outputText> por 
+			<h:outputText value="#{entityIdView.e.userInfo.userUpdated.nome}" />
+				</fd:labelInput>
+
+			</p:outputPanel>
+
+		</p:dialog>
+	</h:form>
+
+</ui:composition>

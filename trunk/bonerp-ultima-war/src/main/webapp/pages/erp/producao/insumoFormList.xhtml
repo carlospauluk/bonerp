@@ -1,0 +1,89 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:param name="view" value="#{insumoFormListView}" />
+
+	<div id="_slnm_insumoFormList" />
+
+	<ui:decorate template="/templates/list.xhtml">
+
+		<ui:param name="role" value="PRODUCAO" />
+
+		<ui:param name="titulo" value="Insumos" />
+		<ui:param name="viewForm" value="#{insumoFormListView}" />
+		<ui:param name="widgetDlgForm" value="dlgInsumo" />
+		<ui:param name="updateDlg" value=":frmInsumo:opnDlgInsumo" />
+
+		<ui:param name="btnImprimir_relSufix" value="Insumos" />
+
+
+
+		<ui:define name="cols">
+
+			<p:column headerText="Código" sortBy="#{_.codigo}">
+				<h:outputText value="#{_.codigo}" />
+			</p:column>
+
+			<p:column headerText="Tipo" sortBy="#{_.tipoInsumo.descricao}">
+				<h:outputText value="#{_.tipoInsumo.descricao}" />
+			</p:column>
+
+			<p:column headerText="Descrição" sortBy="#{_.descricao}">
+				<h:outputText value="#{_.descricao}" />
+			</p:column>
+
+			<p:column headerText="Unidade" sortBy="#{_.unidadeProduto.label}">
+				<h:outputText value="#{_.unidadeProduto.label}" />
+			</p:column>
+
+			<p:column headerText="Preço Custo"
+				sortBy="#{_.precoAtual.precoCusto}" style="width: 80px">
+				<div style="text-align: right;">
+					R$
+					<h:outputText value="#{_.precoAtual.precoCusto}"
+						converter="#{doubleConverterNull}" />
+				</div>
+			</p:column>
+
+
+			<p:column headerText="Dt Custo" sortBy="#{_.precoAtual.dtCusto}"
+				style="width: 80px">
+				<h:outputText value="#{_.precoAtual.dtCusto}">
+					<f:convertDateTime pattern="dd/MM/yy" />
+				</h:outputText>
+			</p:column>
+
+			<p:column headerText="" styleClass="noWrapColBtns">
+
+				<p:commandButton icon="ui-icon-note"
+					update=":frmDlgInsumoConfeccoesRef:opnDlgInsumoConfeccoesRef" 
+					process="@this"
+					oncomplete="PF('dlgInsumoConfeccoesRef').show()" partialSubmit="true"
+					actionListener="#{view.updateConfeccoesRefInsumo(_)}"
+					title="Listar confecções que utilizam este insumo" />
+
+			</p:column>
+		</ui:define>
+	</ui:decorate>
+
+	<ui:include src="insumoDlg.xhtml" />
+
+	<ui:include src="insumoFormList_confeccoesRef.xhtml" />
+
+
+	<ui:include src="insumoFormList_dlgPesquisa.xhtml" />
+
+	<ui:decorate template="/templates/dlgRelatorio.xhtml">
+		<ui:param name="sufix" value="Insumos" />
+		<ui:param name="action" value="imprimirRelatorio" />
+	</ui:decorate>
+
+
+
+
+</ui:composition>

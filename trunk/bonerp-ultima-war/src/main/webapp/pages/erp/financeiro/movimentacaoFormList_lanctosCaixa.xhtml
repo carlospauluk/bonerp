@@ -1,0 +1,401 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:p="http://primefaces.org/ui" template="/templates/template.xhtml">
+
+
+
+	<ui:define name="headFirst">
+		<script src="#{resource['js/helpers.js']}" type="text/javascript"></script>
+	</ui:define>
+
+
+	<ui:param name="view" value="#{movimentacaoLanctosCaixaFormListView}" />
+
+	<ui:define name="content">
+	
+	<div id="_slnm_movimentacaoFormList_lanctosCaixa" />
+
+		<style type="text/css">
+
+.movimentEntrada {
+	color: blue;
+}
+
+.movimentSaida {
+	color: red;
+}
+
+.movimentSaida:hover {
+	background: #ff9999 !important;
+}
+
+.movimentEntrada:hover {
+	background: #99ccff !important;
+}
+</style>
+
+		<!-- exibição de mensagem caso usuário não tenha permissão de acesso -->
+		<sec:authorize ifNotGranted="ROLE_FINANCEIRO">
+			<div class="errorMsg">Usuário sem autorização para acessar este
+				recurso.</div>
+		</sec:authorize>
+
+		<sec:authorize ifAnyGranted="ROLE_FINANCEIRO">
+
+
+			<h:form id="frm">
+			
+				<p:remoteCommand name="loadList" process="@none" update="@none" />
+
+				<p:panel id="panel" header="Caixa - Movimentações Diárias">
+
+					<p:spacer height="8" />
+
+					<p:outputPanel id="opnToolbar">
+						<p:toolbar>
+							<f:facet name="left">
+
+								<p:commandButton value="Lançar Movimentação"
+									style="width: 300px" actionListener="#{view.novo}"
+									title="Lançar uma movimentação"
+									oncomplete="PF('dlgMovimentacao').show()"
+									update=":frmDlg:opnDlg" icon="ui-icon-document" />
+
+								<p:commandButton value="Consolidar Débitos"
+									rendered="#{view.carteiraTela.id eq 2 or view.carteiraTela.id eq 20}"
+									actionListener="#{view.consolidarMovimentacoesCartoesDebito}"
+									title="Consolidar Movimentações de Cartões de Débito"
+									icon="ui-icon-gear"
+									update=":frm:opnDtList opnToolbar :frmDlg:opnDlgResultadoConsolidacao"
+									oncomplete="openDlg(xhr, status, args);">
+									<p:confirm />
+								</p:commandButton>
+
+							</f:facet>
+							<f:facet name="right">
+
+								<p:outputPanel id="opnPesquisaRapida">
+									<h:outputText value="Data: " />
+									<p:calendar styleClass="maskData" showOn="button"
+										value="#{view.filtros['dtPagto']}" id="iDtPagto" locale="pt"
+										mask="true" pattern="dd/MM/yyyy" size="12"
+										selectOtherMonths="true" showOtherMonths="true">
+										<p:ajax process="@this" partialSubmit="true"
+											listener="#{view.pesquisar}" update=":frm:opnDtList" />
+									</p:calendar>
+
+									<p:commandButton icon="ui-icon-triangle-1-w"
+										actionListener="#{view.incDia(-1)}" process="@this"
+										update=":frm" partialSubmit="true" />
+									<p:commandButton icon="ui-icon-triangle-1-e"
+										actionListener="#{view.incDia(1)}" process="@this"
+										update=":frm" partialSubmit="true" />
+
+									<p:spacer width="20px" />
+
+									<p:selectOneMenu value="#{view.filtros['carteira']}"
+										converter="#{entityIdConverter}" style="bottom: -7px">
+										<f:selectItems value="#{lmFinanc.carteiraCaixaValues}" var="c"
+											itemLabel="#{c.codigo} - #{c.descricao}" itemValue="#{c}" />
+										<p:ajax event="change" process="@this" partialSubmit="true"
+											listener="#{view.pesquisar}"
+											update=":frm:opnDtList opnToolbar" />
+									</p:selectOneMenu>
+
+									<p:commandButton action="#{view.pesquisar}"
+										process="opnPesquisaRapida" update="opnDtList opnToolbar"
+										id="btnStrPesquisa" icon="ui-icon-search" />
+
+									<p:defaultCommand scope=":frm:panel"
+										target=":frm:btnStrPesquisa" />
+
+								</p:outputPanel>
+							</f:facet>
+
+						</p:toolbar>
+					</p:outputPanel>
+
+					<p:spacer height="10" />
+
+
+					<p:outputPanel id="opnDtList">
+
+
+
+						<!-- DTLIST CARTÕES -->
+
+						<ui:include src="movimentacaoFormList_lanctosCaixa_dtList.xhtml">
+							<ui:param name="dtList" value="#{view.dtListCartoes}" />
+							<ui:param name="tituloDtList" value="CARTÕES DE DÉBITO" />
+							<ui:param name="sufixoTotalizacao" value="CARTOES" />
+							<ui:param name="exibirSaldoAnterior" value="true" />
+							<ui:param name="exibirSaldoPosterior" value="false" />
+						</ui:include>
+
+						<p:spacer height="20px" />
+
+						<!-- DTLIST ENTRADAS DINHEIRO -->
+
+						<ui:include src="movimentacaoFormList_lanctosCaixa_dtList.xhtml">
+							<ui:param name="dtList" value="#{view.dtListEntradas}" />
+							<ui:param name="tituloDtList" value="ENTRADAS" />
+							<ui:param name="sufixoTotalizacao" value="ENTRADAS" />
+							<ui:param name="exibirSaldoAnterior" value="false" />
+							<ui:param name="exibirSaldoPosterior" value="false" />
+						</ui:include>
+
+						<p:spacer height="20px" />
+
+						<!-- DTLIST DESPESAS -->
+
+						<ui:include src="movimentacaoFormList_lanctosCaixa_dtList.xhtml">
+							<ui:param name="dtList" value="#{view.dtListDespesas}" />
+							<ui:param name="tituloDtList" value="DESPESAS" />
+							<ui:param name="sufixoTotalizacao" value="DESPESAS" />
+							<ui:param name="exibirSaldoAnterior" value="false" />
+							<ui:param name="exibirSaldoPosterior" value="false" />
+						</ui:include>
+
+						<p:spacer height="20px" />
+
+						<!-- DTLIST RETIRADAS -->
+
+						<ui:include src="movimentacaoFormList_lanctosCaixa_dtList.xhtml">
+							<ui:param name="dtList" value="#{view.dtListRetiradas}" />
+							<ui:param name="tituloDtList" value="RETIRADAS" />
+							<ui:param name="sufixoTotalizacao" value="RETIRADAS" />
+							<ui:param name="exibirSaldoAnterior" value="false" />
+							<ui:param name="exibirSaldoPosterior" value="true" />
+						</ui:include>
+
+					</p:outputPanel>
+
+
+				</p:panel>
+
+
+
+
+			</h:form>
+
+
+			<h:form id="frmDlg">
+
+				<p:dialog id="dlgMovimentacao" width="800"
+					widgetVar="dlgMovimentacao" position="top"
+					header="Movimentação Diária" modal="true" resizable="false"
+					closeOnEscape="true">
+
+					<p:outputPanel id="opnDlg">
+
+						<p:defaultCommand target="btnSalvar" />
+
+
+						<p:outputPanel rendered="#{view.e.id eq null}">
+							<fd:labelInput label="Tipo Lancto: *" labelWidth="120px"
+								breakAfter="true">
+								<p:selectOneMenu id="iTipoLancto" value="#{view.e.tipoLancto}"
+									converter="#{tipoLanctoConverter}">
+									<f:selectItems value="#{view.siTiposLancto}" />
+									<p:ajax event="change" process="@this" partialSubmit="true"
+										update="opnDlg" listener="#{view.updateTipoLancto}" />
+								</p:selectOneMenu>
+							</fd:labelInput>
+						</p:outputPanel>
+						<p:outputPanel rendered="#{view.e.id ne null}">
+							<fd:labelInput label="Tipo Lancto: " labelWidth="120px"
+								breakAfter="true">
+								<p:inputText value="#{view.e.tipoLancto.label}" size="60"
+									readonly="true" />
+							</fd:labelInput>
+						</p:outputPanel>
+
+						<p:outputPanel id="opnCarteiraDestino">
+							<p:outputPanel
+								rendered="#{view.e.tipoLancto == 'TRANSF_PROPRIA' or view.e.tipoLancto == 'TRANSF_CAIXA'}">
+								<fd:labelInput label="Carteira (destino) :" labelWidth="120px"
+									breakAfter="true">
+									<p:selectOneMenu id="iCarteiraDestino"
+										value="#{view.e.carteiraDestino}"
+										converter="#{entityIdConverter}">
+										<f:selectItem itemLabel="" itemValue="" />
+										<f:selectItems value="#{lmFinanc.carteiraConcretaValues}"
+											var="c" itemLabel="#{c.codigo} - #{c.descricao}" itemValue="#{c}" />
+									</p:selectOneMenu>
+								</fd:labelInput>
+							</p:outputPanel>
+						</p:outputPanel>
+
+						<fd:labelInput label="Modo Moviment :" labelWidth="120px"
+							breakAfter="true">
+							<p:selectOneMenu id="iModoMoviment" value="#{view.e.modo}"
+								converter="#{entityIdConverter}">
+								<f:selectItem />
+								<f:selectItems value="#{lmFinanc.modoValues}" var="mm"
+									itemLabel="#{mm.codigo} - #{mm.descricao}" itemValue="#{mm}" />
+								<p:ajax event="change" process="@this" partialSubmit="true"
+									update="opnCheque opnDescricoes" listener="#{view.updateDescricao}" />
+							</p:selectOneMenu>
+						</fd:labelInput>
+
+						<p:outputPanel id="opnCategoria">
+							<p:outputPanel
+								rendered="#{view.e.tipoLancto ne 'TRANSF_PROPRIA'}">
+								<fd:labelInput labelWidth="120px" label="Categoria :"
+									breakAfter="true">
+
+									<p:inputText converter="#{categoriaCodigoConverter}"
+										value="#{view.e.categoria.codigo}" size="10" readonly="true" />
+
+									<h:outputText value="-" />
+
+									<p:autoComplete id="iCategoria" size="60"
+										value="#{view.e.categoria}" var="cat"
+										itemLabel="#{cat.descricao}" itemValue="#{cat}"
+										forceSelection="false"
+										completeMethod="#{categoriaFinder.findFolhasBy}" minQueryLength="3"
+										widgetVar="acCategoria" converter="#{entityIdConverter}">
+										<p:ajax event="itemSelect" process="@this"
+											update="opnCategoria"
+											oncomplete="_$('iModoMoviment').focus()" />
+									</p:autoComplete>
+
+									<p:spacer width="4" />
+
+									<p:commandButton id="btnBuscaCateg" title="Buscar Categoria"
+										actionListener="#{categoriaFormListView.categoriaFormListView}"
+										oncomplete="PF('dlgBuscaCateg').show()"
+										update=":frmDlgBuscaCateg:opnTree" partialSubmit="true"
+										process="@none" icon="ui-icon-search" />
+
+									<p:remoteCommand name="updateOpnCategoria"
+										update="opnCategoria" process="@none" />
+
+								</fd:labelInput>
+
+							</p:outputPanel>
+						</p:outputPanel>
+
+						<p:outputPanel id="opnDescricoes">
+
+							<p:outputPanel
+								rendered="#{view.exibirCampoBandeiraCartao eq true}">
+
+								<fd:labelInput label="Bandeira Cartão :" labelWidth="120px"
+									breakAfter="true">
+									<p:selectOneMenu id="iBandeiraCartao"
+										value="#{view.e.bandeiraCartao}"
+										converter="#{entityIdConverter}">
+										<f:selectItem />
+										<f:selectItems value="#{lmFinanc.bandeiraCartaoValues}"
+											var="mm" itemLabel="#{mm.descricao}" itemValue="#{mm}" />
+										<p:ajax listener="#{view.updateDescricao}"
+											process="@this" />
+									</p:selectOneMenu>
+								</fd:labelInput>
+
+							</p:outputPanel>
+
+							<!-- Só exibe o campo descrição se o modo NÃO for 'RECEB. CARTÃO CRÉDITO' ou 'RECEB. CARTÃO DÉBITO' -->
+							<p:outputPanel
+								rendered="#{view.exibirCampoBandeiraCartao eq false}">
+
+								<fd:labelInput labelWidth="120px" label="Descrição :"
+									breakAfter="true">
+
+									<p:autoComplete id="iDescricao" scrollHeight="230"
+										value="#{view.e.descricao}" size="65" dropdown="true"
+										completeMethod="#{view.acDescricao}" />
+
+								</fd:labelInput>
+							</p:outputPanel>
+						</p:outputPanel>
+
+						<fd:labelInput label="Valor :" labelWidth="120px"
+							breakAfter="true">
+							<p:inputText size="10" value="#{view.e.valor}" id="iValorTotal"
+								styleClass="maskMoney" style="text-align: right;"
+								converter="#{doubleConverterAbs}">
+							</p:inputText>
+						</fd:labelInput>
+
+
+
+						<p:outputPanel id="opnCheque">
+							<ui:include src="movimentacaoForm_campos_cheque.xhtml" />
+						</p:outputPanel>
+
+						<!-- utilizado quando seleciona uma categoria no dlgBuscaCateg -->
+						<p:remoteCommand name="updateOpnCategoria_#{tipoLancto}"
+							update="opnCategoria" process="@none" />
+
+						<fd:labelInput breakAfter="true" alignRight="true">
+							<p:commandButton value="Salvar" style="width: 180px"
+								actionListener="#{view.save}" icon="ui-icon-save" id="btnSalvar"
+								oncomplete="afterFormSubmit(xhr, status, args);"
+								update=":frm:opnDtList" />
+
+						</fd:labelInput>
+
+					</p:outputPanel>
+
+				</p:dialog>
+
+
+
+				<p:dialog id="dlgResultadoConsolidacao" width="800"
+					widgetVar="dlgResultadoConsolidacao" position="top"
+					header="Resultado" modal="true" resizable="false"
+					closeOnEscape="true">
+
+					<p:outputPanel id="opnDlgResultadoConsolidacao">
+
+						<p:scrollPanel style="height:600px" mode="native">
+
+							<p:dataTable id="dtListResultConsolid" var="_" rowIndexVar="row"
+								value="#{view.resultadoConsolidacao}"
+								emptyMessage="Nenhum registro encontrado.">
+
+								<p:column style="width: 1px" headerText="#">
+									<h:outputText value="#{row + 1}" />
+								</p:column>
+
+								<p:column styleClass="noWrapSmall" headerText="Mensagem">
+									<h:outputText value="#{_}" />
+								</p:column>
+
+							</p:dataTable>
+
+						</p:scrollPanel>
+
+					</p:outputPanel>
+
+				</p:dialog>
+
+
+
+
+			</h:form>
+
+			<ui:include src="categoriaDlgBusca.xhtml">
+				<ui:param name="viewForm"
+					value="#{movimentacaoLanctosCaixaFormListView}" />
+			</ui:include>
+
+
+			<ui:include src="movimentacaoForm_dlg.xhtml" />
+
+		</sec:authorize>
+
+	</ui:define>
+
+
+
+
+
+</ui:composition>

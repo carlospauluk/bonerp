@@ -1,0 +1,218 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.bonsucesso.erp</groupId>
+		<artifactId>bonerp</artifactId>
+		<version>1.6.0-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>ekt2bonerp-jar</artifactId>
+	<packaging>jar</packaging>
+	<name>ekt2bonerp-jar</name>
+	<description>JAR com os importadores do EKT para o Bonerp</description>
+
+
+	<!-- ATENÇÃO: lembrar que o JDBC-ODBC só roda até a versão JDK1.7 -->
+
+	<properties>
+		<java-version>1.7</java-version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+		<sonar.host.url>http://localhost:9000/</sonar.host.url>
+	</properties>
+
+	<profiles>
+		<profile>
+			<id>HOM</id>
+			<properties>
+				<sonar.host.url>http://localhost:8080/sonar</sonar.host.url>
+			</properties>
+		</profile>
+		<profile>
+			<!-- utilizado para rodar via linha de comando com o plugin appassembler -->
+			<id>RUN</id>
+			<properties>
+				<ocabitbase.jar.path>file:///root/.m2/repository/com/ocabit/ocabitbase/${ocabitbase.version}/ocabitbase-${ocabitbase.version}.jar</ocabitbase.jar.path>
+				<bonerp.jar.path>file:///root/.m2/repository/com/bonsucesso/erp/bonerp-model-jar/${project.version}/bonerp-model-jar-${project.version}.jar</bonerp.jar.path>
+			</properties>
+		</profile>
+	</profiles>
+
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources/</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.2</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7	</target>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>appassembler-maven-plugin</artifactId>
+				<version>1.10</version>
+				<configuration>
+					<repositoryLayout>flat</repositoryLayout>
+					<useWildcardClassPath>true</useWildcardClassPath>
+					<programs>
+						<program>
+							<mainClass>com.bonsucesso.erp.ekt.ekt2espelhos.ImportarEkt2Espelhos</mainClass>
+							<id>ImportarEkt2Espelhos</id>
+							<jvmSettings>
+								<systemProperties>
+									<systemProperty>net.sf.ehcache.disabled=true</systemProperty>
+								</systemProperties>
+							</jvmSettings>
+						</program>
+						<program>
+							<mainClass>com.bonsucesso.erp.ekt.ekt2espelhos.ImportarEkt2EspelhosCSV</mainClass>
+							<id>ImportarEkt2EspelhosCSV</id>
+							<jvmSettings>
+								<systemProperties>
+									<systemProperty>net.sf.ehcache.disabled=true</systemProperty>
+								</systemProperties>
+							</jvmSettings>
+						</program>
+						<program>
+							<mainClass>com.bonsucesso.erp.ekt.espelhos2bonerp.ImportarFornecedores2BonERP</mainClass>
+							<id>ImportarFornecedores2BonERP</id>
+							<jvmSettings>
+								<systemProperties>
+									<systemProperty>net.sf.ehcache.disabled=true</systemProperty>
+								</systemProperties>
+							</jvmSettings>
+						</program>
+						<program>
+							<mainClass>com.bonsucesso.erp.ekt.espelhos2bonerp.ImportarProdutos2BonERP</mainClass>
+							<id>ImportarProdutos2BonERP</id>
+							<jvmSettings>
+								<systemProperties>
+									<systemProperty>net.sf.ehcache.disabled=true</systemProperty>
+								</systemProperties>
+							</jvmSettings>
+						</program>
+						<program>
+							<mainClass>com.bonsucesso.erp.ekt.espelhos2bonerp.ImportarVendas2BonERP</mainClass>
+							<id>ImportarVendas2BonERP</id>
+							<jvmSettings>
+								<systemProperties>
+									<systemProperty>net.sf.ehcache.disabled=true</systemProperty>
+								</systemProperties>
+							</jvmSettings>
+						</program>
+						<program>
+							<mainClass>com.bonsucesso.erp.ekt.espelhos2bonerp.ImportarEncomendas2BonERP</mainClass>
+							<id>ImportarEncomendas2BonERP</id>
+							<jvmSettings>
+								<systemProperties>
+									<systemProperty>net.sf.ehcache.disabled=true</systemProperty>
+								</systemProperties>
+							</jvmSettings>
+						</program>
+						
+						<program>
+							<mainClass>com.bonsucesso.erp.ekt.espelhos2bonerp.GerarTrocas</mainClass>
+							<id>GerarTrocas</id>
+							<jvmSettings>
+								<systemProperties>
+									<systemProperty>net.sf.ehcache.disabled=true</systemProperty>
+								</systemProperties>
+							</jvmSettings>
+						</program>
+						
+						<program>
+							<mainClass>com.bonsucesso.erp.ekt.espelhos2bonerp.GerarProdutoSaldoHistorico</mainClass>
+							<id>GerarProdutoSaldoHistorico</id>
+							<jvmSettings>
+								<systemProperties>
+									<systemProperty>net.sf.ehcache.disabled=true</systemProperty>
+								</systemProperties>
+							</jvmSettings>
+						</program>
+						
+						<program>
+							<mainClass>com.bonsucesso.erp.ekt.espelhos2bonerp.GerarProdutosPrecos</mainClass>
+							<id>GerarProdutosPrecos</id>
+							<jvmSettings>
+								<systemProperties>
+									<systemProperty>net.sf.ehcache.disabled=true</systemProperty>
+								</systemProperties>
+							</jvmSettings>
+						</program>
+						
+						
+						<program>
+							<mainClass>com.bonsucesso.erp.jobs.VendasJob</mainClass>
+							<id>VendasJob</id>
+							<jvmSettings>
+								<systemProperties>
+									<systemProperty>net.sf.ehcache.disabled=true</systemProperty>
+								</systemProperties>
+							</jvmSettings>
+						</program>
+					</programs>
+
+				</configuration>
+			</plugin>
+
+		</plugins>
+	</build>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>com.bonsucesso.erp</groupId>
+			<artifactId>bonerp-model-jar</artifactId>
+			<version>1.6.0-SNAPSHOT</version>
+			<type>jar</type>
+		</dependency>
+
+		<dependency>
+			<groupId>com.bonsucesso.erp</groupId>
+			<artifactId>bonerp-businessdata-jar</artifactId>
+			<version>1.6.0-SNAPSHOT</version>
+			<type>jar</type>
+		</dependency>
+
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.16</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+			<version>1.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.1.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.el</groupId>
+			<artifactId>javax.el-api</artifactId>
+			<version>3.0.0</version>
+		</dependency>
+
+	</dependencies>
+
+
+
+</project>

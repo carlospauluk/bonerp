@@ -1,0 +1,139 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:p="http://primefaces.org/ui">
+
+
+	<div id="_slnm_mesVendaFormList" />
+
+	<ui:decorate template="/templates/list.xhtml">
+
+
+		<ui:param name="role" value="VENDAS" />
+
+		<ui:param name="view" value="#{mesVendaFormListView}" />
+		<ui:param name="titulo" value="Meses - Vendas" />
+		<ui:param name="tituloDlg" value="Mês - Vendas" />
+
+		<ui:param name="formOutcome" value="/pages/erp/venda/mesVenda.jsf" />
+		<ui:param name="exibir_btnAtualizar" value="false" />
+		<ui:param name="exibir_btnNovo" value="false" />
+
+		<ui:param name="exibirPesquisar" value="false" />
+
+		<ui:param name="exibir_btnSalvar" value="false" />
+		<ui:param name="exibirColuna_IudtUpdated" value="false" />
+
+
+
+		<ui:define name="cols">
+
+			<p:column headerText="Mês/Ano" sortBy="#{_.mesAno}">
+				<h:outputText value="#{_.mesAno}">
+					<f:convertDateTime pattern="MMMM/yyyy" />
+				</h:outputText>
+				<h:outputText
+					value=" (#{_.qtdeDiasUteisAteHoje} / #{_.qtdeDiasUteisComerciais})"
+					title="Dias úteis comerciais" />
+				<br />
+				<h:outputText value="#{_.qtdeVendedores} vendedores" />
+				<br />
+				<h:outputText style="font-weight: bold" value="IGPM: #{_.inflacao}%" />
+			</p:column>
+
+			<p:column headerText="Totais Históricos" styleClass="noWrap"
+				style="width:1px">
+				<div style="text-align: right;">
+
+					Global:
+					<h:outputText style="font-weight: bold" value="#{_.totalHistorico}"
+						converter="#{doubleConverterNull}" />
+					<br /> Vendedores:
+					<h:outputText style="font-weight: bold"
+						value="#{_.totalHistoricoVendedores}"
+						converter="#{doubleConverterNull}" />
+					<br /> Externos:
+					<h:outputText style="font-weight: bold"
+						value="#{_.totalHistoricoExternos}"
+						converter="#{doubleConverterNull}" />
+
+				</div>
+			</p:column>
+
+
+			<p:column styleClass="noWrap" headerText="Totais Realizados">
+				<div style="text-align: right;">
+
+					Global:
+					<h:outputText style="font-weight: bold"
+						value="#{_.totalVendidoGlobal}" converter="#{doubleConverterNull}"
+						title="Variações: Bruta (#{stringUtils.getScaled(_.variacaoBruta,2)}) - Meta Mínima (#{stringUtils.getScaled(_.variacaoInflacao,2)}) - Meta Esperada (#{stringUtils.getScaled(_.variacaoMeta,2)})" />
+					<br /> Vendedores:
+					<h:outputText style="font-weight: bold"
+						value="#{_.totalVendidoVendedores}"
+						converter="#{doubleConverterNull}"
+						title="Variações: Bruta (#{stringUtils.getScaled(_.variacaoBrutaVendedores,2)}) - Meta Mínima (#{stringUtils.getScaled(_.variacaoInflacaoVendedores,2)}) - Meta Esperada (#{stringUtils.getScaled(_.variacaoMetaVendedores,2)})" />
+					<br /> Externos:
+					<h:outputText style="font-weight: bold"
+						value="#{_.totalVendidoExternos}"
+						converter="#{doubleConverterNull}"
+						title="Variações: Bruta (#{stringUtils.getScaled(_.variacaoBrutaExternos,2)}) - Meta Mínima (#{stringUtils.getScaled(_.variacaoInflacaoExternos,2)}) - Meta Esperada (#{stringUtils.getScaled(_.variacaoMetaExternos,2)})" />
+				</div>
+			</p:column>
+			
+			<p:column styleClass="noWrap" headerText="%">
+				<div style="text-align: right;">
+
+					Global:
+					<h:outputText style="font-weight: bold; color: red"
+						value="#{_.variacaoBruta}" converter="#{doubleConverterNull}"
+						 />%
+					<br /> Vendedores:
+					<h:outputText style="font-weight: bold"
+						value="#{_.variacaoBrutaVendedores}"
+						converter="#{doubleConverterNull}" />%
+					<br /> Externos:
+					<h:outputText style="font-weight: bold"
+						value="#{_.variacaoBrutaExternos}"
+						converter="#{doubleConverterNull}" />%
+				</div>
+			</p:column>
+
+
+<!-- 
+			<p:column styleClass="noWrap" headerText="Metas">
+				<div style="text-align: right;">
+					Meta Mínima (Vendedores):
+					<h:outputText value="#{_.metaMinimaVendedores}"
+						style="font-weight: bold" converter="#{doubleConverterNull}" />
+					<br />
+					Meta Mínima (Externos):
+					<h:outputText value="#{_.metaMinimaExternos}"
+						style="font-weight: bold" converter="#{doubleConverterNull}" />
+					<hr />
+					
+					Meta Esperada (Vendedores):
+					<h:outputText value="#{_.metaEsperadaVendedores}"
+						style="font-weight: bold" converter="#{doubleConverterNull}" />
+					<br />
+					Meta Esperada (Externos):
+					<h:outputText value="#{_.metaEsperadaExternos}"
+						style="font-weight: bold" converter="#{doubleConverterNull}" />
+					<br />
+					
+				</div>
+			</p:column>
+-->
+
+		</ui:define>
+
+
+
+	</ui:decorate>
+
+
+</ui:composition>

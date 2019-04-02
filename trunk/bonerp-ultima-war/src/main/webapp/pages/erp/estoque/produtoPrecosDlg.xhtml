@@ -1,0 +1,90 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags">
+
+
+	<!-- FORM para PREÇOS de PRODUTOS -->
+
+	<!-- 
+		Parâmetro da página	
+	 	'e'
+	 	'update'
+	 	'action'
+	 -->
+
+	<h:form id="frmDlgProdutoPrecos">
+
+	<p:dialog id="dlgProdutoPrecos" header="Preços" position="top"
+		widgetVar="dlgProdutoPrecos" resizable="false" width="750"
+		modal="true"   closable="true"
+		closeOnEscape="true">
+
+		<p:outputPanel id="opnDlgProdutoPrecos">
+
+			<p:dataTable id="dataTable" var="_" value="#{e.precos}" rowIndexVar="row">
+
+
+				<p:column headerText="#" style="width: 1px">
+					<h:outputText value="#{row + 1}" />
+				</p:column>
+
+				<p:column headerText="Dt Custo" sortBy="#{_.dtCusto}" style="width: 1px">
+					<div style="text-align: center;">
+						<h:outputText value="#{_.dtCusto}">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</div>
+				</p:column>
+
+				<p:column headerText="Preço Custo" sortBy="#{_.precoCusto}" style="width: 80px">
+					<div style="text-align: right;">
+						R$
+						<h:outputText value="#{_.precoCusto}"
+							converter="#{doubleConverterNull}" />
+					</div>
+				</p:column>
+				
+				<p:column headerText="Coef" 
+					style="width: 1px" sortBy="#{_.coeficiente}">
+					<div style="text-align: right;">
+						<h:outputText value="#{_.coeficiente}">
+							<f:convertNumber maxFractionDigits="3" minFractionDigits="3" />
+						</h:outputText>
+					</div>
+				</p:column>	
+				
+				<p:column headerText="Preço Prazo" 
+					sortBy="#{_.precoPrazo}" style="width: 80px">
+					<div style="text-align: right;">
+						R$
+						<h:outputText value="#{_.precoPrazo}"
+							converter="#{doubleConverterNull}" />
+					</div>
+				</p:column>
+				
+				<p:column headerText="Preço Promo" 
+					sortBy="#{_.precoPromo}" style="width: 80px">
+					<div style="text-align: right;">
+						R$
+						<h:outputText value="#{_.precoPromo}"
+							converter="#{doubleConverterNull}" />
+					</div>
+				</p:column>
+			
+			</p:dataTable>
+
+		</p:outputPanel>
+
+		<p:spacer height="10px" />
+
+		<div style="clear: both;" />
+
+	</p:dialog>
+	
+	</h:form>
+
+</ui:composition>

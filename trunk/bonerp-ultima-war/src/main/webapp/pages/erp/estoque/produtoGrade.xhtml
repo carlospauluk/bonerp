@@ -1,0 +1,330 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags">
+
+
+	<style>
+.grade {
+	border-width: 1px;
+	border-style: ridge;
+	text-align: center;
+	padding: 4px;
+	margin: 3px;
+}
+
+.inputGradeTamanho {
+	width: 90%;
+}
+
+.outputTamanho {
+	font-weight: bold;
+	font-size: 12px;
+}
+</style>
+
+	<p:fieldset legend="Grade">
+
+		<p:outputPanel id="opnGrade">
+
+			<table>
+			<tr>
+			<td></td>
+			</tr>
+			</table>
+
+			<div class="ui-grid ui-grid-responsive">
+				<div class="ui-grid-row">
+					<div class="ui-grid-col-2 grade">
+
+						<p:outputPanel
+							rendered="#{produtoFormView.getProdutoSaldoFromMapa(1) ne null}">
+
+							<div style="text-align: center">
+								<h:outputText class="outputTamanho"
+									value="#{produtoFormView.getProdutoSaldoFromMapa(1).gradeTamanho.tamanho}" />
+							</div>
+							<div>
+								<p:inputText size="8"
+									style="#{produtoFormView.getProdutoSaldoFromMapa(1).qtde eq null ? 'background-color: lightgrey' : 'background-color: gold'}"
+									value="#{produtoFormView.getProdutoSaldoFromMapa(1).qtde}"
+									styleClass="maskQtde inputGradeTamanho">
+									<f:convertNumber maxFractionDigits="3" minFractionDigits="3" />
+								</p:inputText>
+							</div>
+
+						</p:outputPanel>
+
+					</div>
+
+					<div class="ui-grid-col-2 grade">
+
+						<p:outputPanel
+							rendered="#{produtoFormView.getProdutoSaldoFromMapa(2) ne null}">
+
+							<div style="text-align: center">
+								<h:outputText class="outputTamanho"
+									value="#{produtoFormView.getProdutoSaldoFromMapa(2).gradeTamanho.tamanho}" />
+							</div>
+							<div>
+								<p:inputText size="8"
+									style="#{produtoFormView.getProdutoSaldoFromMapa(2).qtde eq null ? 'background-color: lightgrey' : 'background-color: gold'}"
+									value="#{produtoFormView.getProdutoSaldoFromMapa(2).qtde}"
+									styleClass="maskQtde inputGradeTamanho">
+									<f:convertNumber maxFractionDigits="3" minFractionDigits="3" />
+								</p:inputText>
+							</div>
+
+						</p:outputPanel>
+
+					</div>
+
+					<div class="ui-grid-col-2 grade">
+
+						<p:outputPanel
+							rendered="#{produtoFormView.getProdutoSaldoFromMapa(3) ne null}">
+
+							<div style="text-align: center">
+								<h:outputText class="outputTamanho"
+									value="#{produtoFormView.getProdutoSaldoFromMapa(3).gradeTamanho.tamanho}" />
+							</div>
+							<div>
+								<p:inputText size="8"
+									style="#{produtoFormView.getProdutoSaldoFromMapa(3).qtde eq null ? 'background-color: lightgrey' : 'background-color: gold'}"
+									value="#{produtoFormView.getProdutoSaldoFromMapa(3).qtde}"
+									styleClass="maskQtde inputGradeTamanho">
+									<f:convertNumber maxFractionDigits="3" minFractionDigits="3" />
+								</p:inputText>
+							</div>
+
+						</p:outputPanel>
+
+					</div>
+
+					<div class="ui-grid-col-2 grade">
+
+						<p:outputPanel
+							rendered="#{produtoFormView.getProdutoSaldoFromMapa(4) ne null}">
+
+							<div style="text-align: center">
+								<h:outputText class="outputTamanho"
+									value="#{produtoFormView.getProdutoSaldoFromMapa(4).gradeTamanho.tamanho}" />
+							</div>
+							<div>
+								<p:inputText size="8"
+									style="#{produtoFormView.getProdutoSaldoFromMapa(4).qtde eq null ? 'background-color: lightgrey' : 'background-color: gold'}"
+									value="#{produtoFormView.getProdutoSaldoFromMapa(4).qtde}"
+									styleClass="maskQtde inputGradeTamanho">
+									<f:convertNumber maxFractionDigits="3" minFractionDigits="3" />
+								</p:inputText>
+							</div>
+
+						</p:outputPanel>
+
+					</div>
+
+					<div class="ui-grid-col-2 grade">
+
+						<p:outputPanel
+							rendered="#{produtoFormView.getProdutoSaldoFromMapa(5) ne null}">
+
+							<div style="text-align: center">
+								<h:outputText class="outputTamanho"
+									value="#{produtoFormView.getProdutoSaldoFromMapa(5).gradeTamanho.tamanho}" />
+							</div>
+							<div>
+								<p:inputText size="8"
+									style="#{produtoFormView.getProdutoSaldoFromMapa(5).qtde eq null ? 'background-color: lightgrey' : 'background-color: gold'}"
+									value="#{produtoFormView.getProdutoSaldoFromMapa(5).qtde}"
+									styleClass="maskQtde inputGradeTamanho">
+									<f:convertNumber maxFractionDigits="3" minFractionDigits="3" />
+								</p:inputText>
+							</div>
+
+						</p:outputPanel>
+
+					</div>
+
+					<div class="ui-grid-col-2 grade">
+
+						<p:outputPanel
+							rendered="#{produtoFormView.getProdutoSaldoFromMapa(6) ne null}">
+
+							<div style="text-align: center">
+								<h:outputText class="outputTamanho"
+									value="#{produtoFormView.getProdutoSaldoFromMapa(6).gradeTamanho.tamanho}" />
+							</div>
+							<div>
+								<p:inputText size="8"
+									style="#{produtoFormView.getProdutoSaldoFromMapa(6).qtde eq null ? 'background-color: lightgrey' : 'background-color: gold'}"
+									value="#{produtoFormView.getProdutoSaldoFromMapa(6).qtde}"
+									styleClass="maskQtde inputGradeTamanho">
+									<f:convertNumber maxFractionDigits="3" minFractionDigits="3" />
+								</p:inputText>
+							</div>
+
+						</p:outputPanel>
+
+					</div>
+
+				</div>
+
+
+				<div class="ui-grid-row">
+					<div class="ui-grid-col-2 grade">
+
+						<p:outputPanel
+							rendered="#{produtoFormView.getProdutoSaldoFromMapa(7) ne null}">
+
+							<div style="text-align: center">
+								<h:outputText class="outputTamanho"
+									value="#{produtoFormView.getProdutoSaldoFromMapa(7).gradeTamanho.tamanho}" />
+							</div>
+							<div>
+								<p:inputText size="8"
+									style="#{produtoFormView.getProdutoSaldoFromMapa(7).qtde eq null ? 'background-color: lightgrey' : 'background-color: gold'}"
+									value="#{produtoFormView.getProdutoSaldoFromMapa(7).qtde}"
+									styleClass="maskQtde inputGradeTamanho">
+									<f:convertNumber maxFractionDigits="3" minFractionDigits="3" />
+								</p:inputText>
+							</div>
+
+						</p:outputPanel>
+
+					</div>
+
+					<div class="ui-grid-col-2 grade">
+
+						<p:outputPanel
+							rendered="#{produtoFormView.getProdutoSaldoFromMapa(8) ne null}">
+
+							<div style="text-align: center">
+								<h:outputText class="outputTamanho"
+									value="#{produtoFormView.getProdutoSaldoFromMapa(8).gradeTamanho.tamanho}" />
+							</div>
+							<div>
+								<p:inputText size="8"
+									style="#{produtoFormView.getProdutoSaldoFromMapa(8).qtde eq null ? 'background-color: lightgrey' : 'background-color: gold'}"
+									value="#{produtoFormView.getProdutoSaldoFromMapa(8).qtde}"
+									styleClass="maskQtde inputGradeTamanho">
+									<f:convertNumber maxFractionDigits="3" minFractionDigits="3" />
+								</p:inputText>
+							</div>
+
+						</p:outputPanel>
+
+					</div>
+
+					<div class="ui-grid-col-2 grade">
+
+						<p:outputPanel
+							rendered="#{produtoFormView.getProdutoSaldoFromMapa(9) ne null}">
+
+							<div style="text-align: center">
+								<h:outputText class="outputTamanho"
+									value="#{produtoFormView.getProdutoSaldoFromMapa(9).gradeTamanho.tamanho}" />
+							</div>
+							<div>
+								<p:inputText size="8"
+									style="#{produtoFormView.getProdutoSaldoFromMapa(9).qtde eq null ? 'background-color: lightgrey' : 'background-color: gold'}"
+									value="#{produtoFormView.getProdutoSaldoFromMapa(9).qtde}"
+									styleClass="maskQtde inputGradeTamanho">
+									<f:convertNumber maxFractionDigits="3" minFractionDigits="3" />
+								</p:inputText>
+							</div>
+
+						</p:outputPanel>
+
+					</div>
+
+					<div class="ui-grid-col-2 grade">
+
+						<p:outputPanel
+							rendered="#{produtoFormView.getProdutoSaldoFromMapa(10) ne null}">
+
+							<div style="text-align: center">
+								<h:outputText class="outputTamanho"
+									value="#{produtoFormView.getProdutoSaldoFromMapa(10).gradeTamanho.tamanho}" />
+							</div>
+							<div>
+								<p:inputText size="8"
+									style="#{produtoFormView.getProdutoSaldoFromMapa(10).qtde eq null ? 'background-color: lightgrey' : 'background-color: gold'}"
+									value="#{produtoFormView.getProdutoSaldoFromMapa(10).qtde}"
+									styleClass="maskQtde inputGradeTamanho">
+									<f:convertNumber maxFractionDigits="3" minFractionDigits="3" />
+								</p:inputText>
+							</div>
+
+						</p:outputPanel>
+
+					</div>
+
+					<div class="ui-grid-col-2 grade">
+
+						<p:outputPanel
+							rendered="#{produtoFormView.getProdutoSaldoFromMapa(11) ne null}">
+
+							<div style="text-align: center">
+								<h:outputText class="outputTamanho"
+									value="#{produtoFormView.getProdutoSaldoFromMapa(11).gradeTamanho.tamanho}" />
+							</div>
+							<div>
+								<p:inputText size="8"
+									style="#{produtoFormView.getProdutoSaldoFromMapa(11).qtde eq null ? 'background-color: lightgrey' : 'background-color: gold'}"
+									value="#{produtoFormView.getProdutoSaldoFromMapa(11).qtde}"
+									styleClass="maskQtde inputGradeTamanho">
+									<f:convertNumber maxFractionDigits="3" minFractionDigits="3" />
+								</p:inputText>
+							</div>
+
+						</p:outputPanel>
+
+					</div>
+
+					<div class="ui-grid-col-2 grade">
+
+						<p:outputPanel
+							rendered="#{produtoFormView.getProdutoSaldoFromMapa(12) ne null}">
+
+							<div style="text-align: center">
+								<h:outputText class="outputTamanho"
+									value="#{produtoFormView.getProdutoSaldoFromMapa(12).gradeTamanho.tamanho}" />
+							</div>
+							<div>
+								<p:inputText size="8"
+									style="#{produtoFormView.getProdutoSaldoFromMapa(12).qtde eq null ? 'background-color: lightgrey' : 'background-color: gold'}"
+									value="#{produtoFormView.getProdutoSaldoFromMapa(12).qtde}"
+									styleClass="maskQtde inputGradeTamanho">
+									<f:convertNumber maxFractionDigits="3" minFractionDigits="3" />
+								</p:inputText>
+							</div>
+
+						</p:outputPanel>
+
+					</div>
+
+				</div>
+
+			</div>
+
+		</p:outputPanel>
+
+		<fd:labelInput label="Qtde Total :" alignRight="true"
+			breakAfter="true">
+			<p:inputText size="8" value="#{produtoFormView.e.qtdeTotal}"
+				readonly="true" styleClass="maskQtde">
+				<f:convertNumber maxFractionDigits="3" minFractionDigits="3" />
+			</p:inputText>
+		</fd:labelInput>
+
+
+
+	</p:fieldset>
+
+
+
+
+</ui:composition>

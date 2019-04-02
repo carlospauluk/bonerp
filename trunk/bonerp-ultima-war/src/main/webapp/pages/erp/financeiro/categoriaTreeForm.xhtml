@@ -1,0 +1,164 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	template="/templates/template.xhtml">
+
+	<ui:define name="content">
+
+		<div id="_slnm_categoriaFormList" />
+
+		<sec:authorize ifAnyGranted="ROLE_FINANCEIRO_ADMIN">
+
+			<f:metadata>
+				<ui:param name="view" value="#{categoriaFormListView}" />
+			</f:metadata>
+
+
+
+			<h:form id="frm">
+
+				<p:panel id="panel" header="Categorias"
+					style="width: 1000px; margin: 0 auto;">
+
+
+
+
+					<p:toolbar>
+						<p:toolbarGroup align="left">
+							<p:commandButton id="btnAtualizar" title="Atualizar dados (A)"
+								update=":frm:opnTree" immediate="true" process="@this"
+								actionListener="#{view.setArvoreCategorias(null)}"
+								icon="ui-icon-refresh" style="width: 23; height: 23;" />
+						</p:toolbarGroup>
+					</p:toolbar>
+
+					<p:outputPanel id="opnLoadTree">
+						<p:remoteCommand id="rcLoadTree" name="loadTree"
+							actionListener="#{view.carregarArvore}" autoRun="true"
+							update="opnTree" process="@this opnTree" />
+					</p:outputPanel>
+
+
+					<p:outputPanel id="opnTree">
+
+						<p:treeTable value="#{view.arvoreCategorias}" var="_">
+							<p:column headerText="Código" styleClass="noWrap"
+								style="width: 140px">
+								<h:outputText value="#{_.codigo}"
+									converter="#{categoriaCodigoConverter}" />
+							</p:column>
+							<p:column headerText="Descrição">
+								<h:outputText value="#{_.descricao}" />
+							</p:column>
+							<p:column styleClass="noWrapColBtns">
+
+								<p:commandButton actionListener="#{view.novoFilho(_)}"
+									title="Adicionar subcategoria" process="@this"
+									oncomplete="PF('dlgForm').show()" update=":frmDlg:opnDlg"
+									icon="ui-icon-document" />
+
+								<p:commandButton actionListener="#{view.setE(_)}"
+									rendered="#{_.pai ne null}" title="Editar categoria"
+									process="@this" oncomplete="PF('dlgForm').show()"
+									update=":frmDlg:opnDlg" icon="ui-icon-build" />
+
+								<p:commandButton action="#{view.deletar(_)}"
+									rendered="#{_.subCategs eq null or _.subCategs.size() eq 0}"
+									title="Deletar registro" process="@this" icon="ui-icon-trash"
+									update=":frm" styleClass="red-btn">
+									<p:confirm />
+								</p:commandButton>
+
+							</p:column>
+						</p:treeTable>
+
+					</p:outputPanel>
+				</p:panel>
+
+			</h:form>
+
+
+			<h:form id="frmDlg">
+				<p:dialog id="dlgForm" widgetVar="dlgForm" position="top"
+					header="Categoria" modal="true" resizable="false"
+					closeOnEscape="true">
+					<p:outputPanel id="opnDlg">
+
+						<p:defaultCommand target="btnSalvar" />
+
+						<fd:labelInput label="Código :" breakAfter="true"
+							labelWidth="180px" forId="iCodigoSufixo">
+							<p:inputText size="10" value="#{view.e.pai.codigoM}"
+								disabled="true" />
+							<p:inputText size="5" value="#{view.codigoSufixo}"
+								id="iCodigoSufixo" />
+						</fd:labelInput>
+
+						<fd:labelInput label="Descrição :" breakAfter="true"
+							labelWidth="180px" forId="iDescricao">
+							<p:inputText size="50" value="#{view.e.descricao}"
+								id="iDescricao" required="true" />
+						</fd:labelInput>
+
+						<fd:labelInput label="Totalizável :" labelWidth="180px"
+							breakAfter="true" forId="iTotalizavel">
+							<p:selectOneRadio value="#{view.e.totalizavel}" id="iTotalizavel">
+								<f:selectItem itemValue="true" itemLabel="SIM" />
+								<f:selectItem itemValue="false" itemLabel="NÃO" />
+							</p:selectOneRadio>
+						</fd:labelInput>
+
+						<fd:labelInput label="Centro Custo Dif :" labelWidth="180px"
+							breakAfter="true" forId="iCentroCustoDif">
+							<p:selectOneRadio value="#{view.e.centroCustoDif}"
+								id="iCentroCustoDif">
+								<f:selectItem itemValue="true" itemLabel="SIM" />
+								<f:selectItem itemValue="false" itemLabel="NÃO" />
+							</p:selectOneRadio>
+						</fd:labelInput>
+
+						<fd:labelInput label="Descrição Padrão Moviment :"
+							breakAfter="true" labelWidth="180px"
+							forId="iDescricaoPadraoMoviment">
+							<p:inputText size="50" value="#{view.e.descricaoPadraoMoviment}"
+								id="iDescricaoPadraoMoviment" />
+						</fd:labelInput>
+
+						<p:fieldset legend="Segurança">
+
+							<fd:labelInput label="Roles Acess :" breakAfter="true"
+								labelWidth="180px" forId="iRolesAcess">
+								<p:inputText size="50" value="#{view.e.rolesAcess}"
+									id="iRolesAcess" />
+							</fd:labelInput>
+
+							<fd:labelInput label="Descrição Alternativa :" breakAfter="true"
+								labelWidth="180px" forId="iDescricaoAlternativa">
+								<p:inputText size="50" value="#{view.e.descricaoAlternativa}"
+									id="iDescricaoAlternativa" />
+							</fd:labelInput>
+
+						</p:fieldset>
+
+						<p:spacer height="20px" />
+
+						<fd:labelInput noLabel="true" alignRight="true">
+							<p:commandButton title="Salvar o registro atual" id="btnSalvar"
+								icon="ui-icon-save" value="Salvar" style="width: 110px"
+								actionListener="#{view.save}" update="opnDlg"
+								oncomplete="afterFormSubmit(xhr, status, args);" />
+						</fd:labelInput>
+
+					</p:outputPanel>
+				</p:dialog>
+			</h:form>
+
+		</sec:authorize>
+
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,660 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.0.1.final using JasperReports Library version 6.0.0  -->
+<!-- 2016-05-07T15:11:50 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rpOrcamento" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isSummaryWithPageHeaderAndFooter="true" uuid="2a67a703-1e4b-425d-9d18-40e739567676">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="9"/>
+	<property name="ireport.callouts" value="##Mon Nov 10 10:25:51 BRST 2014"/>
+	<parameter name="orcamentoId" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT * FROM (
+-- PRIMEIRO SQL: pega tudo menos as mão-de-obra das costureiras (pra agrupa-las no segundo sql do union)
+(SELECT
+    orc.id as id,
+    orc.cabecalho,
+    orc.desconto,
+    orc.dt_preenchimento,
+    orc.dt_validade,
+    orc.obs,
+    orc.exibir_totais,
+    orc.preenchido_por,
+    orc.status as status_orcamento,
+    orc_grupo.id as grupo_id,
+    orc_grupo.ordem as grupo_ordem,
+    orc_grupo.titulo,
+    orc_item.descricao as item_descricao,
+    orc_item.ordem as item_ordem,
+    orc_item.valor_unit,
+    orc_item.obs as item_obs,
+    cortina.id as cortina_id,
+    cortina.altura,
+    cortina.largura,
+    cortina.altura_janela,
+    cortina.largura_janela,
+    cortina.com_instalacao,
+    cortina.qtde_camadas,
+    cortina_item.altura_barra,
+    cortina_item.camada,
+    cortina_item.`tecido_fator`,
+    cortina_item.obs as cortinaItemObs,
+    cortina_item.preco_prazo,
+    cortina_item.preco_promo,
+    cortina_item.preco_vista,
+    cortina_item.qtde,
+    artigo_cortina.tipo_artigo_cortina,
+    tecido.largura tecido_largura,
+    produto.reduzido as produto_reduzido,
+    produto.descricao as produto_descricao,
+    unidade.`label` as unidade,
+    cortina_item.qtde * cortina_item.preco_prazo AS total_item,
+    (
+    SELECT round(truncate(( SUM(i_.qtde * i_.valor_unit ) ), 3) + 0.0001, 2)
+    FROM
+        orc_orcamento o_,
+        orc_orcamento_grupo_item g_,
+        orc_orcamento_item i_
+    WHERE
+        o_.id = orc.id AND
+        i_.orcamento_grupo_id = g_.id AND g_.orcamento_id = o_.id
+        ) as sub_total,
+    (
+    SELECT round(truncate(( SUM(i_.qtde * i_.valor_unit * ((100-o_.desconto)/100) ) ), 3) + 0.0001, 2)
+    FROM
+        orc_orcamento o_,
+        orc_orcamento_grupo_item g_,
+        orc_orcamento_item i_
+    WHERE
+        o_.id = orc.id AND
+        i_.orcamento_grupo_id = g_.id AND g_.orcamento_id = o_.id
+        ) as valor_total
+FROM
+    orc_orcamento orc
+    JOIN orc_orcamento_grupo_item orc_grupo ON orc_grupo.orcamento_id = orc.id
+    JOIN orc_orcamento_item orc_item ON orc_item.`orcamento_grupo_id` = orc_grupo.id
+    JOIN crtn_cortina cortina ON cortina.`orcamento_item_id` = orc_item.id
+    JOIN crtn_cortina_item cortina_item ON cortina_item.`cortina_id` = cortina.id
+    JOIN crtn_artigo_cortina artigo_cortina ON cortina_item.`artigoCortina_id` = artigo_cortina.id
+    LEFT JOIN crtn_tecido tecido ON artigo_cortina.`tecido_id` = tecido.id
+    JOIN est_produto produto ON artigo_cortina.`produto_id` = produto.id
+    JOIN `est_unidade_produto` unidade ON produto.`unidade_produto_id` = `unidade`.id
+
+WHERE
+    orc.id = 16
+    AND artigo_cortina.`tipo_artigo_cortina` NOT IN ('MAO_DE_OBRA_COSTUREIRA_DETALHES','MAO_DE_OBRA_COSTUREIRA_TECIDO','MAO_DE_OBRA_ILHOS')
+
+ORDER BY
+    orc_grupo.`ordem`,
+    orc_item.`ordem`,
+    cortina_item.`camada`,
+    produto.descricao)
+UNION ALL
+-- SEGUNDO SQL: pega só as mão-de-obra das costureiras e agrupa com SUM
+(SELECT
+    orc.id as id,
+    orc.cabecalho,
+    orc.desconto,
+    orc.dt_preenchimento,
+    orc.dt_validade,
+    orc.obs,
+    orc.exibir_totais,
+    orc.preenchido_por,
+    orc.status as status_orcamento,
+    orc_grupo.id as grupo_id,
+    orc_grupo.ordem as grupo_ordem,
+    orc_grupo.titulo,
+    orc_item.descricao as item_descricao,
+    orc_item.ordem as item_ordem,
+    orc_item.valor_unit,
+    orc_item.obs as item_obs,
+    cortina.id as cortina_id,
+    cortina.altura,
+    cortina.largura,
+    cortina.altura_janela,
+    cortina.largura_janela,
+    cortina.com_instalacao,
+    cortina.qtde_camadas,
+    cortina_item.altura_barra,
+    999 as camada, -- cortina_item.camada,
+    cortina_item.`tecido_fator`,
+    null as cortinaItemObs, -- cortina_item.obs as cortinaItemObs,
+    SUM(cortina_item.qtde * cortina_item.preco_prazo) as preco_prazo, -- cortina_item.preco_prazo,
+    cortina_item.preco_promo,
+    cortina_item.preco_vista,
+    1.00 as qtde, -- cortina_item.qtde,
+    artigo_cortina.tipo_artigo_cortina,
+    tecido.largura tecido_largura,
+    null as produto_reduzido, -- produto.reduzido as produto_reduzido,
+    'MÃO-DE-OBRA CONFECÇÃO' as produto_descricao, -- produto.descricao as produto_descricao,
+    'UN' as unidade, -- unidade.`label` as unidade,
+    SUM(cortina_item.qtde * cortina_item.preco_prazo) AS total_item,
+    (
+    SELECT round(truncate(( SUM(i_.qtde * i_.valor_unit ) ), 3) + 0.0001, 2)
+    FROM
+        orc_orcamento o_,
+        orc_orcamento_grupo_item g_,
+        orc_orcamento_item i_
+    WHERE
+        o_.id = orc.id AND
+        i_.orcamento_grupo_id = g_.id AND g_.orcamento_id = o_.id
+        ) as sub_total,
+    (
+    SELECT round(truncate(( SUM(i_.qtde * i_.valor_unit * ((100-o_.desconto)/100) ) ), 3) + 0.0001, 2)
+    FROM
+        orc_orcamento o_,
+        orc_orcamento_grupo_item g_,
+        orc_orcamento_item i_
+    WHERE
+        o_.id = orc.id AND
+        i_.orcamento_grupo_id = g_.id AND g_.orcamento_id = o_.id
+        ) as valor_total
+FROM
+    orc_orcamento orc
+    JOIN orc_orcamento_grupo_item orc_grupo ON orc_grupo.orcamento_id = orc.id
+    JOIN orc_orcamento_item orc_item ON orc_item.`orcamento_grupo_id` = orc_grupo.id
+    JOIN crtn_cortina cortina ON cortina.`orcamento_item_id` = orc_item.id
+    JOIN crtn_cortina_item cortina_item ON cortina_item.`cortina_id` = cortina.id
+    JOIN crtn_artigo_cortina artigo_cortina ON cortina_item.`artigoCortina_id` = artigo_cortina.id
+    LEFT JOIN crtn_tecido tecido ON artigo_cortina.`tecido_id` = tecido.id
+    JOIN est_produto produto ON artigo_cortina.`produto_id` = produto.id
+    JOIN `est_unidade_produto` unidade ON produto.`unidade_produto_id` = `unidade`.id
+
+WHERE
+    orc.id = $P{orcamentoId}
+     AND    artigo_cortina.`tipo_artigo_cortina` IN ('MAO_DE_OBRA_COSTUREIRA_DETALHES','MAO_DE_OBRA_COSTUREIRA_TECIDO','MAO_DE_OBRA_ILHOS')
+GROUP BY
+	orc_item.id
+)) orcamento_cortina
+ORDER BY
+   grupo_ordem,
+item_ordem,
+camada,
+produto_descricao]]>
+	</queryString>
+	<field name="id" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="cabecalho" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="desconto" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="dt_preenchimento" class="java.sql.Timestamp">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="dt_validade" class="java.sql.Timestamp">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="obs" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="exibir_totais" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="preenchido_por" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="status_orcamento" class="java.lang.String"/>
+	<field name="grupo_id" class="java.lang.Long"/>
+	<field name="grupo_ordem" class="java.lang.Integer"/>
+	<field name="titulo" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="item_descricao" class="java.lang.String"/>
+	<field name="item_ordem" class="java.lang.Integer"/>
+	<field name="valor_unit" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="item_obs" class="java.lang.String"/>
+	<field name="cortina_id" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="altura" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="largura" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="altura_janela" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="largura_janela" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="com_instalacao" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="qtde_camadas" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="altura_barra" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="camada" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="tecido_fator" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="cortinaItemObs" class="java.lang.String"/>
+	<field name="preco_prazo" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="preco_promo" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="preco_vista" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="qtde" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="tipo_artigo_cortina" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="tecido_largura" class="java.lang.Double"/>
+	<field name="produto_reduzido" class="java.lang.Integer"/>
+	<field name="produto_descricao" class="java.lang.String"/>
+	<field name="unidade" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="total_item" class="java.lang.Double"/>
+	<field name="sub_total" class="java.lang.Double"/>
+	<field name="valor_total" class="java.lang.Double"/>
+	<variable name="total_cortina" class="java.lang.Double" resetType="Group" resetGroup="cortina" calculation="Sum">
+		<variableExpression><![CDATA[$F{total_item}]]></variableExpression>
+	</variable>
+	<variable name="total_grupo" class="java.lang.Double" resetType="Group" resetGroup="grupo" calculation="Sum">
+		<variableExpression><![CDATA[$F{total_item}]]></variableExpression>
+	</variable>
+	<group name="grupo" keepTogether="true">
+		<groupExpression><![CDATA[$F{grupo_id}]]></groupExpression>
+		<groupHeader>
+			<band height="23">
+				<textField isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="555" height="23" backcolor="#CCCCCC" uuid="9130ccf1-4bd1-4ff2-acd6-6a2591f26a38"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="12" isBold="true" isItalic="false" isUnderline="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{titulo}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="cortina" keepTogether="true">
+		<groupExpression><![CDATA[$F{cortina_id}]]></groupExpression>
+		<groupHeader>
+			<band height="30">
+				<textField isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" mode="Transparent" x="0" y="0" width="325" height="30" uuid="545cd9dc-7874-4afb-b88a-08e2bf14ffdc"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="12" isBold="true" isItalic="true" isUnderline="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{item_descricao}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,###,##0.00" isBlankWhenNull="true">
+					<reportElement x="505" y="0" width="35" height="15" uuid="a8b83b09-d03d-49b4-9a20-3195e7f7c6d8"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{altura}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="447" y="0" width="58" height="15" uuid="a7c20af4-ad44-4696-95be-e72726c02b63"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Altura:]]></text>
+				</staticText>
+				<textField pattern="#,###,##0.00">
+					<reportElement x="505" y="15" width="35" height="15" uuid="e350480e-ff7b-4be4-84aa-079c886b5719"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{largura}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="447" y="15" width="58" height="15" uuid="1a60ecfa-692d-4470-94ac-c83847a08d34"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Largura:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="540" y="0" width="15" height="15" uuid="914e1517-5681-4a72-84a5-4e760cce210c"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[m]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="540" y="15" width="15" height="15" uuid="7a76281c-5966-4dd5-bc62-6842d92d7105"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[m]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="432" y="0" width="15" height="15" uuid="99742953-b8a2-4c3c-99bb-61e546e05463"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[m]]></text>
+				</staticText>
+				<textField pattern="#,###,##0.00">
+					<reportElement x="399" y="15" width="35" height="15" uuid="7d028295-d0c9-4cab-b84e-c5b5f9b2d3ec"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{largura_janela}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,###,##0.00" isBlankWhenNull="true">
+					<reportElement x="399" y="0" width="35" height="15" uuid="5bd43b70-98ee-4d71-9382-72403cc7f1e6"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{altura_janela}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="432" y="15" width="15" height="15" uuid="00bcd27d-8766-4ae9-a860-fca94fe3bc75"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[m]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="325" y="15" width="74" height="15" uuid="86bc800b-d0aa-4bab-8d33-b02aca98495b"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Largura Janela:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="325" y="0" width="74" height="15" uuid="a7e9b714-c61c-4f28-87d2-ad9e8d5f4369"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Altura Janela:]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="21">
+				<printWhenExpression><![CDATA[$F{item_obs} != null]]></printWhenExpression>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="0" y="5" width="555" height="15" uuid="bda23f2d-3abe-4811-87c2-9f19d1de2a5b"/>
+					<box topPadding="2" leftPadding="10" bottomPadding="2" rightPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="8" isItalic="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["OBS. P/ " + $F{item_descricao} + ": \n" + $F{item_obs}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="camada">
+		<groupExpression><![CDATA[$F{camada}]]></groupExpression>
+		<groupHeader>
+			<band height="15">
+				<textField isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="486" height="15" uuid="82f0ee33-1152-4470-9807-2b6091edb9e7"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($F{camada} == 999) ? "GERAL" : "CAMADA " + $F{camada}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="486" y="0" width="45" height="15" uuid="e535619e-00b7-4e6a-b993-e437f9b2ee4d"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Qtde]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="531" y="0" width="24" height="15" uuid="d5f69761-5c2c-4cef-8347-4a1edde2d3ea"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[UN]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="65" splitType="Prevent">
+			<image>
+				<reportElement x="0" y="0" width="190" height="55" uuid="9b39bbdf-6c49-475a-8cba-99a8ca043cf1"/>
+				<imageExpression><![CDATA["../LOGO_COMPLETO_400px.jpg"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="263" y="0" width="292" height="32" uuid="7c87a2c9-af2d-484e-a824-32fd537abe1e"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="16" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Planilha - Confecção de Cortinas]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="59" width="555" height="1" uuid="9a7ff124-7392-4313-95da-59e5fc154a23"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<textField pattern="0000000">
+				<reportElement x="499" y="36" width="56" height="20" uuid="5d18f100-4eb0-4f0a-abc9-af79185055af"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{id}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="399" y="36" width="100" height="20" uuid="ba42ba61-3b22-43f6-8fec-8025c1a406fd"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Lucida Sans"/>
+				</textElement>
+				<text><![CDATA[Nº:]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="486" height="15" uuid="d9932d14-3119-4739-8dd4-b73c67fcef34"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{produto_descricao}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,###,##0.00" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="486" y="0" width="45" height="15" uuid="f9f94096-d589-473f-8dca-ceaf126fbef6"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{qtde}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="531" y="0" width="24" height="15" uuid="ba450543-ace4-4576-8cfc-31600ec2ecb5"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{unidade}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="15" splitType="Stretch">
+			<printWhenExpression><![CDATA[$F{cortinaItemObs} != null]]></printWhenExpression>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="555" height="15" uuid="3afebbde-3c9d-40c6-8e48-8708d1bc7d87"/>
+				<box topPadding="2" leftPadding="20" bottomPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="7" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Obs.: " + $F{cortinaItemObs}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="63">
+			<staticText>
+				<reportElement x="525" y="42" width="15" height="12" uuid="351d9b87-113f-4c94-90d0-76334a5f2303"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[de]]></text>
+			</staticText>
+			<textField pattern="00">
+				<reportElement x="510" y="42" width="15" height="12" uuid="0593f3e3-6f2e-4e78-96e7-7dbe4741e68f"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="00">
+				<reportElement x="540" y="42" width="15" height="12" uuid="87933d26-6425-4bb1-8212-f735913d6f80"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="7" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="14" width="246" height="10" uuid="c0255e42-8890-4989-abc2-95371ed60e28"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="8"/>
+				</textElement>
+				<text><![CDATA[COMERCIAL DE TECIDOS PAULUK LTDA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="309" y="14" width="246" height="10" uuid="7312aa30-e0c4-4818-bad9-aab31dc8e01c"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="8"/>
+				</textElement>
+				<text><![CDATA[I.E.: 20103024-23          CNPJ: 77.498.442/0001-34]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="24" width="246" height="10" uuid="a8a778b9-6838-4a90-9fd9-f0adb6d3a1fe"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="8"/>
+				</textElement>
+				<text><![CDATA[Av. Dom Pedro II, 337  .  Nova Rússia  .  Ponta Grossa-PR  .  CEP 84053-000]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="246" y="24" width="309" height="10" uuid="df5daca7-befa-4e10-b45e-e446f6275dd8"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="8"/>
+				</textElement>
+				<text><![CDATA[(42) 3227.6657   (42) 3227.6650     contato@casabonsucesso.com.br]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="11" width="555" height="1" uuid="062d8f98-acf3-4676-bb6a-ac9a2b0eeec5"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<textField>
+				<reportElement x="0" y="42" width="378" height="12" uuid="dbb9b888-d16f-4750-9fe8-c0c1c3b8f121"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="6" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Preenchido por " + $F{preenchido_por} + " em " + new SimpleDateFormat("dd/MM/YYYY").format($F{dt_preenchimento})]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

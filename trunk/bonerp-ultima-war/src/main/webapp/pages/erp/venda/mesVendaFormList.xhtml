@@ -1,0 +1,363 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:p="http://primefaces.org/ui">
+
+
+	<div id="_slnm_mesVendaFormList" />
+
+	<ui:decorate template="/templates/formList.xhtml">
+
+
+		<ui:param name="role" value="VENDAS" />
+
+		<ui:param name="view" value="#{mesVendaFormListView}" />
+		<ui:param name="titulo" value="Meses - Vendas" />
+		<ui:param name="tituloDlg" value="Mês - Vendas" />
+
+		<ui:param name="formOutcome" value="/pages/erp/venda/mesVenda.jsf" />
+		<ui:param name="exibir_btnAtualizar" value="false" />
+		
+		<ui:param name="updateDlg" value=":frm" />
+		
+
+		<ui:param name="exibirPesquisar" value="false" />
+
+		<ui:param name="exibir_btnSalvar" value="false" />
+		<ui:param name="exibirColuna_IudtUpdated" value="false" />
+
+
+
+		<ui:define name="cols">
+
+			<p:column headerText="Mês/Ano" sortBy="#{_.mesAno}">
+				<h:outputText value="#{_.mesAno}">
+					<f:convertDateTime pattern="MMMM/yyyy" />
+				</h:outputText>
+				<h:outputText
+					value=" (#{_.qtdeDiasUteisAteHoje} / #{_.qtdeDiasUteisComerciais})"
+					title="Dias úteis comerciais" />
+				<br />
+				<h:outputText value="#{_.qtdeVendedores} vendedores" />
+				<br />
+				<h:outputText style="font-weight: bold" value="IGPM: #{_.inflacao}%" />
+			</p:column>
+
+			<p:column headerText="Totais Históricos" styleClass="noWrap"
+				style="width:1px">
+				<div style="text-align: right;">
+
+					Global:
+					<h:outputText style="font-weight: bold" value="#{_.totalHistorico}"
+						converter="#{doubleConverterNull}" />
+					<br /> Vendedores:
+					<h:outputText style="font-weight: bold"
+						value="#{_.totalHistoricoVendedores}"
+						converter="#{doubleConverterNull}" />
+					<br /> Externos:
+					<h:outputText style="font-weight: bold"
+						value="#{_.totalHistoricoExternos}"
+						converter="#{doubleConverterNull}" />
+
+				</div>
+			</p:column>
+
+
+			<p:column styleClass="noWrap" headerText="Totais Realizados">
+				<div style="text-align: right;">
+
+					Global:
+					<h:outputText style="font-weight: bold"
+						value="#{_.totalVendidoGlobal}" converter="#{doubleConverterNull}"
+						title="Variações: Bruta (#{stringUtils.getScaled(_.variacaoBruta,2)}) - Meta Mínima (#{stringUtils.getScaled(_.variacaoInflacao,2)}) - Meta Esperada (#{stringUtils.getScaled(_.variacaoMeta,2)})" />
+					<br /> Vendedores:
+					<h:outputText style="font-weight: bold"
+						value="#{_.totalVendidoVendedores}"
+						converter="#{doubleConverterNull}"
+						title="Variações: Bruta (#{stringUtils.getScaled(_.variacaoBrutaVendedores,2)}) - Meta Mínima (#{stringUtils.getScaled(_.variacaoInflacaoVendedores,2)}) - Meta Esperada (#{stringUtils.getScaled(_.variacaoMetaVendedores,2)})" />
+					<br /> Externos:
+					<h:outputText style="font-weight: bold"
+						value="#{_.totalVendidoExternos}"
+						converter="#{doubleConverterNull}"
+						title="Variações: Bruta (#{stringUtils.getScaled(_.variacaoBrutaExternos,2)}) - Meta Mínima (#{stringUtils.getScaled(_.variacaoInflacaoExternos,2)}) - Meta Esperada (#{stringUtils.getScaled(_.variacaoMetaExternos,2)})" />
+				</div>
+			</p:column>
+
+
+			<p:column styleClass="noWrap" headerText="Metas">
+				<div style="text-align: right;">
+					Meta Mínima (Vendedores):
+					<h:outputText value="#{_.metaMinimaVendedores}"
+						style="font-weight: bold" converter="#{doubleConverterNull}" />
+					<br />
+					Meta Mínima (Externos):
+					<h:outputText value="#{_.metaMinimaExternos}"
+						style="font-weight: bold" converter="#{doubleConverterNull}" />
+					<hr />
+					
+					Meta Esperada (Vendedores):
+					<h:outputText value="#{_.metaEsperadaVendedores}"
+						style="font-weight: bold" converter="#{doubleConverterNull}" />
+					<br />
+					Meta Esperada (Externos):
+					<h:outputText value="#{_.metaEsperadaExternos}"
+						style="font-weight: bold" converter="#{doubleConverterNull}" />
+					<br />
+					
+				</div>
+			</p:column>
+
+			<p:column styleClass="noWrap" headerText="Médias (Vendedores)">
+				<div style="text-align: right;">
+
+					Média Realizada:
+					<h:outputText value="#{_.mediaDiariaVendedores}"
+						style="font-weight: bold" title="Média diária realizada"
+						converter="#{doubleConverterNull}" />
+					<br />
+
+					<p:outputPanel rendered="#{_.ehMesAtual eq true}">
+						Média At Hist:
+						<h:outputText
+							value="#{_.mediaDiariaAtingirHistoricoRestanteVendedores}"
+							style="font-weight: bold"
+							title="Média diária necessária para atingir histórico"
+							converter="#{doubleConverterNull}" />
+						<br />
+
+						Média At Meta Mín:
+						<h:outputText
+							value="#{_.mediaDiariaAtingirMetaMinimaRestanteVendedores}"
+							style="font-weight: bold"
+							title="Média diária necessária para atingir meta mínima (histórico + inflação)"
+							converter="#{doubleConverterNull}" />
+
+						<br />
+
+						Média At Meta Esp:
+						<h:outputText
+							value="#{_.mediaDiariaAtingirMetaEsperadaRestanteVendedores}"
+							style="font-weight: bold"
+							title="Média diária necessária para atingir meta esperada (histórico + inflação + 3%)"
+							converter="#{doubleConverterNull}" />
+						<br />
+					</p:outputPanel>
+
+					<p:outputPanel rendered="#{_.ehMesAtual eq false}">
+
+						Média At Hist:
+						<h:outputText value="#{_.mediaDiariaAtingirHistoricoVendedores}"
+							style="font-weight: bold"
+							title="Média diária necessária para atingir histórico considerando o total já vendido"
+							converter="#{doubleConverterNull}" />
+						<br />
+
+						Média At Meta Mín:
+						<h:outputText value="#{_.mediaDiariaAtingirMetaMinimaVendedores}"
+							style="font-weight: bold"
+							title="Média diária necessária para atingir meta mínima (histórico + inflação) considerando o total já vendido"
+							converter="#{doubleConverterNull}" />
+						<br />
+
+						Média At Meta Esp:
+						<h:outputText
+							value="#{_.mediaDiariaAtingirMetaEsperadaVendedores}"
+							style="font-weight: bold"
+							title="Média diária necessária para atingir meta esperada (histórico + inflação + 3%) considerando o total já vendido"
+							converter="#{doubleConverterNull}" />
+						<br />
+					</p:outputPanel>
+
+				</div>
+			</p:column>
+
+			<p:column styleClass="noWrap" headerText="Variações">
+				<div style="text-align: right;">
+					Global Bruta:
+					<h:outputText value="#{_.variacaoBruta}" style="font-weight: bold"
+						title="Variação bruta em relação ao mesmo mês do ano passado"
+						converter="#{doubleConverterNull}" />
+					% <br />
+					
+					Global Inflação:
+					<h:outputText value="#{_.variacaoInflacao}" style="font-weight: bold"
+						title="Variação em relação ao mesmo mês do ano passado considerando mais a inflação"
+						converter="#{doubleConverterNull}" />
+					% <hr />
+					
+					Vendedores Bruta:
+					<h:outputText value="#{_.variacaoBrutaVendedores}" style="font-weight: bold"
+						title="Variação bruta em relação ao mesmo mês do ano passado (somente vendas de vendedores)"
+						converter="#{doubleConverterNull}" />
+					% <br />
+					Vendedores Inflação:
+					<h:outputText value="#{_.variacaoInflacaoVendedores}" style="font-weight: bold"
+						title="Variação em relação ao mesmo mês do ano passado considerando mais a inflação (somente vendas de vendedores)"
+						converter="#{doubleConverterNull}" />
+					% <hr />
+					
+					Externos Bruta:
+					<h:outputText value="#{_.variacaoBrutaExternos}" style="font-weight: bold"
+						title="Variação bruta em relação ao mesmo mês do ano passado (somente vendas 'externas')"
+						converter="#{doubleConverterNull}" />
+					% <br />
+					Externos Inflação:
+					<h:outputText value="#{_.variacaoInflacaoExternos}" style="font-weight: bold"
+						title="Variação em relação ao mesmo mês do ano passado considerando mais a inflação (somente vendas 'externas')"
+						converter="#{doubleConverterNull}" />
+					% <hr />
+					
+					
+
+
+
+
+				</div>
+			</p:column>
+
+
+			<p:column styleClass="noWrap" style="width:1px">
+				<p:commandButton action="#{mesVendaGraficosView.updateMesVenda(_)}"
+					process="@this" update=":frmMesVendaGraficos:opnDlg"
+					oncomplete="PF('dlgPieVendas').show()"
+					title="Abrir gráfico de vendas" icon="ui-icon-bookmark" />
+			</p:column>
+		</ui:define>
+
+
+
+		<ui:define name="campos">
+
+			<fd:labelInput label="Mês/Ano :" labelWidth="90px">
+				<p:inputText readonly="true" value="#{view.e.mesAno}" id="iMesAno">
+					<f:convertDateTime pattern="MMMM 'de' yyyy" />
+				</p:inputText>
+			</fd:labelInput>
+
+			<fd:labelInput label="Total Vendas :" alignRight="true">
+								R$ <p:inputText styleClass="maskMoney" size="11" id="iTotal"
+					value="#{view.e.totalVendidoGlobal}" style="text-align: right;"
+					converter="#{doubleConverterAbsNull}" readonly="true">
+				</p:inputText>
+			</fd:labelInput>
+
+			<fd:labelInput label="Total Histórico :" alignRight="true"
+				breakAfter="true">
+								R$ <p:inputText styleClass="maskMoney" size="11"
+					id="iTotalHistorico" value="#{view.e.totalHistorico}"
+					readonly="true" style="text-align: right;"
+					converter="#{doubleConverterAbsNull}">
+				</p:inputText>
+			</fd:labelInput>
+
+
+
+
+			<fd:labelInput label="Qtde Dias Úteis Comerciais :">
+				<p:inputText readonly="true" size="4"
+					value="#{view.e.qtdeDiasUteisComerciais}" />
+			</fd:labelInput>
+
+			<fd:labelInput label="Qtde Dias Úteis Restantes :">
+				<p:inputText readonly="true" size="4"
+					value="#{view.e.qtdeDiasUteisRestantes}" />
+			</fd:labelInput>
+
+			<fd:labelInput label="Média p/ Histórico :">
+								R$ <p:inputText styleClass="maskMoney" size="11"
+					value="#{view.e.mediaDiariaAtingirHistorico}" readonly="true"
+					style="text-align: right;" converter="#{doubleConverterAbsNull}">
+				</p:inputText>
+			</fd:labelInput>
+
+			<fd:labelInput label="Média p/ Meta Mínima :" breakAfter="true">
+								R$ <p:inputText styleClass="maskMoney" size="11"
+					value="#{view.e.mediaDiariaAtingirMetaMinima}" readonly="true"
+					style="text-align: right;" converter="#{doubleConverterAbsNull}">
+				</p:inputText>
+			</fd:labelInput>
+
+			<fd:labelInput label="Inflação :" labelWidth="90px" breakAfter="true">
+				<p:inputText styleClass="maskDec2" size="11" id="iInflacao"
+					value="#{view.e.inflacao}" style="text-align: right;"
+					converter="#{doubleConverterNull}" />%
+			</fd:labelInput>
+
+
+			<fd:labelInput noLabel="true" breakAfter="true" alignRight="true">
+
+				<p:defaultCommand target="btnSalvarMes" scope="frmDlg" />
+
+				<p:commandButton id="btnSalvarMes" update=":frm" icon="ui-icon-save"
+					value="Salvar" style="width: 200px" process="@form"
+					actionListener="#{view.save}"
+					oncomplete="afterFormSubmit(xhr, status, args);" />
+
+				<p:commandButton id="btnAtualizarMes" icon="ui-icon-refresh"
+					value="Atualizar" process="@form" update=":frm"
+					actionListener="#{view.atualizarMes}">
+					<p:confirm />
+				</p:commandButton>
+
+			</fd:labelInput>
+
+
+			<p:spacer height="30px" />
+
+			<div style="clear: both;" />
+
+
+			<p:outputPanel id="opnTotaisVendedores">
+
+				<p:scrollPanel style="height:400px" mode="native">
+
+					<p:panel header="Totais/Vendedores" id="pnTotaisVendedores">
+
+						<p:dataTable id="dtTotaisVendedores" var="_" rowIndexVar="row"
+							value="#{view.e.itens}" editable="true" editMode="cell"
+							sortBy="#{_.posicao}">
+
+
+							<p:column headerText="Posição" sortBy="#{_.posicao}">
+								<div style="text-align: right;">
+									<h:outputText value="#{_.posicao}" />
+								</div>
+							</p:column>
+
+							<p:column headerText="Vendedor">
+								<h:outputText value="#{_.vendedor.pessoa.nome}" />
+							</p:column>
+
+							<p:column headerText="Total/Mês">
+								<div style="text-align: right;">
+									<h:outputText value="#{_.totalVendido}"
+										converter="#{doubleConverterNull}" />
+								</div>
+							</p:column>
+
+							<p:column headerText="Qtde Vendas" sortBy="#{_.qtdeVendas}">
+								<div style="text-align: right;">
+									<h:outputText value="#{_.qtdeVendas}" />
+								</div>
+							</p:column>
+						</p:dataTable>
+					</p:panel>
+
+				</p:scrollPanel>
+
+			</p:outputPanel>
+
+
+		</ui:define>
+
+	</ui:decorate>
+
+
+	<ui:include src="mesVenda_graficos.xhtml" />
+
+
+</ui:composition>

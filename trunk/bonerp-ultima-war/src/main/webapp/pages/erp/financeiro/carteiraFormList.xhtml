@@ -1,0 +1,179 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:p="http://primefaces.org/ui">
+
+
+	<div id="_slnm_carteiraFormList" />
+
+	<ui:decorate template="/templates/formList.xhtml">
+
+
+		<ui:param name="role" value="FINANCEIRO" />
+
+		<ui:param name="view" value="#{carteiraFormListView}" />
+		<ui:param name="titulo" value="Carteiras" />
+		<ui:param name="tituloDlg" value="Carteira" />
+
+
+		<ui:define name="cols">
+			<p:column sortBy="#{_.codigo}" headerText="Código">
+				<h:outputText value="#{_.codigo}" />
+			</p:column>
+
+			<p:column sortBy="#{_.descricao}" headerText="Descrição" breakAfter="true">
+				<f:facet name="header">Descrição</f:facet>
+				<h:outputText value="#{_.descricao}" />
+			</p:column>
+			
+			<p:column styleClass="noWrapSmall" headerText="Dt Consolidado"
+				sortBy="#{_.dtConsolidado}">
+				<h:outputText value="#{_.dtConsolidado}">
+					<f:convertDateTime pattern="dd/MM/yyyy" />
+				</h:outputText>
+
+				<p:outputPanel style="float: right">
+					<p:commandButton icon="ui-icon-check"
+						style="width: 18px; height: 18px"
+						title="Consolidar carteira para data de ontem" process="@this"
+						partialSubmit="true" actionListener="#{view.consolidarOntem(_)}">
+						<p:confirm />
+					</p:commandButton>
+					<p:commandButton icon="ui-icon-cancel"
+						style="width: 18px; height: 18px"
+						title="Deixar aberta" process="@this"
+						partialSubmit="true" actionListener="#{view.desconsolidar(_)}">
+						<p:confirm />
+					</p:commandButton>
+				</p:outputPanel>
+			</p:column>
+
+			<p:column sortBy="#{_.concreta}" headerText="Concreta"
+				style="width: 110px">
+				<h:outputText value="#{_.concreta ? 'SIM' : 'NÃO'}" />
+			</p:column>
+
+			<p:column sortBy="#{_.caixa}" headerText="Caixa" style="width: 110px">
+				<h:outputText value="#{_.caixa ? 'SIM' : 'NÃO'}" />
+			</p:column>
+
+			<p:column sortBy="#{_.cheque}" headerText="Cheque"
+				style="width: 110px">
+				<h:outputText value="#{_.cheque ? 'SIM' : 'NÃO'}" />
+			</p:column>
+
+			<p:column sortBy="#{_.abertas}" headerText="Abertas"
+				style="width: 110px">
+				<h:outputText value="#{_.abertas ? 'SIM' : 'NÃO'}" />
+			</p:column>
+
+		</ui:define>
+
+
+
+		<ui:define name="campos">
+
+			<fd:labelInput label="Código * :" labelWidth="110px"
+				breakAfter="true">
+				<p:inputText size="10" value="#{view.e.codigo}" id="iCodigo"
+					styleClass="maskInt">
+					<f:convertNumber integerOnly="true" />
+				</p:inputText>
+			</fd:labelInput>
+
+			<fd:labelInput label="Descrição *:" labelWidth="110px">
+				<p:inputText size="50" value="#{view.e.descricao}" id="iDescricao" />
+				<div style="float: right;">
+					<p:message for="iDescricao" display="icon" />
+				</div>
+			</fd:labelInput>
+			
+			<fd:labelInput label="Limite :" labelWidth="110px" breakAfter="true" alignRight="true">
+				<p:inputText size="10" value="#{view.e.limite}" id="iLimite"
+					styleClass="maskMoney" style="text-align: right;">
+					<fd:bigDecimalConverter onlyAbs="true" />
+				</p:inputText>
+			</fd:labelInput>
+
+			<fd:labelInput label="Dt Consolidado :" labelWidth="110px" breakAfter="true">
+
+				<p:calendar styleClass="maskData" value="#{view.e.dtConsolidado}"
+					id="iDtConsolidado" locale="pt" pages="1" pattern="dd/MM/yyyy"
+					showOn="button" widgetVar="iDtConsolidado" size="12"
+					selectOtherMonths="true" showOtherMonths="true" />
+
+			</fd:labelInput>
+
+			<fd:labelInput label="Concreta *:" labelWidth="110px">
+				<p:selectOneRadio value="#{view.e.concreta}" id="iConcreta">
+					<f:selectItem itemValue="true" itemLabel="SIM" />
+					<f:selectItem itemValue="false" itemLabel="NÃO" />
+				</p:selectOneRadio>
+			</fd:labelInput>
+
+			<fd:labelInput label="Cheque *:">
+				<p:selectOneRadio value="#{view.e.cheque}" id="iCheque">
+					<f:selectItem itemValue="true" itemLabel="SIM" />
+					<f:selectItem itemValue="false" itemLabel="NÃO" />
+				</p:selectOneRadio>
+			</fd:labelInput>
+
+			<fd:labelInput label="Abertas *:">
+				<p:selectOneRadio value="#{view.e.abertas}" id="iAbertas">
+					<f:selectItem itemValue="true" itemLabel="SIM" />
+					<f:selectItem itemValue="false" itemLabel="NÃO" />
+				</p:selectOneRadio>
+			</fd:labelInput>
+
+			<fd:labelInput label="Caixa *:" alignRight="true" breakAfter="true">
+				<p:selectOneRadio value="#{view.e.caixa}" id="iCaixa">
+					<f:selectItem itemValue="true" itemLabel="SIM" />
+					<f:selectItem itemValue="false" itemLabel="NÃO" />
+				</p:selectOneRadio>
+			</fd:labelInput>
+
+
+			<p:outputPanel id="opnBanco">
+				<fd:labelInput labelWidth="110px" label="Banco :" breakAfter="true">
+
+					<p:inputText value="#{view.e.banco.codigoBanco} -" size="10"
+						readonly="true" id="iCodigoBanco" />
+
+					<p:autoComplete id="iDocumentoBanco" size="70"
+						value="#{view.e.banco}" var="_" itemLabel="#{_.nome}"
+						itemValue="#{_}" forceSelection="false"
+						completeMethod="#{lmFinanc.acBanco}" minQueryLength="1"
+						widgetVar="acDocumentoBanco" converter="#{entityIdConverter}">
+						<p:ajax event="itemSelect" process="@this" update="opnBanco" />
+					</p:autoComplete>
+
+					<p:spacer width="4" />
+
+				</fd:labelInput>
+			</p:outputPanel>
+
+
+			<fd:labelInput label="Agência :" breakAfter="true" labelWidth="110px">
+				<p:inputText id="iAgencia" size="8" value="#{view.e.agencia}" />
+			</fd:labelInput>
+
+			<fd:labelInput label="Conta :" breakAfter="true" labelWidth="110px">
+				<p:inputText id="iConta" size="10" value="#{view.e.conta}" />
+			</fd:labelInput>
+
+
+			<div style="clear: both" />
+
+			<p:spacer height="20px" />
+
+		</ui:define>
+
+	</ui:decorate>
+
+
+
+</ui:composition>

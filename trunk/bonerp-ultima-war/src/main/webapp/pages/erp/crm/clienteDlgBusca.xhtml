@@ -1,0 +1,89 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags">
+
+
+	<ui:param name="view" value="#{clienteDlgBuscaView}" />
+
+	<!-- BUSCA DE CLIENTES -->
+
+	<!-- Passar como parâmetro a variável 'update' -->
+
+	<ui:param name="action"
+		value="#{empty action ? 'updateCliente' : action}" />
+
+	<h:form id="frmDlgBuscaCliente#{sufix}">
+		<p:dialog id="dlgBuscaCliente" header="Buscar Cliente" position="top"
+			widgetVar="dlgBuscaCliente" resizable="false" width="800"
+			modal="true" closable="true" closeOnEscape="true">
+
+			<p:outputPanel id="opnDlgBuscaCliente">
+
+				<p:defaultCommand target="btnBuscarCliente"
+					scope="frmDlgBuscaCliente#{sufix}" />
+
+				<fd:labelInput noLabel="true">
+					<p:inputText id="iBuscaCliente" size="65"
+						value="#{view.filtros['strPesquisa']}" />
+					<p:watermark value="Pesquisar..." for="iBuscaCliente" />
+				</fd:labelInput>
+
+				<fd:labelInput label="Registros: " breakAfter="true"
+					alignRight="true">
+
+					<p:selectOneMenu editable="true" value="#{view.qtdeRegistros}"
+						id="selQtdeRegistros">
+						<f:selectItems value="#{lmView.qtdeRegistrosValues}" var="_"
+							itemLabel="#{_}" itemValue="#{_}" />
+					</p:selectOneMenu>
+
+					<p:commandButton actionListener="#{view.pesquisar}"
+						id="btnBuscarCliente" icon="ui-icon-search"
+						update="opnDlgBuscaCliente" />
+				</fd:labelInput>
+
+				<p:scrollPanel style="width:800px;height:400px" mode="native">
+					<p:dataTable id="dtListBuscaCliente" var="_" rowIndexVar="row"
+						emptyMessage="Nenhum registro encontrado." value="#{view.list}">
+
+						<p:column headerText="#" style="width: 20px">
+							<h:outputText value="#{row + 1}" />
+						</p:column>
+
+						<p:column headerText="Código" sortBy="#{_.codigo}">
+							<h:outputText value="#{_.codigo}" />
+						</p:column>
+
+						<p:column headerText="CPF/CNPJ" styleClass="noWrap">
+							<h:outputText value="#{_.pessoa.documento}" converter="#{docConverter}" />
+						</p:column>
+
+						<p:column headerText="Nome" style="white-space: normal"
+							sortBy="#{_.pessoa.nome}">
+							<h:outputText value="#{_.pessoa.nome}" />
+						</p:column>
+
+						<p:column style="white-space: normal" headerText="Alterado em"
+							sortBy="#{_.iudt.updated}">
+							<h:outputText value="#{_.iudt.updated}">
+								<f:convertDateTime pattern="dd/MM/yy HH:mm" />
+							</h:outputText>
+						</p:column>
+
+						<p:column width="1%">
+							<p:commandButton actionListener="#{viewSelec[action](_)}"
+								icon="ui-icon-check" process="@this" update="#{update}"
+								oncomplete="PF('dlgBuscaCliente').hide()" />
+						</p:column>
+					</p:dataTable>
+				</p:scrollPanel>
+
+			</p:outputPanel>
+		</p:dialog>
+	</h:form>
+
+</ui:composition>

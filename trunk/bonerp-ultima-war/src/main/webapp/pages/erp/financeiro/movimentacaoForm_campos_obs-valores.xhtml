@@ -1,0 +1,71 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:fd="http://ocabit.com.br/facelets">
+
+
+	<c:if test="#{empty viewForm}">
+		<ui:param name="viewForm" value="#{movimentacaoFormView}" />
+	</c:if>
+
+	<p:outputPanel style="display: table; float: left;">
+
+		<fd:labelInput label="Obs. :" labelWidth="120px" breakAfter="true">
+			<p:inputTextarea id="iObs" rows="7" cols="55" value="#{viewForm.e.obs}" />
+		</fd:labelInput>
+
+	</p:outputPanel>
+
+
+	<p:outputPanel id="opnTotalizacao"
+		style="display: table; float: right;">
+
+
+		<p:outputPanel id="divValores"
+			rendered="#{viewForm.parcelamento eq false}">
+
+			<fd:labelInput label="Valor :" labelWidth="120px" breakAfter="true">
+				<p:inputText size="10" value="#{viewForm.e.valor}" id="iValor"
+					styleClass="maskMoney" style="text-align: right;">
+					<fd:bigDecimalConverter onlyAbs="true" />
+				</p:inputText>
+			</fd:labelInput>
+
+			<fd:labelInput label="Descontos :" labelWidth="120px"
+				breakAfter="true">
+				<p:inputText size="10" value="#{viewForm.e.descontos}" id="iDescontos"
+					style="text-align: right;" converter="#{doubleConverterNull}"
+					styleClass="maskMoneyNeg">
+				</p:inputText>
+			</fd:labelInput>
+
+			<fd:labelInput label="Acréscimos :" labelWidth="120px"
+				breakAfter="true">
+				<p:inputText size="10" value="#{viewForm.e.acrescimos}" id="iAcrescimos"
+					style="text-align: right;" converter="#{doubleConverterNull}"
+					styleClass="maskMoney">
+				</p:inputText>
+			</fd:labelInput>
+
+			<f:validateBean disabled="true">
+				<fd:labelInput label="Total :" labelWidth="120px" breakAfter="true">
+					<p:inputText size="10" value="#{viewForm.e.valorTotal}"
+						styleClass="maskMoney" id="iValorTotal" style="text-align: right;"
+						converter="#{doubleConverterAbsNull}">
+						<p:ajax event="focus" immediate="true" process="@none"
+							onstart="somaValores('#{tipoLancto}')" />
+					</p:inputText>
+				</fd:labelInput>
+			</f:validateBean>
+
+		</p:outputPanel>
+
+	</p:outputPanel>
+
+
+	<div style="clear: both" />
+
+</ui:composition>

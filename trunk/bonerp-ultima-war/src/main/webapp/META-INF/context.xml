@@ -1,0 +1,9 @@
+<Context path="/${urlContext}" debug="5" crossContext="false"
+	reloadable="false" antiResourceLocking="false" antiJARLocking="true">
+
+<!-- 
+	<Loader
+		loaderClass="org.springframework.instrument.classloading.tomcat.TomcatInstrumentableClassLoader" />
+-->
+
+</Context>

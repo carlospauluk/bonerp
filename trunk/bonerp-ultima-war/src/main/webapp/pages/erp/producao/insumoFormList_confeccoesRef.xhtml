@@ -1,0 +1,66 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:sec="http://www.springframework.org/security/tags">
+
+	<ui:define name="headFirst">
+		<script src="#{resource['js/helpers.js']}" type="text/javascript"></script>
+	</ui:define>
+
+	<sec:authorize ifNotGranted="ROLE_PRODUCAO">
+		<div class="errorMsg">Usuário sem autorização para acessar este
+			recurso.</div>
+	</sec:authorize>
+
+	<sec:authorize ifAnyGranted="ROLE_PRODUCAO">
+
+		<ui:param name="view" value="#{insumoFormListView}" />
+
+
+		<h:form id="frmDlgInsumoConfeccoesRef">
+
+
+			<p:dialog id="dlgInsumoConfeccoesRef"
+				widgetVar="dlgInsumoConfeccoesRef"
+				header="Planilhas com Referência ao Insumo" modal="true" width="700"
+				resizable="false" closeOnEscape="true">
+				<p:outputPanel id="opnDlgInsumoConfeccoesRef" position="top">
+
+					<p:dataTable id="dtList" var="_" rowIndexVar="row" reflow="true"
+						rowKey="#{_}" emptyMessage="Nenhum registro encontrado."
+						value="#{view.confeccoesRefInsumo}">
+
+						<p:column style="width: 1px" headerText="#">
+							<h:outputText value="#{row + 1}" id="otRowNum" />
+						</p:column>
+
+						<p:column headerText="Confecção">
+							<h:outputText value="#{_.instituicao.nome} = #{_.descricao}" />
+						</p:column>
+
+						<p:column styleClass="noWrapColBtns">
+							<p:button id="btnEditarO" outcome="confeccaoBuilderView.jsf"
+								icon="ui-icon-build" title="Novo registro (N)">
+								<f:param name="confeccaoId" value="#{_.id}" />
+							</p:button>
+						</p:column>
+
+
+
+					</p:dataTable>
+
+				</p:outputPanel>
+			</p:dialog>
+
+		</h:form>
+
+
+	</sec:authorize>
+
+
+</ui:composition>

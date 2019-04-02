@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<formLists>
+ 	<formList> 
+ 		<url>pages/erp/crm/clienteList.jsf</url> 
+ 		<camposCadastro> 
+ 			<campoCadastro id="selTipoPessoa" tipo="radio">1</campoCadastro> 
+ 			<campoCadastro id="iNomePJ" tipo="text">CLIENTE SELENIUM</campoCadastro> 
+ 		</camposCadastro> 
+ 	</formList> 
+
+ 	<formList> 
+ 		<url>pages/erp/financeiro/carteiraFormList.jsf</url> 
+ 		<camposCadastro> 
+ 			<campoCadastro id="iDescricao" tipo="text">CARTEIRA SELENIUM</campoCadastro> 
+ 			<campoCadastro id="iCodigo" tipo="inteiro">2000</campoCadastro> 
+  			<campoCadastro id="iDtConsolidado_input" tipo="data">01/08/2016</campoCadastro>
+ 		</camposCadastro> 
+ 	</formList>
+
+ 	<formList> 
+ 		<url>pages/erp/financeiro/centroCustoFormList.jsf</url> 
+ 		<camposCadastro> 
+ 			<campoCadastro id="iDescricao" tipo="text">CENTRO CUSTO SELENIUM</campoCadastro> 
+ 			<campoCadastro id="iCodigo" tipo="inteiro">2000</campoCadastro> 
+ 		</camposCadastro>
+ 	</formList> 
+
+ 	<formList> 
+ 		<url>pages/erp/financeiro/modoFormList.jsf</url> 
+ 		<camposCadastro> 
+ 			<campoCadastro id="iDescricao" tipo="text">MODO MOV SELENIUM</campoCadastro> 
+ 			<campoCadastro id="iCodigo" tipo="inteiro">2000</campoCadastro> 
+ 			<campoCadastro id="iModoDeTransfPropria" tipo="radioPF">0</campoCadastro> 
+ 			<campoCadastro id="iModoComBancoOrigem" tipo="radioPF">1</campoCadastro> 
+ 			<campoCadastro id="iModoDeTransfCaixa" tipo="radioPF">0</campoCadastro> 
+ 			<campoCadastro id="iModoDeMovimentAgrup" tipo="radioPF">1</campoCadastro> 
+ 			<campoCadastro id="iModoDeCartao" tipo="radioPF">0</campoCadastro> 
+ 			<campoCadastro id="iModoDeCheque" tipo="radioPF">1</campoCadastro> 
+ 		</camposCadastro> 
+ 	</formList> 
+
+	<formList>
+		<url>pages/erp/financeiro/bandeiraCartaoFormList.jsf</url>
+		<camposCadastro>
+			<campoCadastro id="iDescricao" tipo="text">CARTAO SELENIUM</campoCadastro>
+			<campoCadastro id="iModoMoviment_label" tipo="comboPF">4 - CHEQUE TERCEIROS</campoCadastro>
+			<campoCadastro id="iLabels" tipo="text">SELENIUM 1
+SELENIUM 2
+SELENIUM 3</campoCadastro>
+		</camposCadastro>
+	</formList>
+	
+ 	<formList> 
+ 		<url>pages/erp/financeiro/operadoraCartaoFormList.jsf</url> 
+ 		<camposCadastro> 
+ 			<campoCadastro id="iDescricao" tipo="text">OPERADORA CARTAO SELENIUM</campoCadastro> 
+ 			<campoCadastro id="iCarteira_label" tipo="comboPF">2 - CAIXA A VISTA</campoCadastro> 
+ 		</camposCadastro> 
+ 	</formList> 
+	
+ 	<formList> 
+ 		<url>pages/erp/financeiro/bancoFormList.jsf</url>
+ 		<camposCadastro> 
+ 			<campoCadastro id="iNome" tipo="text">BANCO SELENIUM</campoCadastro> 
+ 			<campoCadastro id="iCodigoBanco" tipo="inteiro">999001</campoCadastro> 
+ 			<campoCadastro id="j_idt90" tipo="radioPF">0</campoCadastro> 
+ 		</camposCadastro>
+ 	</formList>
+	
+ 	<formList> 
+ 		<url>pages/erp/financeiro/registroConferenciaFormList.jsf</url> 
+ 		<camposCadastro> 
+ 			<campoCadastro id="iDescricao_input" tipo="text">REG CONF SELENIUM</campoCadastro> 
+ 			<campoCadastro id="iCarteira_label" tipo="comboPF">2 - CAIXA A VISTA</campoCadastro> 
+ 			<campoCadastro id="j_idt95_input" tipo="data">01/08/2016</campoCadastro> 
+ 		</camposCadastro>
+ 	</formList>
+	
+ 	<formList> 
+ 		<url>pages/erp/estoque/fornecedorList.jsf</url> 
+ 		<camposCadastro> 
+ 			<campoCadastro id="selTipoPessoa" tipo="radio">1</campoCadastro> 
+ 			<campoCadastro id="iNomePJ" tipo="text">FORNECEDOR SELENIUM</campoCadastro> 
+ 		</camposCadastro> 
+ 	</formList>
+		
+ 	<formList> 
+ 		<url>pages/erp/cortinas/artigoCortinaList.jsf</url> 
+ 		<camposCadastro> 
+ 			<campoCadastro id="iUnidade_input" tipo="comboPF">UN</campoCadastro> 
+ 			<campoCadastro id="iGrade_input" tipo="comboPF">1</campoCadastro> 
+ 			<campoCadastro id="iDepto_input" tipo="comboPF">FEMININO - 3</campoCadastro> 
+ 			<campoCadastro id="iSubdepto_input" tipo="comboPF">ACESSORIOS FEMININOS - 245</campoCadastro> 
+ 		</camposCadastro>
+ 	</formList> 
+	
+ 	<formList>
+ 		<url>pages/erp/producao/insumoFormList.jsf</url> 
+ 		<camposCadastro> 
+ 			<campoCadastro id="iTipo_focus" tipo="comboPF">AVIAMENTO</campoCadastro> 
+ 			<campoCadastro id="iDescricao" tipo="text">INSUMO SELENIUM</campoCadastro> 
+ 			<campoCadastro id="j_idt155" tipo="text">123,45</campoCadastro> 
+ 			<campoCadastro id="j_idt162" tipo="text">15</campoCadastro> 
+ 		</camposCadastro> 
+ 	</formList> 
+	
+ 	<formList>
+ 		<url>pages/erp/producao/instituicaoFormList.jsf</url> 
+ 		<camposCadastro> 
+ 			<campoCadastro id="j_idt75" tipo="text">INST SELENIUM</campoCadastro> 
+ 		</camposCadastro> 
+ 	</formList> 
+	
+ 	<formList>
+ 		<url>pages/erp/rh/funcionarioList.jsf</url> 
+ 		<camposCadastro> 
+ 			<campoCadastro id="iNomePF" tipo="text">FUNCIONARIO SELENIUM</campoCadastro> 
+ 		</camposCadastro>
+ 	</formList>  
+</formLists>

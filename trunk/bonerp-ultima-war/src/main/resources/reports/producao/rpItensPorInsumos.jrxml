@@ -1,0 +1,1152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.0.1.final using JasperReports Library version 6.0.0  -->
+<!-- 2016-06-24T12:20:00 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rpCustoProducao" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="2a67a703-1e4b-425d-9d18-40e739567676">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="loteItensIds" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["D:\\ocabit\\bonerp\\trunk\\bonerp-war\\src\\main\\resources\\reports\\producao\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="tiposInsumosIds" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[CALL prod_planilha_corte( $P{loteItensIds} , $P{tiposInsumosIds});]]>
+	</queryString>
+	<field name="lote_id" class="java.lang.Long"/>
+	<field name="lote_codigo" class="java.lang.Integer"/>
+	<field name="lote_dt_lote" class="java.sql.Date"/>
+	<field name="lote_descricao" class="java.lang.String"/>
+	<field name="loteitem_id" class="java.lang.Long"/>
+	<field name="confeccao_id" class="java.lang.Long"/>
+	<field name="confeccao_descricao" class="java.lang.String"/>
+	<field name="confeccaoitem_id" class="java.lang.Long"/>
+	<field name="tipoinsumo" class="java.lang.String"/>
+	<field name="insumo" class="java.lang.String"/>
+	<field name="preco_custo" class="java.lang.Double"/>
+	<field name="qtdeitem_02" class="java.lang.Double"/>
+	<field name="qtdeitem_04" class="java.lang.Double"/>
+	<field name="qtdeitem_06" class="java.lang.Double"/>
+	<field name="qtdeitem_08" class="java.lang.Double"/>
+	<field name="qtdeitem_10" class="java.lang.Double"/>
+	<field name="qtdeitem_12" class="java.lang.Double"/>
+	<field name="qtdeitem_14" class="java.lang.Double"/>
+	<field name="qtdeitem_16" class="java.lang.Double"/>
+	<field name="qtdeitem_P" class="java.lang.Double"/>
+	<field name="qtdeitem_M" class="java.lang.Double"/>
+	<field name="qtdeitem_G" class="java.lang.Double"/>
+	<field name="qtdeitem_XG" class="java.lang.Double"/>
+	<field name="qtdeitem_SG" class="java.lang.Double"/>
+	<field name="qtdeitem_SS" class="java.lang.Integer"/>
+	<field name="qtdelote_02" class="java.lang.Integer"/>
+	<field name="qtdelote_04" class="java.lang.Integer"/>
+	<field name="qtdelote_06" class="java.lang.Integer"/>
+	<field name="qtdelote_08" class="java.lang.Integer"/>
+	<field name="qtdelote_10" class="java.lang.Integer"/>
+	<field name="qtdelote_12" class="java.lang.Integer"/>
+	<field name="qtdelote_14" class="java.lang.Integer"/>
+	<field name="qtdelote_16" class="java.lang.Integer"/>
+	<field name="qtdelote_P" class="java.lang.Integer"/>
+	<field name="qtdelote_M" class="java.lang.Integer"/>
+	<field name="qtdelote_G" class="java.lang.Integer"/>
+	<field name="qtdelote_XG" class="java.lang.Integer"/>
+	<field name="qtdelote_SG" class="java.lang.Integer"/>
+	<field name="qtdelote_SS" class="java.lang.Integer"/>
+	<field name="qtdetotal_02" class="java.lang.Double"/>
+	<field name="qtdetotal_04" class="java.lang.Double"/>
+	<field name="qtdetotal_06" class="java.lang.Double"/>
+	<field name="qtdetotal_08" class="java.lang.Double"/>
+	<field name="qtdetotal_10" class="java.lang.Double"/>
+	<field name="qtdetotal_12" class="java.lang.Double"/>
+	<field name="qtdetotal_14" class="java.lang.Double"/>
+	<field name="qtdetotal_16" class="java.lang.Double"/>
+	<field name="qtdetotal_P" class="java.lang.Double"/>
+	<field name="qtdetotal_M" class="java.lang.Double"/>
+	<field name="qtdetotal_G" class="java.lang.Double"/>
+	<field name="qtdetotal_XG" class="java.lang.Double"/>
+	<field name="qtdetotal_SG" class="java.lang.Double"/>
+	<field name="qtdetotal_SS" class="java.lang.Double"/>
+	<field name="totalitem" class="java.lang.Double"/>
+	<field name="totallote" class="java.lang.Integer"/>
+	<field name="totalinsumo" class="java.lang.Double"/>
+	<sortField name="tipoinsumo"/>
+	<sortField name="insumo"/>
+	<sortField name="confeccao_descricao"/>
+	<variable name="qtdetotal_02_1" class="java.lang.Double" resetType="Group" resetGroup="insumo" calculation="Sum">
+		<variableExpression><![CDATA[$F{qtdetotal_02}]]></variableExpression>
+	</variable>
+	<variable name="qtdetotal_04_1" class="java.lang.Double" resetType="Group" resetGroup="insumo" calculation="Sum">
+		<variableExpression><![CDATA[$F{qtdetotal_04}]]></variableExpression>
+	</variable>
+	<variable name="qtdetotal_06_1" class="java.lang.Double" resetType="Group" resetGroup="insumo" calculation="Sum">
+		<variableExpression><![CDATA[$F{qtdetotal_06}]]></variableExpression>
+	</variable>
+	<variable name="qtdetotal_08_1" class="java.lang.Double" resetType="Group" resetGroup="insumo" calculation="Sum">
+		<variableExpression><![CDATA[$F{qtdetotal_08}]]></variableExpression>
+	</variable>
+	<variable name="qtdetotal_10_1" class="java.lang.Double" resetType="Group" resetGroup="insumo" calculation="Sum">
+		<variableExpression><![CDATA[$F{qtdetotal_10}]]></variableExpression>
+	</variable>
+	<variable name="qtdetotal_12_1" class="java.lang.Double" resetType="Group" resetGroup="insumo" calculation="Sum">
+		<variableExpression><![CDATA[$F{qtdetotal_12}]]></variableExpression>
+	</variable>
+	<variable name="qtdetotal_14_1" class="java.lang.Double" resetType="Group" resetGroup="insumo" calculation="Sum">
+		<variableExpression><![CDATA[$F{qtdetotal_14}]]></variableExpression>
+	</variable>
+	<variable name="qtdetotal_16_1" class="java.lang.Double" resetType="Group" resetGroup="insumo" calculation="Sum">
+		<variableExpression><![CDATA[$F{qtdetotal_16}]]></variableExpression>
+	</variable>
+	<variable name="qtdetotal_P_1" class="java.lang.Double" resetType="Group" resetGroup="insumo" calculation="Sum">
+		<variableExpression><![CDATA[$F{qtdetotal_P}]]></variableExpression>
+	</variable>
+	<variable name="qtdetotal_M_1" class="java.lang.Double" resetType="Group" resetGroup="insumo" calculation="Sum">
+		<variableExpression><![CDATA[$F{qtdetotal_M}]]></variableExpression>
+	</variable>
+	<variable name="qtdetotal_G_1" class="java.lang.Double" resetType="Group" resetGroup="insumo" calculation="Sum">
+		<variableExpression><![CDATA[$F{qtdetotal_G}]]></variableExpression>
+	</variable>
+	<variable name="qtdetotal_XG_1" class="java.lang.Double" resetType="Group" resetGroup="insumo" calculation="Sum">
+		<variableExpression><![CDATA[$F{qtdetotal_XG}]]></variableExpression>
+	</variable>
+	<variable name="qtdetotal_SG_1" class="java.lang.Double" resetType="Group" resetGroup="insumo" calculation="Sum">
+		<variableExpression><![CDATA[$F{qtdetotal_SG}]]></variableExpression>
+	</variable>
+	<variable name="qtdetotal_XG_2" class="java.lang.Double" resetType="Group" resetGroup="insumo" calculation="Sum">
+		<variableExpression><![CDATA[$F{qtdetotal_XG}]]></variableExpression>
+	</variable>
+	<variable name="qtdetotal_SG_2" class="java.lang.Double" resetType="Group" resetGroup="insumo" calculation="Sum">
+		<variableExpression><![CDATA[$F{qtdetotal_SG}]]></variableExpression>
+	</variable>
+	<variable name="qtdetotal_SS_1" class="java.lang.Double" resetType="Group" resetGroup="insumo" calculation="Sum">
+		<variableExpression><![CDATA[$F{qtdetotal_SS}]]></variableExpression>
+	</variable>
+	<variable name="totalinsumo_1" class="java.lang.Double" resetType="Group" resetGroup="insumo" calculation="Sum">
+		<variableExpression><![CDATA[$F{totalinsumo}]]></variableExpression>
+	</variable>
+	<filterExpression><![CDATA[$F{totalinsumo} > 0]]></filterExpression>
+	<group name="tipoInsumo">
+		<groupExpression><![CDATA[$F{tipoinsumo}]]></groupExpression>
+		<groupHeader>
+			<band height="30">
+				<textField>
+					<reportElement mode="Opaque" x="0" y="0" width="555" height="30" backcolor="#CCCCCC" uuid="e26ad1a6-92b2-4099-a5a9-29f07e989d53"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" isBold="true" isItalic="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{tipoinsumo}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="insumo" minHeightToStartNewPage="50">
+		<groupExpression><![CDATA[$F{insumo}]]></groupExpression>
+		<groupHeader>
+			<band height="36">
+				<textField isStretchWithOverflow="true">
+					<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="18" width="155" height="18" backcolor="#CCCCCC" uuid="3d080088-7fcb-4ee7-b534-0391fdd92ce3"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{insumo}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="insumo" pattern="#,##0.###" isBlankWhenNull="true">
+					<reportElement x="155" y="18" width="26" height="18" uuid="52607279-5d44-4ed6-a5ef-4678837ee0a1"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{qtdetotal_02_1}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="insumo" pattern="#,##0.###" isBlankWhenNull="true">
+					<reportElement x="181" y="18" width="26" height="18" uuid="e74c71ca-018a-43d2-9f39-a4e013c7fa07"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{qtdetotal_04_1}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="insumo" pattern="#,##0.###" isBlankWhenNull="true">
+					<reportElement x="207" y="18" width="26" height="18" uuid="7ca4aa49-e5dd-4914-ab41-e038ee8329ed"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{qtdetotal_06_1}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="insumo" pattern="#,##0.###" isBlankWhenNull="true">
+					<reportElement x="233" y="18" width="26" height="18" uuid="84c3f9ba-2e23-40ad-9e6f-61d6b2f5e8cc"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{qtdetotal_08_1}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="insumo" pattern="#,##0.###" isBlankWhenNull="true">
+					<reportElement x="259" y="18" width="26" height="18" uuid="fff6b632-5335-4a27-8c02-f3bbf5ad834c"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{qtdetotal_10_1}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="insumo" pattern="#,##0.###" isBlankWhenNull="true">
+					<reportElement x="285" y="18" width="26" height="18" uuid="66d58860-c4b6-4275-b8d7-9e3d0c632eb9"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{qtdetotal_12_1}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="insumo" pattern="#,##0.###" isBlankWhenNull="true">
+					<reportElement x="311" y="18" width="26" height="18" uuid="5d55d35d-8eea-4ed9-948c-ed2c20ac9cae"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{qtdetotal_14_1}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="insumo" pattern="#,##0.###" isBlankWhenNull="true">
+					<reportElement x="337" y="18" width="26" height="18" uuid="bf23b093-0f81-4333-82cf-416f2403b5a1"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{qtdetotal_16_1}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="insumo" pattern="#,##0.###" isBlankWhenNull="true">
+					<reportElement x="363" y="18" width="26" height="18" uuid="ed8114e6-eb84-4bf7-8de0-bf0f7e3f3705"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{qtdetotal_P_1}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="insumo" pattern="#,##0.###" isBlankWhenNull="true">
+					<reportElement x="389" y="18" width="26" height="18" uuid="8819c831-23f7-4416-a3ad-febcbb975682"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{qtdetotal_M_1}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="insumo" pattern="#,##0.###" isBlankWhenNull="true">
+					<reportElement x="415" y="18" width="26" height="18" uuid="26cc3d7b-d554-45d2-a883-ba401741ee6c"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{qtdetotal_G_1}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="insumo" pattern="#,##0.###" isBlankWhenNull="true">
+					<reportElement x="441" y="18" width="26" height="18" uuid="4b3a766c-92d7-4b33-afc3-b196845878f9"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{qtdetotal_XG_2}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="insumo" pattern="#,##0.###" isBlankWhenNull="true">
+					<reportElement x="467" y="18" width="26" height="18" uuid="4abea5dc-bfa7-4134-b2ff-95e71821765d"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{qtdetotal_SG_2}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="insumo" pattern="#,##0.###" isBlankWhenNull="true">
+					<reportElement x="493" y="18" width="26" height="18" uuid="74ec3c79-6061-49b5-b17e-33a3f94fc10d"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{qtdetotal_SS_1}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="insumo" pattern="#,##0.###" isBlankWhenNull="true">
+					<reportElement mode="Opaque" x="519" y="18" width="36" height="18" backcolor="#999999" uuid="58ccbfcc-6542-4b48-a77a-34c26127d08d"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{totalinsumo_1}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="493" y="0" width="26" height="18" uuid="6f99d3e5-1a5c-4311-a481-fc199396b3c5"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[SS]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="467" y="0" width="26" height="18" uuid="f0874427-67ac-437e-9365-f81b9a8f8224"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[SG]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="441" y="0" width="26" height="18" uuid="a2c93b99-ba4f-4557-b33c-f695d6e05a16"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[XG]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="415" y="0" width="26" height="18" uuid="f7eb5f64-365f-43b1-babb-4e713041cfa7"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[G]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="389" y="0" width="26" height="18" uuid="b65a213f-58e7-461b-9ede-aa01018862a4"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[M]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="363" y="0" width="26" height="18" uuid="7fba6913-a8c5-4210-93e1-d9cbd4ddf18f"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[P]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="337" y="0" width="26" height="18" uuid="c844508f-5a3c-47de-a0ae-7d5ed8f64c8f"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[16]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="311" y="0" width="26" height="18" uuid="6577bf2d-a6d4-4a32-bab9-c701279cdaf0"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[14]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="285" y="0" width="26" height="18" uuid="a282a8a5-9e15-4e87-982d-44bee58382d4"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[12]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="259" y="0" width="26" height="18" uuid="1966f593-5c66-4868-a22d-f10838a0080c"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[10]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="233" y="0" width="26" height="18" uuid="1766701e-c2b1-46b6-bf12-907c7dda8eae"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[08]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="207" y="0" width="26" height="18" uuid="3b3c2ba2-55bd-4f3f-80c7-d2176b595a7f"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[06]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="181" y="0" width="26" height="18" uuid="e53a28cd-245f-459b-ad5b-b00c750b83f6"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[04]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="155" y="0" width="26" height="18" uuid="1855748f-c0c2-4f69-8777-c0b39b6da079"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[02]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="0" y="0" width="155" height="18" uuid="2be8a21c-2010-48f5-a681-af4e36fa819d"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="519" y="0" width="36" height="18" uuid="51168a14-07a4-464c-8437-3417bc06590c"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[#]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="3">
+				<line>
+					<reportElement x="0" y="2" width="555" height="1" uuid="6858693a-1286-4bc7-a86d-8236460a9547"/>
+					<graphicElement>
+						<pen lineWidth="0.25"/>
+					</graphicElement>
+				</line>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="55" splitType="Stretch">
+			<image>
+				<reportElement x="2" y="0" width="251" height="55" uuid="5e4ac40d-573e-45c6-8a6e-6b6cd52da57f"/>
+				<imageExpression><![CDATA["../LOGO_COMPLETO_400px.jpg"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="253" y="0" width="302" height="55" uuid="64410c5c-fed5-451c-8f52-8757e1c72467"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="15" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Itens por Insumos]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="30">
+			<rectangle>
+				<reportElement x="0" y="0" width="555" height="20" backcolor="#CCCCCC" uuid="f7f05f31-792c-4d97-809d-9d372ea8a460"/>
+			</rectangle>
+			<textField>
+				<reportElement x="70" y="0" width="345" height="20" uuid="00ff7255-4e10-47ff-bb3d-475767e32b00"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Lucida Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{lote_codigo} + " - " + $F{lote_descricao}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="473" y="0" width="82" height="20" uuid="ce88139e-b157-4f71-9478-995e54b77560"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Lucida Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{lote_dt_lote}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="0" width="58" height="20" uuid="ec7a6be0-50f9-4de8-a985-628919e3c03a"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Lucida Sans" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Lote:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="415" y="0" width="58" height="20" uuid="3f37633f-a47c-42d3-b48d-d49af2b1ec08"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Lucida Sans" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Dt. Lote:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="0" width="555" height="1" uuid="8c290d3b-b5cb-4ee6-90c3-e1e43272de7c"/>
+			</line>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="24" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="155" height="24" uuid="ecfab0fb-a26c-45a4-af22-5f01b13bc5fd"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{confeccao_descricao}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.###" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="155" y="0" width="26" height="12" uuid="0a7ddf02-4851-4ac9-97e1-7da94b01641e"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{qtdeitem_02}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.###" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="181" y="0" width="26" height="12" uuid="b15a957d-eef0-4c8a-be5e-2a86e40a6ea9"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{qtdeitem_04}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.###" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="207" y="0" width="26" height="12" uuid="60d9a4a1-9b77-4f2b-8ade-22128f883791"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{qtdeitem_06}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.###" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="233" y="0" width="26" height="12" uuid="9ce00203-df4e-4693-92b7-d5d3380800a2"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{qtdeitem_08}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.###" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="259" y="0" width="26" height="12" uuid="e5ff8e6a-bde4-46c2-9de0-62bcbb8abece"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{qtdeitem_10}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.###" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="285" y="0" width="26" height="12" uuid="a838b40e-c636-41fc-b6fd-f2a9237d4de6"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{qtdeitem_12}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.###" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="311" y="0" width="26" height="12" uuid="08fed220-f727-4a3a-82f9-a2b6aa76e0e1"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{qtdeitem_14}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.###" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="415" y="0" width="26" height="12" uuid="894eb68b-d0bf-4e09-a256-78d9711f7944"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{qtdeitem_G}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.###" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="363" y="0" width="26" height="12" uuid="07cae455-3650-4478-921d-cd8b1959cdfe"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{qtdeitem_P}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.###" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="441" y="0" width="26" height="12" uuid="8fbba37c-9db1-491c-b596-955a4d1df08d"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{qtdeitem_XG}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.###" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="389" y="0" width="26" height="12" uuid="6c5d3de9-8b4a-4320-97ea-39ebc6c10f2b"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{qtdeitem_M}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.###" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="337" y="0" width="26" height="12" uuid="9fc2d7ce-5207-4133-9333-7019a07fd2f5"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{qtdeitem_16}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.###" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="493" y="0" width="26" height="12" uuid="54122260-907c-4c7d-aca4-744151c6517c"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{qtdeitem_SS}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.###" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="467" y="0" width="26" height="12" uuid="99411ad7-79cb-4647-a9f5-ed4f544c3505"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{qtdeitem_SG}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.###" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="519" y="0" width="36" height="12" uuid="c1faab24-dfb8-40ea-97c6-0cd875d47f60"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{totalitem}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.###" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="155" y="12" width="26" height="12" uuid="7ad404cf-0bbf-474f-831d-0c613edce2ba"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{qtdetotal_02}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.###" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="181" y="12" width="26" height="12" uuid="1e0468b1-1285-4a10-ba5e-1ed7d8a47190"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{qtdetotal_04}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.###" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="207" y="12" width="26" height="12" uuid="c7a8b343-0513-4c9c-8162-2cd848d4a543"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{qtdetotal_06}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.###" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="233" y="12" width="26" height="12" uuid="bfeed99c-31dc-4647-8d0e-6b2417037d28"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{qtdetotal_08}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.###" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="259" y="12" width="26" height="12" uuid="9a41ff12-ade6-4fb0-a351-1aa07b33942a"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{qtdetotal_10}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.###" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="285" y="12" width="26" height="12" uuid="7d9f6034-b1ab-48d0-a5b9-7c083f89f4fd"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{qtdetotal_12}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.###" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="311" y="12" width="26" height="12" uuid="c8a60599-7269-4668-9af6-554a56e7e94e"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{qtdetotal_14}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.###" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="415" y="12" width="26" height="12" uuid="e9248f7f-1c86-4574-9ff6-06527d138e65"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{qtdetotal_G}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.###" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="363" y="12" width="26" height="12" uuid="6c4271f6-9800-4094-acd1-0a569b3b82b5"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{qtdetotal_P}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.###" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="441" y="12" width="26" height="12" uuid="e19063f1-2d29-4dd7-a202-fef46be0523f"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{qtdetotal_XG}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.###" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="389" y="12" width="26" height="12" uuid="bde30a40-7db5-4f84-b29e-30262a58b591"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{qtdetotal_M}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.###" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="337" y="12" width="26" height="12" uuid="48ff8a76-d7d0-4de2-abc9-b69b33dc276a"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{qtdetotal_16}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.###" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="493" y="12" width="26" height="12" uuid="e73e731d-fd20-4375-b170-6ba3ea6c418f"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{qtdetotal_SS}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.###" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="467" y="12" width="26" height="12" uuid="3b02560d-c31f-4370-bc87-f4bef6f36a87"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{qtdetotal_SG}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.###" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="519" y="12" width="36" height="12" backcolor="#999999" uuid="94c4f086-83aa-45e7-a573-cf12cfec54cf"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{totalinsumo}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="30">
+			<staticText>
+				<reportElement x="530" y="15" width="10" height="15" uuid="351d9b87-113f-4c94-90d0-76334a5f2303"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="6"/>
+				</textElement>
+				<text><![CDATA[de]]></text>
+			</staticText>
+			<textField pattern="00">
+				<reportElement x="520" y="15" width="10" height="15" uuid="0593f3e3-6f2e-4e78-96e7-7dbe4741e68f"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="00">
+				<reportElement x="540" y="15" width="10" height="15" uuid="87933d26-6425-4bb1-8212-f735913d6f80"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="6" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

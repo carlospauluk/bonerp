@@ -1,0 +1,129 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags">
+
+	<p:repeat var="rForn" value="#{view.listPorFornecedor}">
+
+
+
+		<p:repeat var="rSubdepto" value="#{rForn.filhos}">
+
+			<p:dataTable var="r" value="#{rSubdepto.filhos}">
+				<p:columnGroup type="header">
+					<p:row>
+						<p:column style="font-weight: bold">
+							<f:facet name="header">
+								<h:outputText
+									value="#{ rForn.entityId.codigo} - #{rForn.entityId.pessoa.nomeExibicao}" />
+								<br />
+								<h:outputText
+									value="#{ rSubdepto.entityId.codigo} - #{rSubdepto.entityId.nome}" />
+							</f:facet>
+						</p:column>
+
+						<p:column headerText="Saldo Atual"
+							style="text-align: center; background-color: #ebedf0" />
+
+						<p:column headerText="Saldo Prv"
+							style="text-align: center; background-color: #ebedf0" />
+
+						<p:column headerText="Qtde Ped"
+							style="text-align: center; background-color: #ebedf0" />
+
+						<p:columns value="#{view.mesesAnosPrevisao}" var="_"
+							columnIndexVar="colIndex" styleClass="colsTamanhos">
+							<f:facet name="header">
+								<h:outputText value="#{stringUtils.sdfFormat(_,'MM/yy')}" />
+							</f:facet>
+						</p:columns>
+
+					</p:row>
+					<p:row>
+						<p:column headerText="Produto" style="background-color: #ebedf0" />
+						<p:column />
+						<p:column />
+						<p:column />
+						<p:column colspan="#{view.mesesAnosPrevisao.size()}" />
+					</p:row>
+				</p:columnGroup>
+
+				<p:column>
+					<h:outputText
+						value="#{r.entityId.reduzido} - #{r.entityId.descricao}" />
+				</p:column>
+
+				<p:column styleClass="noWrapSmall">
+					<div style="text-align: right;">
+						<h:outputText value="#{r.saldoNaDtBase}">
+							<fd:bigDecimalConverter zeroToNull="true" />
+						</h:outputText>
+					</div>
+				</p:column>
+				<p:column styleClass="noWrapSmall">
+					<div style="text-align: right;">
+						<h:outputText value="#{r.saldoNaDtEntrega}">
+							<fd:bigDecimalConverter zeroToNull="true" />
+						</h:outputText>
+					</div>
+				</p:column>
+				<p:column styleClass="noWrapSmall">
+					<div style="text-align: right;">
+						<h:outputText value="#{r.qtdePedido}">
+							<fd:bigDecimalConverter zeroToNull="true" />
+						</h:outputText>
+					</div>
+				</p:column>
+
+				<p:columns value="#{view.mesesAnosPrevisao}" var="d"
+					columnIndexVar="colIndex" styleClass="colsTamanhos">
+
+
+
+					<div style="text-align: center;">
+
+						<table>
+
+							<tr>
+								<td>Ano</td>
+								<td>Vend</td>
+								<td>Acum</td>
+							</tr>
+
+							<p:repeat var="ano" value="#{view.anosAnterioresConsiderar}">
+								<tr>
+									<td>#{ano}</td>
+									<td>#{r.qtdeASerVendidaPrevista(ano,d)}</td>
+									<td>#{r.qtdeAcumuladaASerVendidaPrevista(ano,d)}"</td>
+								</tr>
+							</p:repeat>
+							
+							<tr>
+								<td>-</td>
+								<td>#{r.mediaVendas(d)}</td>
+								<td>#{r.mediaVendasAcumulada(d)}</td>
+							</tr>
+
+						</table>
+						
+						
+						#{r.saldoNaDtBase.doubleValue() - r.mediaVendasAcumulada(d).doubleValue()}
+						
+						
+
+					</div>
+
+
+				</p:columns>
+
+
+			</p:dataTable>
+
+		</p:repeat>
+	</p:repeat>
+
+
+</ui:composition>

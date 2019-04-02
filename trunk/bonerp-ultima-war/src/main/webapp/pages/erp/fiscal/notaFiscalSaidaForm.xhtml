@@ -1,0 +1,725 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	template="/templates/template.xhtml">
+
+	<ui:define name="headFirst">
+		<script src="#{resource['js/helpers.js']}" type="text/javascript"></script>
+	</ui:define>
+
+	<ui:define name="content">
+
+		<div id="_slnm_notaFiscalSaidaForm" />
+
+
+		<ui:param name="view" value="#{notaFiscalSaidaFormView}" />
+
+		<f:metadata>
+			<f:viewParam
+				valueChangeListener="#{notaFiscalSaidaFormView.updateId}" name="id" />
+		</f:metadata>
+
+		<h:form id="frm">
+
+			<p:panel id="panel" header="Notas Fiscais de Saída">
+
+
+				<!-- Declarado para que não dê erro de javascript quando algum dos MBs chame o JSFUtils.execute("loadList()"); -->
+				<p:remoteCommand name="loadList" process="@none" update="@none" />
+
+
+				<p:outputPanel rendered="#{view.e.id ne null}">
+
+					<fd:labelInput label="Nota:" alignRight="true">
+
+						<h:outputText value="#{view.e.numero} " />
+						<h:outputText
+							value=" (Id: #{view.e.spartacusId}) (Mod: #{view.e.tipoNotaFiscal.modelo}) (#{view.e.ambiente})" />
+						<h:outputText
+							value=" (Status: #{view.e.spartacusStatus} - #{view.e.spartacusMensRetornoReceita})" />
+					</fd:labelInput>
+
+				</p:outputPanel>
+
+
+
+				<fd:labelInput noLabel="true" breakAfter="true" />
+
+
+
+
+				<p:outputPanel id="opnCabecalho">
+
+
+					<fd:labelInput label="Número :" labelWidth="120px">
+						<p:inputText size="10" value="#{view.e.numero}"
+							styleClass="maskInt" readonly="true">
+							<f:convertNumber integerOnly="true" />
+						</p:inputText>
+					</fd:labelInput>
+
+					<fd:labelInput label="Série :">
+						<p:inputText size="5" value="#{view.e.serie}" styleClass="maskInt"
+							readonly="true">
+							<f:convertNumber integerOnly="true" />
+						</p:inputText>
+					</fd:labelInput>
+
+					<fd:labelInput label="Natureza Operação :" alignRight="true"
+						breakAfter="true">
+						<p:inputText size="25" value="#{view.e.naturezaOperacao}" />
+					</fd:labelInput>
+
+					<fd:labelInput label="Forma de Pagto.: " labelWidth="120px">
+						<p:selectOneMenu value="#{view.e.indicadorFormaPagto}">
+							<f:selectItems value="#{view.e.indicadorFormaPagto.values()}"
+								var="s" itemLabel="#{s.label}" itemValue="#{s}" />
+						</p:selectOneMenu>
+					</fd:labelInput>
+
+					<fd:labelInput paddingLeft="40px" label="Finalidade :">
+						<p:selectOneMenu value="#{view.e.finalidadeNF}"
+							disabled="#{!notaFiscalBusiness.permiteFaturamento(view.e)}">
+							<f:selectItems value="#{view.e.finalidadeNF.values()}" var="_"
+								itemLabel="#{_.label}" itemValue="#{_}" />
+						</p:selectOneMenu>
+					</fd:labelInput>
+
+					<fd:labelInput paddingLeft="40px" label=" ">
+						<p:selectOneRadio value="#{view.e.entrada}">
+							<f:selectItem itemValue="true" itemLabel="ENTRADA" />
+							<f:selectItem itemValue="false" itemLabel="SAÍDA" />
+						</p:selectOneRadio>
+					</fd:labelInput>
+
+					<fd:labelInput label="Dt Emissão :" breakAfter="true"
+						alignRight="true">
+
+						<p:calendar styleClass="maskDataHora" value="#{view.e.dtEmissao}"
+							disabled="#{!notaFiscalBusiness.permiteFaturamento(view.e)}"
+							locale="pt" pages="1" pattern="dd/MM/yyyy HH:mm" showOn="button"
+							widgetVar="iDtConsolidado" size="20" selectOtherMonths="true"
+							showOtherMonths="true" />
+
+					</fd:labelInput>
+
+
+
+
+					<fd:labelInput noLabel="true">
+						<p:selectOneRadio value="#{view.e.pessoaCadastro}"
+							id="iPessoaCadastro"
+							disabled="#{!notaFiscalBusiness.permiteFaturamento(view.e)}">
+							<f:selectItem itemValue="CLIENTE" itemLabel="Cliente" />
+							<f:selectItem itemValue="FORNECEDOR" itemLabel="Fornecedor" />
+						</p:selectOneRadio>
+					</fd:labelInput>
+
+					<fd:labelInput noLabel="true" breakAfter="true" alignRight="true">
+						<p:selectOneRadio value="#{view.e.pessoaDestinatario.tipoPessoa}"
+							disabled="#{!notaFiscalBusiness.permiteFaturamento(view.e)}"
+							id="selTipoPessoa">
+							<p:ajax event="change" update=":frm:opnCabecalho" process="@this"
+								listener="#{view.limparPessoaDestinatario}" />
+							<f:selectItems value="#{lmBase.tipoPessoaValues}" var="_"
+								itemLabel="#{_.label}" itemValue="#{_}" />
+						</p:selectOneRadio>
+					</fd:labelInput>
+
+
+
+					<p:outputPanel id="opnDocNome">
+
+						<f:validateBean disabled="true">
+
+							<p:outputPanel
+								rendered="#{view.e.pessoaDestinatario.tipoPessoa.inicial == 'J'}">
+
+								<fd:labelInput label="CNPJ :" labelWidth="120px">
+									<p:inputMask size="20" id="iCnpj"
+										disabled="#{!notaFiscalBusiness.permiteFaturamento(view.e)}"
+										value="#{view.e.pessoaDestinatario.documento}"
+										requiredMessage="É necessário informar o CNPJ"
+										mask="99.999.999/9999-99" converter="#{docConverter}">
+										<p:ajax event="blur" listener="#{view.updateDoc}"
+											process="@this iPessoaCadastro selTipoPessoa"
+											update=":frm:opnCabecalho" />
+									</p:inputMask>
+									<p:spacer width="4" />
+									<p:commandButton id="btnBuscaPessoaCNPJ" title="Buscar"
+										disabled="#{!notaFiscalBusiness.permiteFaturamento(view.e)}"
+										oncomplete="PF('dlgBuscaPessoaNotaFiscalSaida').show()"
+										update=":frmDlgBuscaPessoaNotaFiscalSaida:opnDlg"
+										process="@this" icon="ui-icon-search" />
+								</fd:labelInput>
+
+								<fd:labelInput label="Razão Social :" breakAfter="true">
+									<p:inputText size="50"
+										disabled="#{!notaFiscalBusiness.permiteFaturamento(view.e)}"
+										value="#{view.e.pessoaDestinatario.nome}" id="iNomePJ" />
+								</fd:labelInput>
+
+
+							</p:outputPanel>
+
+							<p:outputPanel
+								rendered="#{view.e.pessoaDestinatario.tipoPessoa.inicial == 'F'}">
+
+
+
+								<fd:labelInput label="CPF :" labelWidth="120px">
+									<p:inputMask size="16" id="iCPF" widgetVar="iCPF"
+										process="@this iPessoaCadastro selTipoPessoa"
+										disabled="#{!notaFiscalBusiness.permiteFaturamento(view.e)}"
+										value="#{view.e.pessoaDestinatario.documento}"
+										requiredMessage="É necessário informar o CPF"
+										mask="999.999.999-99" converter="#{docConverter}">
+										<p:ajax event="blur" listener="#{view.updateDoc}"
+											update=":frm:opnCabecalho" />
+									</p:inputMask>
+									<p:spacer width="4" />
+									<p:commandButton id="btnBuscaPessoa" title="Buscar"
+										disabled="#{!notaFiscalBusiness.permiteFaturamento(view.e)}"
+										oncomplete="PF('dlgBuscaPessoaNotaFiscalSaida').show()"
+										update=":frmDlgBuscaPessoaNotaFiscalSaida:opnDlg"
+										process="@this" icon="ui-icon-search" />
+								</fd:labelInput>
+
+
+								<fd:labelInput label="Nome :" breakAfter="true">
+									<p:inputText size="50"
+										disabled="#{!notaFiscalBusiness.permiteFaturamento(view.e)}"
+										value="#{view.e.pessoaDestinatario.nome}" id="iNomePF" />
+								</fd:labelInput>
+
+
+
+							</p:outputPanel>
+
+						</f:validateBean>
+
+					</p:outputPanel>
+
+
+					<p:outputPanel
+						rendered="#{view.e.pessoaDestinatario.tipoPessoa.inicial == 'J'}">
+
+						<fd:labelInput label="Nome Fantasia :" labelWidth="120px">
+							<p:inputText size="60"
+								disabled="#{!notaFiscalBusiness.permiteFaturamento(view.e)}"
+								value="#{view.e.pessoaDestinatario.nomeFantasia}"
+								id="iNomeFantasia" />
+						</fd:labelInput>
+
+						<fd:labelInput label="Inscr Est :" breakAfter="true"
+							alignRight="true">
+							<p:inputText size="15" id="iInscrEst"
+								disabled="#{!notaFiscalBusiness.permiteFaturamento(view.e)}"
+								value="#{view.pessoaDestinatario.inscricaoEstadual}" />
+						</fd:labelInput>
+
+
+					</p:outputPanel>
+
+					<fd:labelInput label="Fone :" labelWidth="120px">
+						<p:inputMask size="20" value="#{view.pessoaDestinatario.fone1}"
+							disabled="#{!notaFiscalBusiness.permiteFaturamento(view.e)}"
+							id="iFone1" mask="(99) 9999-9999?9" required="true"
+							requiredMessage="É necessário informar o Fone" />
+					</fd:labelInput>
+
+
+					<fd:labelInput label="E-mail :" alignRight="true" breakAfter="true">
+						<p:inputText size="50" value="#{view.pessoaDestinatario.email}"
+							disabled="#{!notaFiscalBusiness.permiteFaturamento(view.e)}"
+							id="iEmail" style="text-transform: lowercase;" />
+					</fd:labelInput>
+
+					<p:outputPanel id="opnEndereco">
+
+						<fd:labelInput label="CEP :" labelWidth="120px" breakAfter="true">
+							<p:inputMask mask="99999-999" size="10" id="iCep"
+								disabled="#{!notaFiscalBusiness.permiteFaturamento(view.e)}"
+								value="#{view.pessoaDestinatario.endereco.cep}" required="true"
+								requiredMessage="É necessário informar o CEP" />
+							<p:commandButton icon="ui-icon-search" update="opnEndereco"
+								rendered="#{notaFiscalBusiness.permiteFaturamento(view.e)}"
+								process="@this iCep"
+								actionListener="#{viaCEP2Endereco.convert(view.pessoaDestinatario.endereco)}" />
+						</fd:labelInput>
+
+						<div style="clear: both;" />
+
+						<fd:labelInput label="Logradouro :" labelWidth="120px">
+							<p:inputText size="50" required="true"
+								disabled="#{!notaFiscalBusiness.permiteFaturamento(view.e)}"
+								requiredMessage="É necessário informar o Logradouro"
+								value="#{view.pessoaDestinatario.endereco.logradouro}"
+								id="logradouro" />
+						</fd:labelInput>
+
+						<fd:labelInput label="Número :">
+							<p:inputText size="5" required="true"
+								disabled="#{!notaFiscalBusiness.permiteFaturamento(view.e)}"
+								requiredMessage="É necessário informar o Número"
+								value="#{view.pessoaDestinatario.endereco.numero}" id="numero" />
+						</fd:labelInput>
+
+						<fd:labelInput label="Complemento :" alignRight="true"
+							breakAfter="true">
+							<p:inputText size="13"
+								disabled="#{!notaFiscalBusiness.permiteFaturamento(view.e)}"
+								value="#{view.pessoaDestinatario.endereco.complemento}"
+								id="complemento" />
+						</fd:labelInput>
+
+						<fd:labelInput label="Bairro :" labelWidth="120px"
+							breakAfter="true">
+							<p:inputText size="40" required="true"
+								disabled="#{!notaFiscalBusiness.permiteFaturamento(view.e)}"
+								requiredMessage="É necessário informar o Bairro"
+								value="#{view.pessoaDestinatario.endereco.bairro}" id="bairro" />
+						</fd:labelInput>
+
+						<fd:labelInput label="Cidade :" labelWidth="120px">
+							<p:inputText size="40" required="true"
+								disabled="#{!notaFiscalBusiness.permiteFaturamento(view.e)}"
+								requiredMessage="É necessário informar a Cidade"
+								value="#{view.pessoaDestinatario.endereco.cidade}" id="cidade" />
+						</fd:labelInput>
+
+						<fd:labelInput label="Estado :">
+							<p:selectOneMenu
+								value="#{view.pessoaDestinatario.endereco.estado}"
+								disabled="#{!notaFiscalBusiness.permiteFaturamento(view.e)}"
+								id="uf" style="width: 80px" required="true"
+								requiredMessage="É necessário informar o Estado">
+								<f:selectItem itemValue="" itemLabel="Selecione" />
+								<f:selectItems value="#{lmBase.ufValues}" var="uf"
+									itemLabel="#{uf.sigla}" itemValue="#{uf}" />
+							</p:selectOneMenu>
+						</fd:labelInput>
+
+						<fd:labelInput label="NF Referenciada (Id) :" alignRight="true"
+							breakAfter="true">
+							<p:inputText size="55"
+								disabled="#{!notaFiscalBusiness.permiteFaturamento(view.e)}"
+								value="#{view.e.a03idNfReferenciada}"
+								style="text-transform: none;" />
+						</fd:labelInput>
+
+					</p:outputPanel>
+
+					<div style="clear: both;" />
+
+
+
+
+					<!-- BOTÃO SALVAR -->
+					<fd:labelInput noLabel="true" alignRight="true" breakAfter="true">
+
+						<p:defaultCommand target="btnSalvar" />
+
+						<p:commandButton value="Salvar" update=":frm" style="width: 180px"
+							disabled="#{!notaFiscalBusiness.permiteFaturamento(view.e)}"
+							actionListener="#{view.save}" id="btnSalvar" process=":frm"
+							title="Salvar o registro atual e limpar para inserir outro"
+							icon="ui-icon-save" />
+
+						<p:menuButton value="Opções">
+
+							<p:menuitem value="Recalcular Totais" icon="ui-icon-list"
+								process="@this" update="opnRodape"
+								disabled="#{view.e.id eq null or !notaFiscalBusiness.permiteFaturamento(view.e)}"
+								actionListener="#{view.atualizarTotais()}">
+								<p:confirm header="Recalcular totais" />
+							</p:menuitem>
+
+							<p:menuitem value="Clonar" disabled="#{view.e.id eq null}"
+								icon="ui-icon-control-point-duplicate" process="@this"
+								actionListener="#{view.clonar()}">
+								<p:confirm header="Clonar Nota Fiscal" />
+							</p:menuitem>
+
+							<!-- FATURAR: SÓ EXIBE SE AINDA NÃO FOI FATURADO -->
+							<p:menuitem title="Faturar" id="btnFaturar"
+								disabled="#{!notaFiscalBusiness.permiteFaturamento(view.e)}"
+								icon="ui-icon-account-balance" value="Faturar"
+								process=":frm:opnCabecalho" style="width: 200px"
+								actionListener="#{view.faturar()}" update=":frm:panel">
+								<p:confirm header="Faturamento" />
+							</p:menuitem>
+
+							<!-- REIMPRIMIR: SÓ EXIBE SE O STATUS FOR '100' -->
+							<p:menuitem actionListener="#{view.reimprimir()}"
+								disabled="#{view.e.id eq null or (view.e.spartacusStatus ne '100' and view.e.spartacusStatus ne '204')}"
+								process="@this" title="Reimprime venda" value="Reimprimir"
+								update=":frm" icon="ui-icon-print">
+								<p:confirm header="Reimpressão" />
+							</p:menuitem>
+
+							<!-- CANCELAR: SÓ EXIBE SE O STATUS FOR '100' -->
+							<p:menuitem
+								disabled="#{view.e.id eq null or (view.e.spartacusStatus ne '100' and view.e.spartacusStatus ne '204')}"
+								process="@this" title="Cancelar faturamento" value="Cancelar"
+								update=":frm" icon="ui-icon-cancel"
+								oncomplete="PF('dlgCancelar').show()" />
+
+							<!-- DOWNLOAD XML: SÓ EXIBE SE O STATUS FOR '100' -->
+							<p:menuitem
+								disabled="#{view.e.id eq null or view.e.spartacusStatus ne '100' and view.e.spartacusStatus ne '204'}"
+								process="@this" title="Download do arquivo XML"
+								value="Download XML" ajax="false" update=":frm"
+								icon="ui-icon-file-download" actionListener="#{view.gerarXML}">
+								<p:fileDownload value="#{view.arquivoXML}" />
+							</p:menuitem>
+
+						</p:menuButton>
+
+					</fd:labelInput>
+
+
+				</p:outputPanel>
+
+
+				<p:spacer height="15" />
+
+
+				<p:outputPanel rendered="#{view.e.id ne null}">
+
+					<p:toolbar>
+						<f:facet name="left">
+							<h:outputText value="Itens" style="font-size: 18px; margin: 5px" />
+						</f:facet>
+						<f:facet name="right">
+							<p:commandButton icon="ui-icon-document"
+								oncomplete="PF('dlgItem').show()" id="btnNovoItem"
+								update=":frmItem:opnDlgItem" actionListener="#{view.novoItem}"
+								disabled="#{!notaFiscalBusiness.permiteFaturamento(view.e)}"
+								title="Novo Item" style="width: 26; height: 26;" process="@this"
+								value="Novo Item" />
+						</f:facet>
+					</p:toolbar>
+
+
+
+					<p:dataTable var="item" value="#{view.e.itens}" rowIndexVar="row"
+						rowKey="#{item}" draggableRows="true">
+						
+						<p:ajax event="rowReorder" listener="#{view.onRowReorder}" />
+
+						<p:column style="width: 1px" headerText="#">
+							<h:outputText value="#{row + 1}" />
+						</p:column>
+
+						<p:column headerText="Ordem">
+							<h:outputText value="#{item.ordem}" />
+						</p:column>
+						
+						<p:column headerText="Código">
+							<h:outputText value="#{item.codigo}" />
+						</p:column>
+
+						<p:column headerText="Descrição">
+							<h:outputText value="#{item.descricao}" />
+						</p:column>
+
+						<p:column headerText="Unidade">
+							<h:outputText value="#{item.unidade}" />
+						</p:column>
+
+						<p:column headerText="NCM">
+							<h:outputText value="#{item.ncm}" />
+						</p:column>
+
+						<p:column headerText="CFOP">
+							<h:outputText value="#{item.cfop}" />
+						</p:column>
+
+						<p:column headerText="ICMS">
+							<div style="text-align: right">
+								<h:outputText value="#{item.icmsAliquota}"
+									converter="#{doubleConverterNull}" />
+							</div>
+						</p:column>
+
+						<p:column headerText="Qtde">
+							<div style="text-align: right">
+								<h:outputText value="#{item.qtde}"
+									converter="#{doubleConverterNull}" />
+							</div>
+						</p:column>
+
+						<p:column headerText="Valor Unit">
+							<div style="text-align: right">
+								<h:outputText value="#{item.valorUnit}"
+									converter="#{doubleConverterNull}" />
+							</div>
+						</p:column>
+
+						<p:column headerText="Desconto">
+							<div style="text-align: right">
+								<h:outputText value="#{item.valorDesconto}"
+									converter="#{doubleConverterNull}" />
+							</div>
+						</p:column>
+
+						<p:column headerText="Total">
+							<div style="text-align: right">
+								<h:outputText value="#{item.valorTotal}"
+									converter="#{doubleConverterNull}" />
+							</div>
+						</p:column>
+
+						<p:column styleClass="noWrapColBtns">
+
+							<p:commandButton actionListener="#{view.setItem(item)}"
+								disabled="#{!notaFiscalBusiness.permiteFaturamento(view.e)}"
+								icon="ui-icon-build" update=":frmItem:opnDlgItem"
+								process="@this" oncomplete="PF('dlgItem').show()"
+								title="Editar registro" />
+
+							<p:commandButton actionListener="#{view.clonarItem(item)}"
+								disabled="#{!notaFiscalBusiness.permiteFaturamento(view.e)}"
+								icon="ui-icon-list" update=":frm" title="Clonar Item"
+								process="@this">
+								<p:confirm />
+							</p:commandButton>
+
+							<p:commandButton actionListener="#{view.deleteItem(item)}"
+								disabled="#{!notaFiscalBusiness.permiteFaturamento(view.e)}"
+								title="Deletar Item" icon="ui-icon-trash" update=":frm"
+								process="@this" styleClass="red-btn">
+								<p:confirm header="Atenção" message="Confirmar deleção?"
+									icon="ui-icon-alert" />
+							</p:commandButton>
+
+						</p:column>
+
+					</p:dataTable>
+
+					<div style="clear: both;" />
+
+				</p:outputPanel>
+
+				<div style="clear: both;" />
+
+				<p:spacer height="20px" />
+
+				<p:outputPanel id="opnRodape">
+					<fd:labelInput label="Info Complement :" labelWidth="120px">
+						<p:inputTextarea id="iInfoCompl" rows="5" cols="80"
+							disabled="#{!notaFiscalBusiness.permiteFaturamento(view.e)}"
+							value="#{view.e.informacoesComplementares}" />
+					</fd:labelInput>
+
+					<fd:labelInput label="Valor Total :" alignRight="true">
+						<p:inputText value="#{view.e.valorTotal}" size="20"
+							disabled="#{!notaFiscalBusiness.permiteFaturamento(view.e)}"
+							styleClass="maskMoney" id="iValorTotalNF"
+							converter="#{doubleConverterAbs}">
+						</p:inputText>
+					</fd:labelInput>
+
+					<fd:labelInput label="Descontos :" alignRight="true">
+						<p:inputText value="#{view.e.totalDescontos}" size="11"
+							disabled="#{!notaFiscalBusiness.permiteFaturamento(view.e)}"
+							styleClass="maskMoney" converter="#{doubleConverterAbs}">
+						</p:inputText>
+					</fd:labelInput>
+
+					<fd:labelInput label="Subtotal :" alignRight="true">
+						<p:inputText value="#{view.e.subTotal}" size="11"
+							disabled="#{!notaFiscalBusiness.permiteFaturamento(view.e)}"
+							styleClass="maskMoney" converter="#{doubleConverterAbs}">
+						</p:inputText>
+					</fd:labelInput>
+
+					<fd:labelInput noLabel="true" breakAfter="true" />
+				</p:outputPanel>
+
+				<p:outputPanel id="opnFrete">
+
+					<p:outputPanel
+						rendered="#{view.e.transpModalidadeFrete eq 'SEM_FRETE'}">
+
+						<fd:labelInput label="Frete :" labelWidth="120px">
+							<p:selectOneMenu value="#{view.e.transpModalidadeFrete}"
+								disabled="#{!notaFiscalBusiness.permiteFaturamento(view.e)}">
+								<f:selectItems value="#{view.e.transpModalidadeFrete.values()}"
+									var="_" itemLabel="#{_.label}" itemValue="#{_}" />
+								<p:ajax event="change" update="opnFrete" process="@this"
+									listener="#{view.updateFrete}" />
+							</p:selectOneMenu>
+						</fd:labelInput>
+
+					</p:outputPanel>
+
+					<p:fieldset legend="Frete"
+						rendered="#{view.e.transpModalidadeFrete ne 'SEM_FRETE'}">
+
+						<fd:labelInput label="Frete :" labelWidth="120px"
+							breakAfter="true">
+							<p:selectOneMenu value="#{view.e.transpModalidadeFrete}"
+								disabled="#{!notaFiscalBusiness.permiteFaturamento(view.e)}">
+								<f:selectItems value="#{view.e.transpModalidadeFrete.values()}"
+									var="_" itemLabel="#{_.label}" itemValue="#{_}" />
+								<p:ajax event="change" update="opnFrete" process="@this"
+									listener="#{view.updateFrete}" />
+							</p:selectOneMenu>
+						</fd:labelInput>
+
+						<fd:labelInput label="Transportadora :" labelWidth="120px">
+
+							<p:inputText size="60" required="true"
+								requiredMessage="Informe os dados da transportadora"
+								disabled="#{!notaFiscalBusiness.permiteFaturamento(view.e)}"
+								value="#{view.e.transpFornecedor.pessoa.nomeFantasia}"
+								id="iTransportadora" />
+
+							<p:spacer width="4" />
+
+							<p:commandButton id="btnBuscaTransportadora"
+								title="Buscar Transportadora"
+								disabled="#{!notaFiscalBusiness.permiteFaturamento(view.e)}"
+								oncomplete="PF('dlgBuscaFornecedorTransportadora').show()"
+								update="opnFrete" process="@this" icon="ui-icon-search" />
+
+						</fd:labelInput>
+
+						<fd:labelInput label="Peso Líquido :" alignRight="true">
+							<p:inputText value="#{view.e.transpPesoLiquido}" size="11"
+								disabled="#{!notaFiscalBusiness.permiteFaturamento(view.e)}"
+								styleClass="maskQtde" required="true"
+								requiredMessage="Informe o Peso Líquido">
+								<f:convertNumber maxFractionDigits="3" minFractionDigits="3" />
+							</p:inputText>
+						</fd:labelInput>
+
+						<fd:labelInput label="Peso Bruto :" alignRight="true"
+							breakAfter="true">
+							<p:inputText value="#{view.e.transpPesoBruto}" size="11"
+								disabled="#{!notaFiscalBusiness.permiteFaturamento(view.e)}"
+								styleClass="maskQtde" requiredMessage="Informe o Peso Bruto">
+								<f:convertNumber maxFractionDigits="3" minFractionDigits="3" />
+							</p:inputText>
+						</fd:labelInput>
+
+
+						<fd:labelInput label="Qtde Volumes :" labelWidth="120px">
+							<p:inputText value="#{view.e.transpQtdeVolumes}" size="11"
+								disabled="#{!notaFiscalBusiness.permiteFaturamento(view.e)}"
+								styleClass="maskInt" required="true"
+								requiredMessage="Informe a Qtde Volumes">
+								<f:convertNumber integerOnly="true" />
+							</p:inputText>
+						</fd:labelInput>
+
+						<fd:labelInput label="Espécie Volumes">
+							<p:inputText size="7" required="true"
+								requiredMessage="Informe a Qtde Volumes"
+								disabled="#{!notaFiscalBusiness.permiteFaturamento(view.e)}"
+								value="#{view.e.transpEspecieVolumes}" />
+						</fd:labelInput>
+
+						<fd:labelInput label="Marca Volumes :">
+							<p:inputText size="15"
+								disabled="#{!notaFiscalBusiness.permiteFaturamento(view.e)}"
+								value="#{view.e.transpMarcaVolumes}" />
+						</fd:labelInput>
+
+						<fd:labelInput label="Numeração Volumes :">
+							<p:inputText size="15"
+								disabled="#{!notaFiscalBusiness.permiteFaturamento(view.e)}"
+								value="#{view.e.transpNumeracaoVolumes}" />
+						</fd:labelInput>
+
+						<fd:labelInput label="Total Frete :" alignRight="true" breakAfter="true">
+							<p:inputText size="15" styleClass="maskMoney"
+								disabled="#{!notaFiscalBusiness.permiteFaturamento(view.e)}"
+								value="#{view.e.transpValorTotalFrete}">
+								<fd:bigDecimalConverter onlyAbs="true" />
+							</p:inputText>
+						</fd:labelInput>
+
+
+
+					</p:fieldset>
+
+				</p:outputPanel>
+
+
+				<div style="clear: both;" />
+
+			</p:panel>
+
+
+			<p:dialog id="dlgCancelar" widgetVar="dlgCancelar" position="top"
+				fitViewport="true" header="Cancelamento" modal="true"
+				resizable="false" closeOnEscape="true" width="900" dynamic="true">
+
+				<p:outputPanel id="opnDlgCancelar">
+
+					<p:focus for="iMotivo" />
+
+					<fd:labelInput label="Motivo :" labelWidth="110px"
+						breakAfter="true">
+						<p:inputTextarea rows="8" cols="55" id="iMotivo" maxlength="60"
+							value="#{view.e.motivoCancelamento}" />
+					</fd:labelInput>
+
+					<!-- BOTÃO SALVAR -->
+					<fd:labelInput noLabel="true" alignRight="true" breakAfter="true">
+						<p:commandButton title="Cancelar" id="btnCancelar"
+							icon="ui-icon-save" value="Cancelar" process="opnDlgCancelar"
+							style="width: 100px" actionListener="#{view.cancelar}"
+							update=":frm" oncomplete="afterFormSubmit(xhr, status, args);">
+							<p:confirm header="Cancelamento" />
+						</p:commandButton>
+					</fd:labelInput>
+
+
+				</p:outputPanel>
+
+			</p:dialog>
+
+
+		</h:form>
+
+		<p:outputPanel id="opnPessoaDlgBusca">
+			<ui:include src="/pages/erp/base/pessoaDlgBusca.xhtml">
+				<ui:param name="sufix" value="NotaFiscalSaida" />
+				<ui:param name="viewSelec" value="#{view}" />
+				<ui:param name="update" value=":frm" />
+				<ui:param name="pessoaCadastroFixa" value="#{view.e.pessoaCadastro}" />
+			</ui:include>
+		</p:outputPanel>
+
+
+
+
+		<ui:include src="/pages/erp/crm/clienteDlgBusca.xhtml">
+			<ui:param name="update" value=":frm:opnCabecalho" />
+			<ui:param name="viewSelec" value="#{view}" />
+			<ui:param name="action" value="selCliente" />
+		</ui:include>
+
+		<ui:include src="/pages/erp/estoque/fornecedorDlgBusca.xhtml">
+			<ui:param name="sufix" value="Transportadora" />
+			<ui:param name="update" value=":frm:opnFrete" />
+			<ui:param name="viewSelec" value="#{view}" />
+			<ui:param name="action" value="selTransportadora" />
+		</ui:include>
+
+		<ui:include src="notaFiscalSaidaForm_dlg.xhtml" />
+
+
+
+	</ui:define>
+
+
+</ui:composition>

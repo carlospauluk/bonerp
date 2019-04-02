@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.0.1.final using JasperReports Library version 6.0.0  -->
+<!-- 2016-05-07T15:10:17 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rpOrcamento" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isSummaryWithPageHeaderAndFooter="true" uuid="2a67a703-1e4b-425d-9d18-40e739567676">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="647"/>
+	<property name="ireport.callouts" value="##Mon Nov 10 10:25:51 BRST 2014"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="bonerp_prod"/>
+	<property name="com.jaspersoft.studio.unit." value="cm"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="cm"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="cm"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="cm"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="cm"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="cm"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="cm"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="cm"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="cm"/>
+	<parameter name="cortinaId" class="java.lang.Long"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT
+    produto.reduzido as produto_reduzido,
+    produto.descricao as produto_descricao,
+    artigo_cortina.tipo_artigo_cortina,
+    cortina_item.altura_barra,
+    cortina_item.camada,
+    cortina_item.`tecido_fator`,
+    cortina_item.obs as cortinaItemObs,
+    cortina_item.preco_vista,
+    cortina_item.preco_prazo,
+    cortina_item.preco_promo,
+    COALESCE(if(cortina_item.preco_promo = 0,null,cortina_item.preco_promo), cortina_item.preco_vista) AS preco_vigente,
+    cortina_item.qtde,    
+    tecido.largura tecido_largura,    
+    unidade.`label` as unidade,
+    cortina_item.qtde * ( COALESCE(if(cortina_item.preco_promo = 0,null,cortina_item.preco_promo), cortina_item.preco_vista) ) AS total_item
+FROM
+    crtn_cortina_item cortina_item
+    JOIN crtn_artigo_cortina artigo_cortina ON cortina_item.artigoCortina_id = artigo_cortina.id
+    LEFT JOIN crtn_tecido tecido ON artigo_cortina.tecido_id = tecido.id
+    JOIN est_produto produto ON artigo_cortina.produto_id = produto.id
+    JOIN est_unidade_produto unidade ON produto.unidade_produto_id = unidade.id
+WHERE
+	cortina_item.cortina_id =  $P{cortinaId} AND
+	artigo_cortina.tipo_artigo_cortina IN ('MAO_DE_OBRA_COSTUREIRA_TECIDO', 'MAO_DE_OBRA_COSTUREIRA_DETALHES')
+ORDER BY camada]]>
+	</queryString>
+	<field name="altura_barra" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="camada" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="tecido_fator" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="cortinaItemObs" class="java.lang.String"/>
+	<field name="preco_prazo" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="preco_promo" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="preco_vista" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="qtde" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="tipo_artigo_cortina" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="tecido_largura" class="java.math.BigDecimal"/>
+	<field name="produto_reduzido" class="java.lang.Long"/>
+	<field name="produto_descricao" class="java.lang.String"/>
+	<field name="unidade" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="total_item" class="java.math.BigDecimal"/>
+	<field name="preco_vigente" class="java.math.BigDecimal"/>
+	<variable name="total_item1" class="java.math.BigDecimal" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{total_item}]]></variableExpression>
+	</variable>
+	<group name="group_camada">
+		<groupExpression><![CDATA[$F{camada}]]></groupExpression>
+		<groupHeader>
+			<band height="8">
+				<property name="local_mesure_unitheight" value="cm"/>
+				<line>
+					<reportElement x="0" y="0" width="311" height="1" uuid="67707c63-fc47-435a-8815-771afa3a8000">
+						<property name="local_mesure_unitheight" value="pixel"/>
+						<property name="local_mesure_unity" value="cm"/>
+						<property name="com.jaspersoft.studio.unit.y" value="cm"/>
+					</reportElement>
+				</line>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="48" y="0" width="128" height="15" uuid="d9932d14-3119-4739-8dd4-b73c67fcef34"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Top" markup="html">
+					<font fontName="Lucida Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<b>" + $F{produto_descricao} + "</b>" + 
+($F{tecido_largura} != null && !"".equals($F{tecido_largura})
+	? " (Larg.: " + $F{tecido_largura} + "m)"
+	: ""
+)
++
+( $F{altura_barra} != null && !"".equals($F{altura_barra})
+	? " (Barra: " + $F{altura_barra} + "m)"
+	: ""
+)
++
+( $F{cortinaItemObs} != null && !"".equals($F{cortinaItemObs})
+	? "<br /><b>*Obs.: </b><i>" + $F{cortinaItemObs} + "</i><br />"
+	: ""
+)]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,###,##0.00" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="176" y="0" width="37" height="15" uuid="f9f94096-d589-473f-8dca-ceaf126fbef6"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Lucida Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{qtde}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,###,##0.00" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="229" y="0" width="38" height="15" uuid="2a76a723-8ec9-40ba-8537-4c4fd93513c6"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Lucida Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{preco_vigente}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,###,##0.00" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="267" y="0" width="44" height="15" uuid="37c375a0-1746-44b3-a493-ec516d4b9118"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Lucida Sans" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{total_item}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="213" y="0" width="16" height="15" uuid="ba450543-ace4-4576-8cfc-31600ec2ecb5"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Lucida Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{unidade}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="48" height="15" uuid="7b123ffd-761c-4b3c-aba1-426c4f59d915"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Lucida Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{produto_reduzido}.toString().substring(0,4) + "-" + $F{produto_reduzido}.toString().substring(5)]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="20">
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="245" y="0" width="66" height="20" uuid="07767f4c-027a-41d2-aba6-51f9aede91a2"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="Lucida Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{total_item1}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="144" y="0" width="100" height="20" uuid="8420a3f4-5bf3-4c6c-97bc-f3a4796dc2b9"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="Lucida Sans" size="8"/>
+				</textElement>
+				<text><![CDATA[Total M.O.:]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

@@ -1,0 +1,221 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+
+	<ui:param name="view" value="#{resultVendedorView}" />
+
+	<h:form id="frm">
+
+		<p:panel id="panel" header="Resultado de Vendas">
+
+			<p:spacer height="8" />
+
+			<p:focus context="frm" for="iCodigoVendedor" />
+
+			<p:outputPanel id="opnVendedor">
+
+				<fd:labelInput label="Vendedor :" labelWidth="110px"
+					breakAfter="true">
+					<p:inputText value="#{view.codigoVendedor}" styleClass="maskInt"
+						size="8" id="iCodigoVendedor">
+						<f:convertNumber integerOnly="true" />
+						<p:ajax event="blur" listener="#{view.updateVendedor}"
+							update="opnVendedor" oncomplete="_$('iSenha').focus()" />
+					</p:inputText>
+					<p:inputText id="iVendedorNome"
+						value="#{view.vendedor.pessoa.nome}" tabindex="-1" readonly="true"
+						size="40" />
+				</fd:labelInput>
+
+
+				<fd:labelInput label="Senha :" labelWidth="110px" breakAfter="true">
+					<p:password id="iSenha" value="#{view.senha}" />
+				</fd:labelInput>
+
+			</p:outputPanel>
+
+
+			<fd:labelInput noLabel="true" breakAfter="true">
+
+				<p:commandButton title="Consultar" id="btnConsultar"
+					actionListener="#{view.consultar}" update=":frm:opnData"
+					icon="ui-icon-refresh" value="Consultar" style="width: 120px" />
+
+				<p:spacer width="10" />
+
+				<p:commandButton actionListener="#{view.limpar}" title="Limpar"
+					process="@this" id="btnLimpar" icon="ui-icon-refresh"
+					value="Limpar" update=":frm" />
+
+
+				<p:commandButton icon="ui-icon-triangle-1-w"
+					actionListener="#{view.irPara(false)}" process="@this"
+					partialSubmit="true" update=":frm:panel" />
+
+				<p:commandButton icon="ui-icon-triangle-1-e"
+					actionListener="#{view.irPara(true)}" process="@this"
+					partialSubmit="true" update=":frm:panel" />
+
+			</fd:labelInput>
+
+
+			<p:spacer height="10px" />
+
+			<div style="clear: both;" />
+
+			<p:outputPanel id="opnData">
+
+				<p:panel header="Informações">
+
+					<fd:labelInput label="Mês/Ano :" labelWidth="110px">
+						<p:inputText readonly="true" value="#{view.dtBase}" size="12">
+							<f:convertDateTime pattern="MMMM/yyyy" />
+						</p:inputText>
+					</fd:labelInput>
+
+
+					<fd:labelInput label="Posição :" breakAfter="true">
+						<p:inputText size="3" value="#{view.mvi.posicao}" readonly="true" />
+					</fd:labelInput>
+
+					<fd:labelInput label="Meta Esperada :" labelWidth="110px">
+						<p:inputText size="12"
+							value="#{view.mesVenda.metaEsperadaVendedor}" readonly="true"
+							styleClass="maskMoney" converter="#{doubleConverterNull}" />
+					</fd:labelInput>
+
+					<fd:labelInput label="Total Vendido :">
+						<p:inputText size="12" value="#{view.mvi.totalVendido}"
+							readonly="true" styleClass="maskMoney"
+							converter="#{doubleConverterNull}" />
+					</fd:labelInput>
+
+					<fd:labelInput label="Total Provável :">
+						<p:inputText size="12" value="#{view.mvi.totalProvavel}"
+							readonly="true" styleClass="maskMoney"
+							converter="#{doubleConverterNull}" />
+					</fd:labelInput>
+
+
+					<fd:labelInput label="" breakAfter="true">
+						<p:outputPanel style="float: left"
+							rendered="#{view.mvi.totalProvavel.doubleValue() ge view.mvi.mesVenda.metaEsperadaVendedor.doubleValue()}">
+							<span class="ui-icon ui-c ui-icon-thumb-up" />
+						</p:outputPanel>
+						<p:outputPanel style="float: left"
+							rendered="#{view.mvi.totalProvavel.doubleValue() lt view.mvi.mesVenda.metaEsperadaVendedor.doubleValue()}">
+							<span class="ui-icon ui-c ui-icon-thumb-down" />
+						</p:outputPanel>
+					</fd:labelInput>
+
+
+					<p:outputPanel rendered="#{view.dtListTotaisDias.size() gt 0}">
+						<p:fieldset legend="Totais Diários">
+
+
+							<p:dataTable value="#{view.dtListTotaisDias}" rowIndexVar="row"
+								var="_" id="dtDatalist">
+
+								<p:column headerText="Dia">
+									<h:outputText value="#{_[0]}">
+										<f:convertDateTime pattern="dd/MMM - EEEE" />
+									</h:outputText>
+								</p:column>
+
+								<p:column headerText="Total (R$)">
+									<div style="text-align: right;">
+										<h:outputText value="#{_[1]}"
+											converter="#{doubleConverterNull}" />
+									</div>
+								</p:column>
+
+
+							</p:dataTable>
+
+
+						</p:fieldset>
+					</p:outputPanel>
+
+					<p:spacer height="30" />
+
+
+					<p:outputPanel rendered="#{view.dtListMesesAnteriores.size() gt 0}">
+
+						<p:fieldset legend="Resultados Meses Anteriores">
+
+							<p:dataTable value="#{view.dtListMesesAnteriores}"
+								rowIndexVar="row" var="_">
+
+								<p:column headerText="Mês/Ano">
+									<h:outputText value="#{_[0]}">
+										<f:convertDateTime pattern="MMMM/yyyy" />
+									</h:outputText>
+								</p:column>
+
+								<p:column headerText="Total (R$)">
+									<div style="text-align: right;">
+										<h:outputText value="#{_[1]}"
+											converter="#{doubleConverterNull}" />
+									</div>
+								</p:column>
+
+								<p:column headerText="Meta (R$)">
+									<div style="text-align: right;">
+										<h:outputText value="#{_[2]}"
+											converter="#{doubleConverterNull}" />
+									</div>
+								</p:column>
+
+
+								<p:column headerText="Bateu Meta Esperada"
+									style="#{_[4] eq false ? 'background-color: red' : ''}">
+									<div style="text-align: center;">
+
+										<p:outputPanel rendered="#{_[4] eq true}">
+											<span class="ui-icon ui-c ui-icon-thumb-up" />
+										</p:outputPanel>
+										<p:outputPanel rendered="#{_[4] eq false}">
+											<span class="ui-icon ui-c ui-icon-thumb-down" />
+										</p:outputPanel>
+
+									</div>
+								</p:column>
+
+								<p:column headerText="Posição">
+									<div style="text-align: center;">
+										<h:outputText value="#{_[5]}" />
+									</div>
+								</p:column>
+
+
+							</p:dataTable>
+
+
+
+						</p:fieldset>
+
+					</p:outputPanel>
+
+
+				</p:panel>
+
+			</p:outputPanel>
+
+			<p:spacer height="10px" />
+
+			<div style="clear: both;" />
+
+
+		</p:panel>
+
+
+
+	</h:form>
+
+
+</ui:composition>

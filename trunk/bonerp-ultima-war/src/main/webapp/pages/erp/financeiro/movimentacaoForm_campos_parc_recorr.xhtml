@@ -1,0 +1,265 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:fd="http://ocabit.com.br/facelets">
+
+	<c:if test="#{empty viewForm}">
+		<ui:param name="viewForm" value="#{movimentacaoFormView}" />
+	</c:if>
+
+	<p:outputPanel id="opnParRecorr">
+
+		<p:outputPanel id="opnRecorrencia" rendered="#{exibir_recorrencia}">
+
+			<p:outputPanel
+				rendered="#{viewForm.e.recorrencia.recorrente eq false and viewForm.parcelamento eq false}">
+				<fd:labelInput labelWidth="120px" label="Recorrente :"
+					breakAfter="true">
+					<p:selectBooleanCheckbox
+						value="#{viewForm.e.recorrencia.recorrente}">
+						<p:ajax process="@this" update="opnParRecorr" />
+					</p:selectBooleanCheckbox>
+				</fd:labelInput>
+			</p:outputPanel>
+
+			<p:outputPanel
+				rendered="#{viewForm.e.recorrencia.recorrente eq true}">
+
+				<p:fieldset legend="Recorrência">
+
+					<fd:labelInput labelWidth="105px" label="Recorrente :">
+						<p:selectBooleanCheckbox
+							value="#{viewForm.e.recorrencia.recorrente}">
+							<p:ajax process="@this" update="opnParRecorr" />
+						</p:selectBooleanCheckbox>
+					</fd:labelInput>
+
+					<fd:labelInput label="Tipo de Repetição :">
+						<p:selectOneMenu id="iTipoRepeticao"
+							value="#{viewForm.e.recorrencia.tipoRepeticao}">
+							<f:selectItem itemValue="" itemLabel="" />
+							<f:selectItems value="#{lmFinanc.recorrenciaTipoRepeticaoValues}"
+								var="_" itemLabel="#{_.label}" itemValue="#{_}" />
+						</p:selectOneMenu>
+					</fd:labelInput>
+
+					<fd:labelInput label="Frequência :">
+						<p:selectOneMenu id="iFrequencia"
+							value="#{viewForm.e.recorrencia.frequencia}">
+							<f:selectItem itemValue="" itemLabel="" />
+							<f:selectItems value="#{lmFinanc.recorrenciaFrequenciaValues}"
+								var="_" itemLabel="#{_.label}" itemValue="#{_}" />
+						</p:selectOneMenu>
+					</fd:labelInput>
+
+					<fd:labelInput label="Dia :">
+						<p:inputText value="#{viewForm.e.recorrencia.dia}"
+							styleClass="maskInt" size="5" />
+					</fd:labelInput>
+
+					<p:outputPanel rendered="#{viewForm.e.id ne null}">
+						<fd:labelInput label="Ordem :" alignRight="true" breakAfter="true">
+							<p:inputText size="5" value="#{viewForm.e.cadeiaOrdem}"
+								styleClass="maskInt">
+								<f:convertNumber integerOnly="true" />
+							</p:inputText>
+						</fd:labelInput>
+					</p:outputPanel>
+
+				</p:fieldset>
+
+				<p:spacer height="10px" />
+
+			</p:outputPanel>
+
+		</p:outputPanel>
+
+
+
+		<p:outputPanel id="opnParcelamento" rendered="#{exibir_parcelamento}">
+
+			<p:outputPanel
+				rendered="#{viewForm.parcelamento eq false and viewForm.e.recorrencia.recorrente eq false}">
+				<fd:labelInput labelWidth="120px" label="Parcelamento :"
+					breakAfter="true">
+					<p:selectBooleanCheckbox value="#{viewForm.parcelamento}">
+						<p:ajax process="@this"
+							update="opnParRecorr opnTotalizacao opnCheque"
+							listener="#{viewForm.updateParcelamento}" />
+					</p:selectBooleanCheckbox>
+				</fd:labelInput>
+			</p:outputPanel>
+
+			<p:outputPanel rendered="#{viewForm.parcelamento eq true}">
+
+				<fd:labelInput noLabel="true" breakAfter="true" />
+
+				<p:spacer height="10px" />
+
+				<p:fieldset legend="Parcelamento" id="fsParcelamento">
+
+					<fd:labelInput label="Parcelamento :">
+						<p:selectBooleanCheckbox value="#{viewForm.parcelamento}">
+							<p:ajax process="@this"
+								update="opnParRecorr opnTotalizacao opnCheque"
+								listener="#{viewForm.updateParcelamento}" />
+						</p:selectBooleanCheckbox>
+					</fd:labelInput>
+
+					<fd:labelInput label="Núm Parcelas :">
+						<p:inputText id="iNumParcelas" value="#{viewForm.qtdeParcelas}"
+							size="4" styleClass="maskInt" />
+
+					</fd:labelInput>
+
+					<fd:labelInput label="Valor Total :">
+						<p:inputText size="10"
+							value="#{viewForm.e.parcelamento.valorTotal}"
+							id="iValorTotalParcelas" styleClass="maskMoney"
+							style="text-align: right;" converter="#{doubleConverterAbs}">
+						</p:inputText>
+					</fd:labelInput>
+
+
+					<fd:labelInput label="Valor Parcela :">
+						<p:inputText size="8" value="#{viewForm.e.valorTotal}"
+							id="iValorParcela" styleClass="maskMoney"
+							style="text-align: right;" converter="#{doubleConverterAbs}">
+						</p:inputText>
+					</fd:labelInput>
+
+					<fd:labelInput alignRight="true" breakAfter="true">
+
+						<p:splitButton value="Gerar"
+							actionListener="#{viewForm.gerarParcelas(false)}"
+							process="opnDlgMovimentacao"
+							update="fsParcelamento iDtVencto iDtVenctoEfetiva"
+							icon="ui-icon-gear">
+							
+							<p:menuitem value="Gerar (dia fixo)"
+								actionListener="#{viewForm.gerarParcelas(true)}"
+								process="opnDlgMovimentacao"
+								update="fsParcelamento iDtVencto iDtVenctoEfetiva"
+								icon="ui-icon-gear" />
+								
+							<p:menuitem value="Corrigir" title="Corrigir dt venctos e números de cheques"
+								actionListener="#{viewForm.corrigirDtVenctosEfetivas}"
+								process="opnDlgMovimentacao"
+							update="fsParcelamento iDtVencto iDtVenctoEfetiva"
+								icon="ui-icon-gear" />
+						</p:splitButton>
+
+					</fd:labelInput>
+
+					<p:remoteCommand name="atualizarDtListParcelas" process="@none"
+						update="opnParcelas" />
+
+					<p:outputPanel id="opnParcelas">
+
+						<p:spacer height="20px" />
+
+						<p:dataTable value="#{viewForm.e.parcelamento.parcelas}"
+							var="parc" editable="true" editMode="cell" rowIndexVar="row"
+							id="dtListParcelas">
+
+							<p:ajax event="cellEdit" process="@this" partialSubmit="true"
+								listener="#{viewForm.onParcelaEdit(parc)}"
+								update=":frmMovimentacao_#{tipoLancto}:iValorTotalParcelas :frmMovimentacao_#{tipoLancto}:opnCheque"
+								oncomplete="atualizarDtListParcelas()" />
+
+
+							<p:column styleClass="noWrapSmall" headerText="Número">
+								<h:outputText value="#{parc.numParcela}" />
+							</p:column>
+
+							<p:column styleClass="noWrapSmall" headerText="Dt Vencto">
+								<p:cellEditor>
+									<f:facet name="output">
+
+										<h:outputText value="#{parc.dtVencto}">
+											<f:convertDateTime pattern="dd/MM/yyyy" />
+										</h:outputText>
+
+									</f:facet>
+									<f:facet name="input">
+										<p:calendar styleClass="maskData" value="#{parc.dtVencto}"
+											locale="pt" showOn="button" pattern="dd/MM/yyyy" size="10"
+											selectOtherMonths="true" showOtherMonths="true" />
+									</f:facet>
+								</p:cellEditor>
+
+							</p:column>
+
+							<p:column styleClass="noWrapSmall" headerText="Dt Vncto Efet">
+								<p:cellEditor>
+									<f:facet name="output">
+
+										<h:outputText value="#{parc.dtVenctoEfetiva}">
+											<f:convertDateTime pattern="dd/MM/yyyy" />
+										</h:outputText>
+
+									</f:facet>
+									<f:facet name="input">
+										<f:validateBean disabled="true">
+											<p:inputText styleClass="maskData"
+												value="#{parc.dtVenctoEfetiva}" size="10">
+												<f:convertDateTime pattern="dd/MM/yyyy" />
+											</p:inputText>
+										</f:validateBean>
+									</f:facet>
+								</p:cellEditor>
+
+							</p:column>
+
+							<p:column styleClass="noWrapSmall" headerText="Núm Cheque">
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{parc.cheque.numCheque}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputText size="10" value="#{parc.cheque.numCheque}" />
+									</f:facet>
+								</p:cellEditor>
+
+							</p:column>
+
+							<p:column styleClass="noWrapSmall" headerText="Valor">
+								<p:cellEditor>
+									<f:facet name="output">
+										<div style="text-align: right">
+											<h:outputText value="#{parc.valorTotal}"
+												converter="#{doubleConverterNull}" />
+										</div>
+									</f:facet>
+
+									<f:facet name="input">
+										<p:inputText size="10" value="#{parc.valorTotal}"
+											id="iValorTotalParcelas" styleClass="maskMoney"
+											style="text-align: right;" converter="#{doubleConverterAbs}">
+										</p:inputText>
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+
+
+						</p:dataTable>
+
+						<p:spacer height="20px" />
+
+					</p:outputPanel>
+				</p:fieldset>
+
+				<p:spacer height="10px" />
+
+
+			</p:outputPanel>
+
+		</p:outputPanel>
+
+	</p:outputPanel>
+
+
+</ui:composition>

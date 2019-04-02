@@ -1,0 +1,131 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:param name="view" value="#{movimentacaoListagemListView}" />
+
+
+	<sec:authorize ifAnyGranted="ROLE_FINANCEIRO">
+
+
+
+		<h:form id="frmDlgPesquisa">
+			<p:dialog id="dlgPesquisa" header="Pesquisar" widgetVar="dlgPesquisa"
+				resizable="false" width="700" modal="true" dynamic="true">
+
+				<p:outputPanel id="opnDlgPesquisa">
+
+					<fd:labelInput label="Descrição: " labelWidth="120px"
+						breakAfter="true">
+						<p:inputText size="40" value="#{view.filtros['strPesquisa']}"
+							id="iPesq_descricao" />
+					</fd:labelInput>
+					
+					<fd:labelInput label="Pessoa: " labelWidth="120px"
+						breakAfter="true">
+						<p:inputText size="40" value="#{view.filtros['pessoa']}" />
+					</fd:labelInput>
+
+					<fd:labelInput label="Carteira: " labelWidth="120px"
+						breakAfter="true">
+						
+						<p:selectManyMenu id="iCarteira" value="#{view.filtros['carteiras']}" style="width: 350px"
+							converter="#{entityIdConverter}" showCheckbox="true">
+							<f:selectItems value="#{lmFinanc.carteiraValues}" var="c"
+								itemLabel="#{c.codigo} - #{c.descricao}" itemValue="#{c}" />
+						</p:selectManyMenu>
+						
+					</fd:labelInput>
+
+					<fd:labelInput label="Status: " labelWidth="120px">
+						<p:selectManyMenu id="iStatus" value="#{view.filtros['status']}"
+							converter="#{statusMovimentacaoConverter}" showCheckbox="true">
+							<f:selectItems value="#{lmFinanc.statusValues}" var="s"
+								itemLabel="#{s.label}" itemValue="#{s}" />
+						</p:selectManyMenu>
+					</fd:labelInput>
+
+					<fd:labelInput label="Modo: " alignRight="true" breakAfter="true">
+						<p:selectManyMenu id="iModo" value="#{view.filtros['modo']}"
+							style="width: 250px" converter="#{entityIdConverter}"
+							showCheckbox="true">
+							<f:selectItems value="#{lmFinanc.modoValues}" var="_"
+								itemLabel="#{_.codigo} - #{_.descricao}" itemValue="#{_}" />
+						</p:selectManyMenu>
+					</fd:labelInput>
+
+					<fd:labelInput label="Dt Vencto/Pagto: " labelWidth="120px"
+						breakAfter="true">
+						<h:outputText value="Entre " />
+
+						<p:calendar styleClass="maskData"
+							value="#{view.filtros['dtIni']}" id="iDtIni"
+							locale="pt" onfocus="atualizaCampos()" showOn="button"
+							pattern="dd/MM/yyyy" size="12" selectOtherMonths="true"
+							showOtherMonths="true" />
+						<h:outputText value=" e " />
+						<p:calendar styleClass="maskData"
+							value="#{view.filtros['dtFim']}" id="iDtFim"
+							locale="pt" onfocus="atualizaCampos()" showOn="button"
+							pattern="dd/MM/yyyy" size="12" selectOtherMonths="true"
+							showOtherMonths="true" />
+					</fd:labelInput>
+
+
+					<fd:labelInput label="Valor: " labelWidth="120px">
+						<h:outputText value="Entre " />
+						<p:inputText size="15" value="#{view.filtros['valorIni']}"
+							id="iValorIni" converter="#{doubleConverterAbsNull}"
+							styleClass="maskMoney" />
+						<h:outputText value=" e " />
+						<p:inputText size="15" value="#{view.filtros['valorFim']}"
+							id="iValorFim" converter="#{doubleConverterAbsNull}"
+							styleClass="maskMoney"
+							onfocus="if (_$('iValorFim').val() == '') { _$('iValorFim').val(_$('iValorIni').val()) }" />
+					</fd:labelInput>
+
+
+
+
+					<p:outputPanel id="opnCategoria">
+						<fd:labelInput labelWidth="120px" label="Categoria :"
+							breakAfter="true">
+
+							<p:autoComplete id="iCategoria" size="60"
+								value="#{view.filtros['categoria']}" var="cat"
+								itemLabel="#{cat.descricao}" itemValue="#{cat}"
+								forceSelection="false"
+								completeMethod="#{categoriaFinder.findFolhasBy}" minQueryLength="3"
+								widgetVar="acCategoria" converter="#{entityIdConverter}" />
+
+						</fd:labelInput>
+
+					</p:outputPanel>
+
+					<div style="text-align: right; margin-bottom: 10px;">
+						<p:outputPanel>
+							<p:commandButton value="Pesquisar" title="Pesquisar"
+								icon="ui-icon-search" action="#{view.pesquisar}"
+								update=":frm:opnDtList" oncomplete="PF('dlgPesquisa').hide()" />
+						</p:outputPanel>
+					</div>
+
+				</p:outputPanel>
+
+			</p:dialog>
+
+
+
+
+		</h:form>
+
+
+
+
+	</sec:authorize>
+
+</ui:composition>

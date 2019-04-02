@@ -1,0 +1,107 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:param name="view" value="#{notaFiscalSaidaListView}" />
+
+	<div id="_slnm_notaFiscalSaidaList" />
+
+	<ui:decorate template="/templates/list.xhtml">
+
+
+		<ui:param name="titulo" value="NFe de Saída" />
+		<ui:param name="viewForm" value="#{notaFiscalSaidaListView}" />
+
+		<ui:param name="exibirColuna_btnsEditarDeletar" value="false" />
+
+
+		<ui:param name="formOutcome"
+			value="/pages/erp/fiscal/notaFiscalSaidaForm.jsf" />
+
+
+		<ui:define name="cols">
+
+			<p:column styleClass="noWrapSmall" headerText="Código"
+				sortBy="#{_.id}">
+				<h:outputText value="#{_.id}" />
+			</p:column>
+
+			<p:column headerText="Número" sortBy="#{_.numero}">
+				<h:outputText
+					value="#{stringUtils.zerofill(_.numero,7)} / #{_.serie} (Id: #{_.spartacusId}) (#{_.ambiente}) #{_.entrada ? '[E]' : '[S]'}" />
+			</p:column>
+
+			<p:column headerText="Status">
+				<h:outputText
+					value="#{_.spartacusStatus} - #{_.spartacusMensRetornoReceita}" />
+			</p:column>
+
+
+			<p:column headerText="Dt Emissão" sortBy="#{_.dtEmissao}"
+				style="width: 1px">
+				<div style="text-align: center;">
+					<h:outputText value="#{_.dtEmissao}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</div>
+			</p:column>
+
+			<p:column headerText="Destinatário"
+				sortBy="#{_.pessoaDestinatario.nome}">
+				<h:outputText value="#{_.pessoaDestinatario.nome}" />
+			</p:column>
+
+			<p:column headerText="Valor Total" sortBy="#{_.valorTotal}"
+				width="80">
+				<div style="text-align: right">
+					<h:outputText value="#{_.valorTotal}" id="otValorTotal"
+						converter="#{doubleConverter}" />
+				</div>
+			</p:column>
+
+			<p:column
+				headerText="Alterado em" sortBy="#{_.iudt.updated}"
+				styleClass="noWrapColBtns">
+
+				<p:commandButton icon="ui-icon-help" styleClass="teal-btn"
+					update=":frmEntityId:opnEntityId" process="@this"
+					oncomplete="PF('dlgEntityId').show()" partialSubmit="true"
+					actionListener="#{entityIdView.setE(_)}"
+					title="Informações sobre o registro" />
+
+				<p:button
+					outcome="#{formOutcome}" icon="ui-icon-build"
+					title="Editar registro">
+					<f:param name="id" value="#{_.id}" />
+				</p:button>
+
+				<sec:authorize ifAnyGranted="ROLE_ADMIN,ROLE_#{role}_ADMIN">
+					<p:commandButton action="#{view.deletar(_)}"
+						rendered="#{_.spartacusStatus eq 0}" styleClass="red-btn"
+						title="Deletar registro" process="@this" icon="ui-icon-trash"
+						update=":frm">
+						<p:confirm />
+					</p:commandButton>
+				</sec:authorize>
+
+				<div
+					style="width: 100%; padding-top: 5px; color: #CCCCCC; text-align: center">
+					<h:outputText value="#{_.iudt.updated}">
+						<f:convertDateTime pattern="dd/MM/yy HH:mm" />
+					</h:outputText>
+				</div>
+			</p:column>
+
+
+		</ui:define>
+	</ui:decorate>
+
+
+	<ui:include src="notaFiscalSaidaList_dlgPesquisa.xhtml" />
+
+
+</ui:composition>

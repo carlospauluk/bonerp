@@ -1,0 +1,96 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags">
+
+	<p:fieldset legend="Preço">
+
+		<p:outputPanel id="opnElementosPreco">
+
+			<p:outputPanel id="opnCamposCoef">
+				<fd:labelInput label="Prazo :" labelWidth="100px">
+					<p:inputText size="6" value="#{ePreco.prazo}" styleClass="maskInt">
+						<f:convertNumber integerOnly="true" />
+					</p:inputText> dias
+						</fd:labelInput>
+
+				<fd:labelInput label="Margem :">
+					<p:inputText size="8" value="#{ePreco.margem}"
+						styleClass="maskMoney" converter="#{doubleConverter}" />%
+				</fd:labelInput>
+
+				<fd:labelInput label="Custo Operac :">
+					<p:inputText size="10" value="#{ePreco.custoOperacional}"
+						tabindex="0" styleClass="maskMoney"
+						converter="#{doubleConverter}">
+						<p:ajax event="blur"
+							listener="#{view.calcularCoeficiente}"
+							update="opnCoef" process="opnCamposCoef" />
+					</p:inputText>%
+						</fd:labelInput>
+			</p:outputPanel>
+
+			<p:outputPanel id="opnCoef">
+				<fd:labelInput label="Coef :" paddingLeft="30px" breakAfter="true" alignRight="true">
+					<p:inputText size="10" value="#{ePreco.coeficiente}"
+						readonly="true" styleClass="maskQtde" id="iCustoOperac">
+						<f:convertNumber maxFractionDigits="3" minFractionDigits="3" />
+					</p:inputText>%
+						</fd:labelInput>
+			</p:outputPanel>
+
+
+			<fd:labelInput label="Dt Preço Custo :" labelWidth="100px">
+				<p:calendar styleClass="maskData" value="#{ePreco.dtCusto}"
+					locale="pt_BR" showOn="button" pattern="dd/MM/yyyy" size="12"
+					selectOtherMonths="true" showOtherMonths="true" />
+			</fd:labelInput>
+			
+			<fd:labelInput label="Dt Preço Venda :" breakAfter="true" alignRight="true">
+				<p:calendar styleClass="maskData" value="#{ePreco.dtPrecoVenda}"
+					locale="pt_BR" showOn="button" pattern="dd/MM/yyyy" size="12"
+					selectOtherMonths="true" showOtherMonths="true" />
+			</fd:labelInput>
+
+			<fd:labelInput label="Preço Custo :" labelWidth="100px">
+								R$ <p:inputText styleClass="maskMoney" size="11"
+					value="#{ePreco.precoCusto}" style="text-align: right;"
+					converter="#{doubleConverterAbsNull}">
+					<p:ajax event="blur" listener="#{view.calcularPrecos}"
+						update="opnPrecos" process="opnElementosPreco" />
+				</p:inputText>
+			</fd:labelInput>
+		</p:outputPanel>
+
+		<p:outputPanel id="opnPrecos">
+			<fd:labelInput label="Preço Prazo :">
+									R$ <p:inputText styleClass="maskMoney" size="11"
+					value="#{ePreco.precoPrazo}" style="text-align: right;"
+					converter="#{doubleConverterAbsNull}">
+				</p:inputText>
+			</fd:labelInput>
+
+			<fd:labelInput label="Preço Vista :">
+									R$ <p:inputText styleClass="maskMoney" size="11"
+					value="#{ePreco.precoVista}" style="text-align: right;"
+					converter="#{doubleConverterAbsNull}">
+				</p:inputText>
+			</fd:labelInput>
+		</p:outputPanel>
+
+		<fd:labelInput label="Preço Promo :" breakAfter="true"
+			alignRight="true">
+								R$ <p:inputText styleClass="maskMoney" size="11"
+				value="#{ePreco.precoPromo}" style="text-align: right;"
+				converter="#{doubleConverterAbsNull}">
+			</p:inputText>
+		</fd:labelInput>
+	</p:fieldset>
+
+
+
+
+</ui:composition>

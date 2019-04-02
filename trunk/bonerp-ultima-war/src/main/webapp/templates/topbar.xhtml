@@ -1,0 +1,52 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:pu="http://primefaces.org/ultima">
+
+	<div class="topbar clearfix">
+		<div class="topbar-left">
+			<div class="logo"></div>
+		</div>
+
+		<div class="topbar-right">
+			<a id="menu-button" href="#">
+				<i></i>
+			</a>
+			<a id="topbar-menu-button" href="#">
+				<i class="material-icons">&#xE5D2;</i>
+			</a>
+			<ul class="topbar-items fadeInDown animated" style="color: white">
+
+				<li>
+					<h:form prependId="false">
+					
+						<fd:labelInput label="Usuário :">
+							<p:inputText readonly="true" size="15" label="Usuáriooo"
+								value="#{request.userPrincipal.name}" style="margin-right:10px; color: yellow" />
+						</fd:labelInput>
+
+						<input type="hidden" name="#{_csrf.parameterName}"
+							value="#{_csrf.token}" />
+
+						<p:commandButton ajax="false" id="btnLogout"
+							actionListener="#{loginView.logout}" icon="ui-icon-power-settings-new"
+							value="Logout" style="width: 120px;" />
+
+					</h:form>
+				</li>
+				<li class="profile-item">
+					<h:outputText value="Versão do sistema: v.${project.version}" />
+					<br />
+					<h:outputText value="Ambiente: ${ambiente}" />
+				</li>
+
+
+
+			</ul>
+		</div>
+	</div>
+
+</ui:composition>

@@ -1,0 +1,324 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags">
+
+	<ui:param name="view" value="#{funcionarioFormListView}" />
+
+
+	<sec:authorize ifAnyGranted="ROLE_RH">
+
+		<h:form id="frmFuncionario">
+
+			<p:dialog id="dlgForm" header="Cadastro de Funcionário"
+				position="top" widgetVar="dlgForm" resizable="false" width="1000"
+				modal="true" closable="true" closeOnEscape="true">
+
+				<p:outputPanel id="opnDlg">
+
+					<p:defaultCommand target="btnSalvar" />
+
+
+					<p:outputPanel id="opnDados">
+
+						<f:validateBean disabled="true">
+							<fd:labelInput label="Código :" labelWidth="80px">
+								<p:inputText size="5" value="#{view.e.codigo}"
+									styleClass="maskInt" id="iCodigo">
+									<f:convertNumber integerOnly="true" />
+								</p:inputText>
+							</fd:labelInput>
+						</f:validateBean>
+
+						<fd:labelInput label="Nome :">
+							<p:inputText size="50" value="#{view.e.pessoa.nome}" id="iNomePF" />
+						</fd:labelInput>
+
+						<fd:labelInput label="Dt Nasc. :" alignRight="true"
+							breakAfter="true">
+							<p:inputMask size="10" value="#{view.e.dtNascimento}"
+								autocomplete="off" mask="99/99/9999" id="iDtNasc"
+								style="text-align:center">
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</p:inputMask>
+						</fd:labelInput>
+
+						<fd:labelInput label="CPF :" labelWidth="80px">
+							<p:inputMask size="10" id="iCpf"
+								value="#{view.e.pessoa.documento}" mask="999.999.999-99"
+								converter="#{docConverter}" />
+						</fd:labelInput>
+
+						<fd:labelInput label="RG :">
+							<p:inputText size="10" value="#{view.e.rg}" id="iRg" />
+						</fd:labelInput>
+
+						<fd:labelInput label="Naturalidade :" labelWidth="80px"
+							breakAfter="true" alignRight="true">
+							<p:inputText size="50" value="#{view.e.naturalidade}"
+								id="iNaturalidade" />
+						</fd:labelInput>
+
+						<fd:labelInput label="Fone (1) :" labelWidth="80px">
+							<p:inputMask size="12" value="#{view.e.fone1}" id="iFone1"
+								mask="(99) 9999-9999?9" />
+						</fd:labelInput>
+
+						<fd:labelInput label="Fone (2) :" labelWidth="70px">
+							<p:inputMask size="12" value="#{view.e.fone2}" id="iFone2"
+								mask="(99) 9999-9999?9" />
+						</fd:labelInput>
+
+						<fd:labelInput label="Fone (3) :" labelWidth="70px">
+							<p:inputMask size="12" value="#{view.e.fone3}" id="iFone3"
+								mask="(99) 9999-9999?9" />
+						</fd:labelInput>
+
+						<fd:labelInput label="Fone (4) :" labelWidth="70px"
+							breakAfter="true">
+							<p:inputMask size="12" value="#{view.e.fone4}" id="iFone4"
+								mask="(99) 9999-9999?9" />
+						</fd:labelInput>
+
+						<fd:labelInput label="E-mail :" labelWidth="80px">
+							<p:inputText size="50" value="#{view.e.email}" id="iEmail"
+								style="text-transform: lowercase;" />
+						</fd:labelInput>
+
+						<fd:labelInput label="Nome (EKT):" alignRight="true">
+							<p:inputText size="20" value="#{view.e.nomeEkt}" id="iNomeEkt" />
+						</fd:labelInput>
+
+						<fd:labelInput label="Senha:" breakAfter="true" alignRight="true">
+							<p:inputText size="10" value="#{view.alterarSenha}" id="iSenha" />
+						</fd:labelInput>
+
+						<fd:labelInput label="Vendedor comissionado :">
+							<p:selectBooleanCheckbox value="#{view.e.vendedorComissionado}" />
+						</fd:labelInput>
+
+						<fd:labelInput label="CLT :" breakAfter="true">
+							<p:selectBooleanCheckbox value="#{view.e.clt}" />
+						</fd:labelInput>
+
+						<p:outputPanel id="opnEndereco">
+
+							<fd:labelInput label="CEP :" labelWidth="80px" breakAfter="true">
+								<p:inputMask mask="99999-999" size="10" id="cep"
+									value="#{view.e.endereco.cep}" />
+								<p:commandButton icon="ui-icon-search" update="opnEndereco"
+									process="opnEndereco" partialSubmit="true"
+									actionListener="#{viaCEP2Endereco.convert(view.e.endereco.cep, view.e.endereco)}" />
+							</fd:labelInput>
+
+							<div style="clear: both;" />
+
+							<fd:labelInput label="Logradouro :" labelWidth="80px">
+								<p:inputText size="50" value="#{view.e.endereco.logradouro}"
+									id="logradouro" />
+							</fd:labelInput>
+
+							<fd:labelInput label="Número :">
+								<p:inputText size="5" value="#{view.e.endereco.numero}"
+									id="numero" />
+							</fd:labelInput>
+
+							<fd:labelInput label="Complemento :" alignRight="true"
+								breakAfter="true">
+								<p:inputText size="13" value="#{view.e.endereco.complemento}"
+									id="complemento" />
+							</fd:labelInput>
+
+							<fd:labelInput label="Bairro :" labelWidth="80px"
+								breakAfter="true">
+								<p:inputText size="40" value="#{view.e.endereco.bairro}"
+									id="bairro" />
+							</fd:labelInput>
+
+							<fd:labelInput label="Cidade :" labelWidth="80px">
+								<p:inputText size="40" value="#{view.e.endereco.cidade}"
+									id="cidade" />
+							</fd:labelInput>
+
+							<fd:labelInput label="Estado :">
+								<p:selectOneMenu value="#{view.e.endereco.estado}" id="uf"
+									style="width: 180px">
+									<f:selectItem itemValue="" itemLabel="Selecione" />
+									<f:selectItems value="#{lmBase.ufValues}" var="uf"
+										itemLabel="#{uf.sigla}" itemValue="#{uf}" />
+								</p:selectOneMenu>
+							</fd:labelInput>
+
+						</p:outputPanel>
+
+
+						<!-- BOTÃO SALVAR -->
+						<fd:labelInput breakAfter="true" alignRight="true">
+							<p:commandButton title="Salvar o registro atual" id="btnSalvar"
+								update=":frm:opnLoadList" icon="ui-icon-save" value="Salvar"
+								process="opnDados" partialSubmit="true" style="width: 80px"
+								actionListener="#{view.save}"
+								oncomplete="afterFormSubmit(xhr, status, args);" />
+						</fd:labelInput>
+
+					</p:outputPanel>
+
+
+					<div style="clear: both;" />
+
+
+					<sec:authorize ifAnyGranted="ROLE_RH_ADMIN">
+
+						<p:outputPanel rendered="#{view.e.id ne null}">
+
+							<ui:decorate template="/templates/subListForm.xhtml">
+
+								<ui:param name="listValue" value="#{view.e.cargos}" />
+
+								<ui:param name="tituloPanel" value="Cargos" />
+
+								<ui:param name="tituloDlg" value="Cargo" />
+
+								<ui:param name="widgetDlgForm" value="dlgCargo" />
+
+								<ui:param name="actionNovo" value="novoCargo" />
+								<ui:param name="actionEditar" value="setCargo" />
+								<ui:param name="actionDeletar" value="deleteCargo" />
+								<ui:param name="actionSalvar" value="saveCargo" />
+
+								<ui:param name="widthDlg" value="650" />
+
+								<ui:define name="cols">
+
+									<p:column headerText="Cargo">
+										<h:outputText value="#{_.cargo.descricao}" />
+									</p:column>
+
+									<p:column styleClass="noWrapSmall">
+										<f:facet name="header">
+											<h:outputText value="Dt Início" />
+											<br />
+											<h:outputText value="Dt Fim" />
+										</f:facet>
+										<h:outputText value="#{_.dtInicio}">
+											<f:convertDateTime pattern="dd/MM/yyyy" />
+										</h:outputText>
+										<br />
+										<h:outputText value="#{_.dtFim}">
+											<f:convertDateTime pattern="dd/MM/yyyy" />
+										</h:outputText>
+									</p:column>
+
+									<p:column headerText="Atual" width="20">
+										<div style="text-align: center">
+											<h:outputText value="#{_.atual ? 'X' : ''}" />
+										</div>
+									</p:column>
+
+
+								</ui:define>
+
+
+
+								<ui:define name="campos">
+
+									<fd:labelInput label="Cargo :" labelWidth="80px"
+										breakAfter="true">
+										<p:selectOneMenu id="iCargo" value="#{view.cargo.cargo}"
+											converter="#{entityIdConverter}">
+											<f:selectItem itemLabel="" itemValue="" />
+											<f:selectItems value="#{lmRH.cargos}" var="c"
+												itemLabel="#{c.descricao}" itemValue="#{c}" />
+											<p:ajax event="change" update="@form:opnDlgSub"
+												process="@this" partialSubmit="true" />
+										</p:selectOneMenu>
+									</fd:labelInput>
+
+									<fd:labelInput label="Dt Início :" labelWidth="80px">
+										<p:calendar styleClass="maskData"
+											value="#{view.cargo.dtInicio}" id="iDtInicio" locale="pt"
+											showOn="button" pattern="dd/MM/yyyy" size="12"
+											selectOtherMonths="true" showOtherMonths="true">
+										</p:calendar>
+									</fd:labelInput>
+
+									<p:outputPanel id="opnAtual">
+										<fd:labelInput label="Atual *:" alignRight="true"
+											breakAfter="true">
+											<p:selectOneRadio value="#{view.cargo.atual}"
+												converter="#{booleanConverter}">
+												<f:selectItem itemValue="#{true}" itemLabel="SIM" />
+												<f:selectItem itemValue="#{false}" itemLabel="NÃO" />
+												<p:ajax process="@this" partialSubmit="true"
+													update="opnAtual" />
+											</p:selectOneRadio>
+										</fd:labelInput>
+
+										<fd:labelInput label="Dt Fim :" labelWidth="80px"
+											breakAfter="true">
+											<p:calendar styleClass="maskData" value="#{view.cargo.dtFim}"
+												locale="pt" showOn="button" pattern="dd/MM/yyyy" size="12"
+												selectOtherMonths="true" showOtherMonths="true">
+											</p:calendar>
+										</fd:labelInput>
+									</p:outputPanel>
+
+
+									<fd:labelInput label="Salário :" labelWidth="80px">
+										<p:inputText size="10" value="#{view.cargo.salario}"
+											styleClass="maskMoney" style="text-align: right;">
+											<fd:bigDecimalConverter onlyAbs="true" />
+										</p:inputText>
+									</fd:labelInput>
+
+									<fd:labelInput label="Salário (Piso) :" alignRight="true"
+										breakAfter="true">
+										<p:inputText size="10" value="#{view.cargo.salarioPiso}"
+											styleClass="maskMoney" style="text-align: right;">
+											<fd:bigDecimalConverter onlyAbs="true" />
+										</p:inputText>
+									</fd:labelInput>
+
+									<fd:labelInput label="Comissão :" labelWidth="80px">
+										<p:inputText size="10" value="#{view.cargo.comissao}"
+											styleClass="maskMoney" style="text-align: right;">
+											<fd:bigDecimalConverter onlyAbs="true" />
+										</p:inputText>%
+							</fd:labelInput>
+
+									<p:outputPanel
+										rendered="#{view.cargo.cargo.comissaoPorVendas eq true}">
+										<fd:labelInput label="Mín Vendas Mês :" alignRight="true">
+											<p:inputText size="10" value="#{view.cargo.minimoVendasMes}"
+												readonly="true" styleClass="maskMoney"
+												style="text-align: right;">
+												<fd:bigDecimalConverter onlyAbs="true" />
+											</p:inputText>
+										</fd:labelInput>
+									</p:outputPanel>
+
+									<fd:labelInput breakAfter="true" />
+
+								</ui:define>
+
+							</ui:decorate>
+
+						</p:outputPanel>
+
+					</sec:authorize>
+
+				</p:outputPanel>
+
+			</p:dialog>
+
+
+		</h:form>
+
+	</sec:authorize>
+
+
+
+</ui:composition>

@@ -1,0 +1,58 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:p="http://primefaces.org/ui">
+
+	<div id="_slnm_centroCustoFormList" />
+
+
+	<ui:decorate template="/templates/formList.xhtml">
+
+
+		<ui:param name="role" value="FINANCEIRO" />
+
+		<ui:param name="view" value="#{centroCustoFormListView}" />
+		<ui:param name="titulo" value="Centros de Custo" />
+		<ui:param name="tituloDlg" value="Centro de Custo" />
+
+		<ui:define name="cols">
+			<p:column sortBy="#{_.codigo}">
+				<f:facet name="header">Código</f:facet>
+				<h:outputText value="#{_.codigo}" />
+			</p:column>
+			<p:column sortBy="#{_.descricao}">
+				<f:facet name="header">Descrição</f:facet>
+				<h:outputText value="#{_.descricao}" />
+			</p:column>
+
+		</ui:define>
+
+
+
+		<ui:define name="campos">
+
+			<fd:labelInput label="Código * :" breakAfter="true">
+				<p:inputText size="10" value="#{view.e.codigo}" id="iCodigo" styleClass="maskInt">
+					<f:convertNumber integerOnly="true" />
+				</p:inputText>
+			</fd:labelInput>
+
+			<fd:labelInput label="Descrição *:" breakAfter="true"
+				labelWidth="80px">
+				<p:inputText size="50" value="#{view.e.descricao}" id="iDescricao" />
+				<div style="float: right;">
+					<p:message for="iDescricao" display="icon" />
+				</div>
+			</fd:labelInput>
+
+		</ui:define>
+
+	</ui:decorate>
+
+
+
+</ui:composition>

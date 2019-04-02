@@ -1,0 +1,56 @@
+- 10.1.1.100
+
+/usr/local/bin/atualiza-dfodbc_atual
+
+
+- 10.1.1.235
+
+/usr/local/bin/atualiza_bon-lnx
+
+* Tirar os relatórios de INVENTÁRIO e VENDAS
+
+
+
+- COMITE TUDO
+
+- No NB-CEP
+
+Acessar a unidade X: e F5
+
+D:
+cd \ocabit\bonerp\trunk\ekt2bonerp-jar
+D:\java\apache-maven-3.3.3\bin\mvn -U -P DEVBASEPROD clean package appassembler:assemble
+
+
+
+SET PATH=C:\Program Files (x86)\Java\jdk1.7.0_79\bin
+target\appassembler\bin\ImportarEkt2Espelhos FOR PROD PED VEN ENC
+
+
+
+
+
+- No 10.1.1.234, vá em 
+
+cd '/home/jenkins/workspace/bonerp DEPLOYER (TRUNK)/'
+svn update
+mvn -Dmaven.test.skip=true -U -P PROD clean install
+
+cd ekt2bonerp-jar/
+mvn -U -P RUN,PROD package appassembler:assemble
+
+cp -Rf '/home/jenkins/workspace/bonerp DEPLOYER (TRUNK)/ekt2bonerp-jar/target/appassembler/' /home/share/
+cd /home/share/appassembler/bin/
+
+./ImportarFornecedores2BonERP
+./ImportarProdutos2BonERP
+./ImportarVendas2BonERP
+./ImportarEncomendas2BonERP
+
+
+>>>>>>>>>>>>>>> Para verificar
+
+call sp_total_inventario;
+
+select sum(valor_total) as total, DATE_FORMAT(dt_venda,'%Y-%m') as mesano from ven_venda where plano_pagto_id NOT IN (51) GROUP BY mesano;
+

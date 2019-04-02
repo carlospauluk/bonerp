@@ -1,0 +1,1670 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<definitions xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="urn:wsrcs" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns="http://schemas.xmlsoap.org/wsdl/" targetNamespace="urn:wsrcs">
+<types>
+<xsd:schema targetNamespace="urn:wsrcs"
+>
+ <xsd:import namespace="http://schemas.xmlsoap.org/soap/encoding/" />
+ <xsd:import namespace="http://schemas.xmlsoap.org/wsdl/" />
+ <xsd:complexType name="TRetCustom">
+  <xsd:all>
+   <xsd:element name="codigo" type="xsd:int"/>
+   <xsd:element name="mensagem" type="xsd:string"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="TContratoParam">
+  <xsd:all>
+   <xsd:element name="NrContrato" type="xsd:string"/>
+   <xsd:element name="NrLoja" type="xsd:int"/>
+   <xsd:element name="NrPrestacao" type="xsd:int"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="Array_Of_TContratoParam">
+  <xsd:complexContent>
+   <xsd:restriction base="SOAP-ENC:Array">
+    <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:TContratoParam[]"/>
+   </xsd:restriction>
+  </xsd:complexContent>
+ </xsd:complexType>
+ <xsd:complexType name="TPrestacao">
+  <xsd:all>
+   <xsd:element name="atraso" type="xsd:int"/>
+   <xsd:element name="dtvct" type="xsd:int"/>
+   <xsd:element name="juros" type="xsd:string"/>
+   <xsd:element name="multa" type="xsd:string"/>
+   <xsd:element name="nrPrestacao" type="xsd:int"/>
+   <xsd:element name="situacao" type="xsd:string"/>
+   <xsd:element name="vlrVlrtotal" type="xsd:string"/>
+   <xsd:element name="vlrdesc" type="xsd:string"/>
+   <xsd:element name="vlrprest" type="xsd:string"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="Array_Of_TPrestacao">
+  <xsd:complexContent>
+   <xsd:restriction base="SOAP-ENC:Array">
+    <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:TPrestacao[]"/>
+   </xsd:restriction>
+  </xsd:complexContent>
+ </xsd:complexType>
+ <xsd:complexType name="TContratoRetorno">
+  <xsd:all>
+   <xsd:element name="NrContrato" type="xsd:string"/>
+   <xsd:element name="listPrestacao" type="tns:Array_Of_TPrestacao"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="Array_Of_TContratoRetorno">
+  <xsd:complexContent>
+   <xsd:restriction base="SOAP-ENC:Array">
+    <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:TContratoRetorno[]"/>
+   </xsd:restriction>
+  </xsd:complexContent>
+ </xsd:complexType>
+ <xsd:complexType name="TRetContrato">
+  <xsd:all>
+   <xsd:element name="Codigo" type="xsd:int"/>
+   <xsd:element name="Mensagem" type="xsd:string"/>
+   <xsd:element name="listContrato" type="tns:Array_Of_TContratoRetorno"/>
+   <xsd:element name="tipoContrato" type="xsd:int"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="TRetEfetuaPgto">
+  <xsd:all>
+   <xsd:element name="Codigo" type="xsd:int"/>
+   <xsd:element name="Mensagem" type="xsd:string"/>
+   <xsd:element name="imprimir" type="xsd:boolean"/>
+   <xsd:element name="juros" type="xsd:string"/>
+   <xsd:element name="jurosAMenor" type="xsd:string"/>
+   <xsd:element name="multa" type="xsd:string"/>
+   <xsd:element name="nrContrato" type="xsd:string"/>
+   <xsd:element name="pagtoParcial" type="xsd:boolean"/>
+   <xsd:element name="saida" type="xsd:string"/>
+   <xsd:element name="tipoContrato" type="xsd:int"/>
+   <xsd:element name="urlRecibo" type="xsd:string"/>
+   <xsd:element name="valorDesc" type="xsd:string"/>
+   <xsd:element name="valorDevido" type="xsd:string"/>
+   <xsd:element name="valorPago" type="xsd:string"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="TDadosNomeCliente">
+  <xsd:all>
+   <xsd:element name="NmClient" type="xsd:string"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="TDadosPessoaisCliente">
+  <xsd:all>
+   <xsd:element name="CdEscol" type="xsd:int"/>
+   <xsd:element name="CdEstciv" type="xsd:int"/>
+   <xsd:element name="CdNac" type="xsd:int"/>
+   <xsd:element name="CdSPC" type="xsd:string"/>
+   <xsd:element name="CdSituac" type="xsd:int"/>
+   <xsd:element name="DtExpDoc" type="xsd:int"/>
+   <xsd:element name="DtNasccl" type="xsd:int"/>
+   <xsd:element name="DtSPC" type="xsd:int"/>
+   <xsd:element name="NmCidnat" type="xsd:string"/>
+   <xsd:element name="NmClient" type="xsd:string"/>
+   <xsd:element name="NmMae" type="xsd:string"/>
+   <xsd:element name="NmPai" type="xsd:string"/>
+   <xsd:element name="NrDoc" type="xsd:string"/>
+   <xsd:element name="SgEstnat" type="xsd:string"/>
+   <xsd:element name="SgOrgemi" type="xsd:string"/>
+   <xsd:element name="SgOrgemiUf" type="xsd:string"/>
+   <xsd:element name="TpDoc" type="xsd:int"/>
+   <xsd:element name="TpSexo" type="xsd:string"/>
+   <xsd:element name="TpMeioTransporte" type="xsd:int"/>
+   <xsd:element name="TpTransporteFinanc" type="xsd:int"/>
+   <xsd:element name="NrDependente" type="xsd:int"/>
+   <xsd:element name="HrContatoInicio" type="xsd:string"/>
+   <xsd:element name="HrContatoFim" type="xsd:string"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="TEnderecoCliente">
+  <xsd:all>
+   <xsd:element name="DsCompl" type="xsd:string"/>
+   <xsd:element name="IdCorres" type="xsd:int"/>
+   <xsd:element name="NmBairro" type="xsd:string"/>
+   <xsd:element name="NmCidade" type="xsd:string"/>
+   <xsd:element name="NmEmail" type="xsd:string"/>
+   <xsd:element name="NmEnd" type="xsd:string"/>
+   <xsd:element name="NrCel" type="xsd:int"/>
+   <xsd:element name="NrCep" type="xsd:int"/>
+   <xsd:element name="NrDDDCel" type="xsd:int"/>
+   <xsd:element name="NrDDDTel" type="xsd:int"/>
+   <xsd:element name="NrEnd" type="xsd:string"/>
+   <xsd:element name="NrTel" type="xsd:int"/>
+   <xsd:element name="QtResAno" type="xsd:int"/>
+   <xsd:element name="QtResMes" type="xsd:int"/>
+   <xsd:element name="SgEstado" type="xsd:string"/>
+   <xsd:element name="StResid" type="xsd:int"/>
+   <xsd:element name="TpEndereco" type="xsd:int"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="TDadosTrabalhoCliente">
+  <xsd:all>
+   <xsd:element name="amAdmCli" type="xsd:int"/>
+   <xsd:element name="dsCarcli" type="xsd:string"/>
+   <xsd:element name="dsComplc" type="xsd:string"/>
+   <xsd:element name="idConfor" type="xsd:int"/>
+   <xsd:element name="idConfrb" type="xsd:int"/>
+   <xsd:element name="idConfrl" type="xsd:int"/>
+   <xsd:element name="nmBairc" type="xsd:string"/>
+   <xsd:element name="nmCidc" type="xsd:string"/>
+   <xsd:element name="nmEmpcli" type="xsd:string"/>
+   <xsd:element name="nmEndc" type="xsd:string"/>
+   <xsd:element name="nrCepc" type="xsd:int"/>
+   <xsd:element name="nrDDDC" type="xsd:int"/>
+   <xsd:element name="nrEndc" type="xsd:string"/>
+   <xsd:element name="nrTelc" type="xsd:int"/>
+   <xsd:element name="sgEstc" type="xsd:string"/>
+   <xsd:element name="vlRembru" type="xsd:float"/>
+   <xsd:element name="vlRemliq" type="xsd:float"/>
+   <xsd:element name="vlRemout" type="xsd:float"/>
+   <xsd:element name="sgCarteira" type="xsd:int"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="TDadosConjugeCliente">
+  <xsd:all>
+   <xsd:element name="amAdmCjg" type="xsd:int"/>
+   <xsd:element name="dsCarcjg" type="xsd:string"/>
+   <xsd:element name="nmConjug" type="xsd:string"/>
+   <xsd:element name="nmEmpcjg" type="xsd:string"/>
+   <xsd:element name="vlRemCjg" type="xsd:float"/>
+   <xsd:element name="nrDDD" type="xsd:int"/>
+   <xsd:element name="nrTelefone" type="xsd:int"/>
+   <xsd:element name="nrDDDCom" type="xsd:int"/>
+   <xsd:element name="nrTelCom" type="xsd:int"/>
+   <xsd:element name="DtNasc" type="xsd:int"/>
+   <xsd:element name="dsCPF" type="xsd:string"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="TDadosReferenciaCliente">
+  <xsd:all>
+   <xsd:element name="cdREL1" type="xsd:int"/>
+   <xsd:element name="cdREL2" type="xsd:int"/>
+   <xsd:element name="nmRF1" type="xsd:string"/>
+   <xsd:element name="nmRF2" type="xsd:string"/>
+   <xsd:element name="nrCELRF1" type="xsd:int"/>
+   <xsd:element name="nrCELRF2" type="xsd:int"/>
+   <xsd:element name="nrDDCRF1" type="xsd:int"/>
+   <xsd:element name="nrDDCRF2" type="xsd:int"/>
+   <xsd:element name="nrDDDRF1" type="xsd:int"/>
+   <xsd:element name="nrDDDRF2" type="xsd:int"/>
+   <xsd:element name="nrTELRF1" type="xsd:int"/>
+   <xsd:element name="nrTELRF2" type="xsd:int"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="TDadosRendaFamiliar">
+  <xsd:all>
+   <xsd:element name="nmRenda" type="xsd:string"/>
+   <xsd:element name="dsCPF" type="xsd:string"/>
+   <xsd:element name="cdRelacao" type="xsd:int"/>
+   <xsd:element name="nrDDDCom" type="xsd:int"/>
+   <xsd:element name="nrTelCom" type="xsd:int"/>
+   <xsd:element name="nrDDDCel" type="xsd:int"/>
+   <xsd:element name="nrTelCel" type="xsd:int"/>
+   <xsd:element name="cdCargo" type="xsd:int"/>
+   <xsd:element name="vlSalario" type="xsd:float"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="Array_Of_TDadosRendaFamiliar">
+  <xsd:complexContent>
+   <xsd:restriction base="SOAP-ENC:Array">
+    <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:TDadosRendaFamiliar[]"/>
+   </xsd:restriction>
+  </xsd:complexContent>
+ </xsd:complexType>
+ <xsd:complexType name="TDadosReferenciaClienteItem">
+  <xsd:all>
+   <xsd:element name="nmReferencia" type="xsd:string"/>
+   <xsd:element name="cdRelacao" type="xsd:int"/>
+   <xsd:element name="nrDDDRes" type="xsd:int"/>
+   <xsd:element name="nrTelRes" type="xsd:int"/>
+   <xsd:element name="nrDDDCel" type="xsd:int"/>
+   <xsd:element name="nrTelCel" type="xsd:int"/>
+   <xsd:element name="nrDDDCom" type="xsd:int"/>
+   <xsd:element name="nrTelCom" type="xsd:int"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="Array_Of_TDadosReferenciaClienteItem">
+  <xsd:complexContent>
+   <xsd:restriction base="SOAP-ENC:Array">
+    <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:TDadosReferenciaClienteItem[]"/>
+   </xsd:restriction>
+  </xsd:complexContent>
+ </xsd:complexType>
+ <xsd:complexType name="TDadosReferenciaComercial">
+  <xsd:all>
+   <xsd:element name="nmComercial" type="xsd:string"/>
+   <xsd:element name="nrDDD" type="xsd:int"/>
+   <xsd:element name="nrTelefone" type="xsd:int"/>
+   <xsd:element name="DtCliDesde" type="xsd:int"/>
+   <xsd:element name="nrParcAberta" type="xsd:int"/>
+   <xsd:element name="nrParcPaga" type="xsd:int"/>
+   <xsd:element name="vlTotalPago" type="xsd:float"/>
+   <xsd:element name="DtInformado" type="xsd:int"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="Array_Of_TDadosReferenciaComercial">
+  <xsd:complexContent>
+   <xsd:restriction base="SOAP-ENC:Array">
+    <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:TDadosReferenciaComercial[]"/>
+   </xsd:restriction>
+  </xsd:complexContent>
+ </xsd:complexType>
+ <xsd:complexType name="TRetDadosCliente">
+  <xsd:all>
+   <xsd:element name="codigo" type="xsd:int"/>
+   <xsd:element name="mensagem" type="xsd:string"/>
+   <xsd:element name="DadosPessoaisCliente" type="tns:TDadosPessoaisCliente"/>
+   <xsd:element name="EnderecoCliente" type="tns:TEnderecoCliente"/>
+   <xsd:element name="DadosTrabalhoCliente" type="tns:TDadosTrabalhoCliente"/>
+   <xsd:element name="DadosConjugeCliente" type="tns:TDadosConjugeCliente"/>
+   <xsd:element name="DadosReferenciaCliente" type="tns:TDadosReferenciaCliente"/>
+   <xsd:element name="DadosReferenciaLista" type="tns:Array_Of_TDadosReferenciaClienteItem"/>
+   <xsd:element name="DadosRendaFamiliar" type="tns:Array_Of_TDadosRendaFamiliar"/>
+   <xsd:element name="DadosReferenciaComercial" type="tns:Array_Of_TDadosReferenciaComercial"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="TItemCombo">
+  <xsd:all>
+   <xsd:element name="Codigo" type="xsd:int"/>
+   <xsd:element name="Nome" type="xsd:string"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="Array_Of_TItemCombo">
+  <xsd:complexContent>
+   <xsd:restriction base="SOAP-ENC:Array">
+    <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:TItemCombo[]"/>
+   </xsd:restriction>
+  </xsd:complexContent>
+ </xsd:complexType>
+ <xsd:complexType name="TRetCustomCombo">
+  <xsd:all>
+   <xsd:element name="codigo" type="xsd:int"/>
+   <xsd:element name="mensagem" type="xsd:string"/>
+   <xsd:element name="ListaCombo" type="tns:Array_Of_TItemCombo"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="TItemConsultaAnterior">
+  <xsd:all>
+   <xsd:element name="dsNome" type="xsd:string"/>
+   <xsd:element name="dtConsulta" type="xsd:int"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="Array_Of_TItemConsultaAnterior">
+  <xsd:complexContent>
+   <xsd:restriction base="SOAP-ENC:Array">
+    <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:TItemConsultaAnterior[]"/>
+   </xsd:restriction>
+  </xsd:complexContent>
+ </xsd:complexType>
+ <xsd:complexType name="TItemRegistroSPC">
+  <xsd:all>
+   <xsd:element name="dsNome" type="xsd:string"/>
+   <xsd:element name="dsCidade" type="xsd:string"/>
+   <xsd:element name="vlValor" type="xsd:float"/>
+   <xsd:element name="dtRegistro" type="xsd:int"/>
+   <xsd:element name="dtVencimento" type="xsd:int"/>
+   <xsd:element name="dsContrato" type="xsd:string"/>
+   <xsd:element name="dsOcorrencia" type="xsd:string"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="Array_Of_TItemRegistroSPC">
+  <xsd:complexContent>
+   <xsd:restriction base="SOAP-ENC:Array">
+    <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:TItemRegistroSPC[]"/>
+   </xsd:restriction>
+  </xsd:complexContent>
+ </xsd:complexType>
+ <xsd:complexType name="TRetConsultaSPC">
+  <xsd:all>
+   <xsd:element name="codigo" type="xsd:int"/>
+   <xsd:element name="mensagem" type="xsd:string"/>
+   <xsd:element name="dsRetorno" type="xsd:string"/>
+   <xsd:element name="dsCor" type="xsd:string"/>
+   <xsd:element name="dsNome" type="xsd:string"/>
+   <xsd:element name="dsCPFCNPJ" type="xsd:string"/>
+   <xsd:element name="dtConsulta" type="xsd:int"/>
+   <xsd:element name="ConsultaAnterior" type="tns:Array_Of_TItemConsultaAnterior"/>
+   <xsd:element name="Registros" type="tns:Array_Of_TItemRegistroSPC"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="TRetResumoSituacao">
+  <xsd:all>
+   <xsd:element name="dsNomeCliente" type="xsd:string"/>
+   <xsd:element name="vlMediaCompra" type="xsd:float"/>
+   <xsd:element name="vlMediaAtraso" type="xsd:float"/>
+   <xsd:element name="nrPagoQuantidade" type="xsd:int"/>
+   <xsd:element name="vlPagoValor" type="xsd:float"/>
+   <xsd:element name="nrAbertoQuantidade" type="xsd:int"/>
+   <xsd:element name="vlAbertoValor" type="xsd:float"/>
+   <xsd:element name="nrVencidoQuantidade" type="xsd:int"/>
+   <xsd:element name="vlVencidoValor" type="xsd:float"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="TItemParcela">
+  <xsd:all>
+   <xsd:element name="dsContrato" type="xsd:string"/>
+   <xsd:element name="nrParcela" type="xsd:int"/>
+   <xsd:element name="dsLoja" type="xsd:string"/>
+   <xsd:element name="dtVenda" type="xsd:int"/>
+   <xsd:element name="vlVenda" type="xsd:float"/>
+   <xsd:element name="dtVencimento" type="xsd:int"/>
+   <xsd:element name="vlParcela" type="xsd:float"/>
+   <xsd:element name="dtPago" type="xsd:int"/>
+   <xsd:element name="vlPago" type="xsd:float"/>
+   <xsd:element name="dtParcial" type="xsd:int"/>
+   <xsd:element name="vlParcial" type="xsd:float"/>
+   <xsd:element name="dsDocumento" type="xsd:string"/>
+   <xsd:element name="vlQuitacao" type="xsd:float"/>
+   <xsd:element name="linkBoleto" type="xsd:string"/>
+   <xsd:element name="prestacao" type="tns:TPrestacao"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="Array_Of_TItemParcela">
+  <xsd:complexContent>
+   <xsd:restriction base="SOAP-ENC:Array">
+    <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:TItemParcela[]"/>
+   </xsd:restriction>
+  </xsd:complexContent>
+ </xsd:complexType>
+ <xsd:complexType name="TRetConsultaSituacao">
+  <xsd:all>
+   <xsd:element name="codigo" type="xsd:int"/>
+   <xsd:element name="mensagem" type="xsd:string"/>
+   <xsd:element name="Resumo" type="tns:TRetResumoSituacao"/>
+   <xsd:element name="ResumoGrupo" type="tns:TRetResumoSituacao"/>
+   <xsd:element name="ParcelasVencidas" type="tns:Array_Of_TItemParcela"/>
+   <xsd:element name="ParcelasAberta" type="tns:Array_Of_TItemParcela"/>
+   <xsd:element name="ParcelasPaga" type="tns:Array_Of_TItemParcela"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="TItemArquivo">
+  <xsd:all>
+   <xsd:element name="nrCodigo" type="xsd:int"/>
+   <xsd:element name="nrTipo" type="xsd:int"/>
+   <xsd:element name="dsTipo" type="xsd:string"/>
+   <xsd:element name="dsLink" type="xsd:string"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="Array_Of_TItemArquivo">
+  <xsd:complexContent>
+   <xsd:restriction base="SOAP-ENC:Array">
+    <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:TItemArquivo[]"/>
+   </xsd:restriction>
+  </xsd:complexContent>
+ </xsd:complexType>
+ <xsd:complexType name="TRetConsultaArquivo">
+  <xsd:all>
+   <xsd:element name="codigo" type="xsd:int"/>
+   <xsd:element name="mensagem" type="xsd:string"/>
+   <xsd:element name="ArquivosDigitalizados" type="tns:Array_Of_TItemArquivo"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="TItemParcelaAcordo">
+  <xsd:all>
+   <xsd:element name="nrParcela" type="xsd:int"/>
+   <xsd:element name="dtVencimento" type="xsd:int"/>
+   <xsd:element name="vlCapital" type="xsd:float"/>
+   <xsd:element name="vlJuro" type="xsd:float"/>
+   <xsd:element name="vlMulta" type="xsd:float"/>
+   <xsd:element name="vlPmt" type="xsd:float"/>
+   <xsd:element name="vlTotal" type="xsd:float"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="Array_Of_TItemParcelaAcordo">
+  <xsd:complexContent>
+   <xsd:restriction base="SOAP-ENC:Array">
+    <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:TItemParcelaAcordo[]"/>
+   </xsd:restriction>
+  </xsd:complexContent>
+ </xsd:complexType>
+ <xsd:complexType name="TRetCalculaAcordo">
+  <xsd:all>
+   <xsd:element name="codigo" type="xsd:int"/>
+   <xsd:element name="mensagem" type="xsd:string"/>
+   <xsd:element name="ListaParcelaAcordo" type="tns:Array_Of_TItemParcelaAcordo"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="Array_Of_TItemRetornoAcordo">
+  <xsd:complexContent>
+   <xsd:restriction base="SOAP-ENC:Array">
+    <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:TItemRetornoAcordo[]"/>
+   </xsd:restriction>
+  </xsd:complexContent>
+ </xsd:complexType>
+ <xsd:complexType name="TItemRetornoAcordo">
+  <xsd:all>
+   <xsd:element name="linhadigitavel" type="xsd:string"/>
+   <xsd:element name="codigobarras" type="xsd:string"/>
+   <xsd:element name="nossonumero" type="xsd:string"/>
+   <xsd:element name="dtvencto" type="xsd:int"/>
+   <xsd:element name="vlrvencto" type="xsd:float"/>
+   <xsd:element name="acocodigo" type="xsd:int"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="TRetGravaAcordo">
+  <xsd:all>
+   <xsd:element name="codigo" type="xsd:int"/>
+   <xsd:element name="mensagem" type="xsd:string"/>
+   <xsd:element name="ListaRetGravaAcordo" type="tns:Array_Of_TItemRetornoAcordo"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="TItemRetornoClienteAlterado">
+  <xsd:all>
+   <xsd:element name="dsCPF" type="xsd:string"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="Array_Of_TItemRetornoClienteAlterado">
+  <xsd:complexContent>
+   <xsd:restriction base="SOAP-ENC:Array">
+    <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:TItemRetornoClienteAlterado[]"/>
+   </xsd:restriction>
+  </xsd:complexContent>
+ </xsd:complexType>
+ <xsd:complexType name="TRetornoClienteAlterado">
+  <xsd:all>
+   <xsd:element name="codigo" type="xsd:int"/>
+   <xsd:element name="mensagem" type="xsd:string"/>
+   <xsd:element name="ListaCliente" type="tns:Array_Of_TItemRetornoClienteAlterado"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="TItemRetornoVendaDia">
+  <xsd:all>
+   <xsd:element name="NrContrato" type="xsd:string"/>
+   <xsd:element name="NrLoja" type="xsd:int"/>
+   <xsd:element name="NrQtdPrestacao" type="xsd:int"/>
+   <xsd:element name="DtVenda" type="xsd:int"/>
+   <xsd:element name="VlrVenda" type="xsd:float"/>
+   <xsd:element name="VlrFinanciado" type="xsd:float"/>
+   <xsd:element name="dsCPF" type="xsd:string"/>
+   <xsd:element name="nrDoc" type="xsd:string"/>
+   <xsd:element name="listPrestacao" type="tns:Array_Of_TPrestacao"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="Array_Of_TItemRetornoVendaDia">
+  <xsd:complexContent>
+   <xsd:restriction base="SOAP-ENC:Array">
+    <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:TItemRetornoVendaDia[]"/>
+   </xsd:restriction>
+  </xsd:complexContent>
+ </xsd:complexType>
+ <xsd:complexType name="TRetornoVendaDia">
+  <xsd:all>
+   <xsd:element name="codigo" type="xsd:int"/>
+   <xsd:element name="mensagem" type="xsd:string"/>
+   <xsd:element name="ListaVenda" type="tns:Array_Of_TItemRetornoVendaDia"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="TItemRetornoAutorizado">
+  <xsd:all>
+   <xsd:element name="NrCodigo" type="xsd:int"/>
+   <xsd:element name="dsNome" type="xsd:string"/>
+   <xsd:element name="dsDDD" type="xsd:string"/>
+   <xsd:element name="dsTelefone" type="xsd:string"/>
+   <xsd:element name="dsCPF" type="xsd:string"/>
+   <xsd:element name="dsRG" type="xsd:string"/>
+   <xsd:element name="DtLimite" type="xsd:int"/>
+   <xsd:element name="VlLimite" type="xsd:float"/>
+   <xsd:element name="NrAtivo" type="xsd:int"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="Array_Of_TItemRetornoAutorizado">
+  <xsd:complexContent>
+   <xsd:restriction base="SOAP-ENC:Array">
+    <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:TItemRetornoAutorizado[]"/>
+   </xsd:restriction>
+  </xsd:complexContent>
+ </xsd:complexType>
+ <xsd:complexType name="TRetornoListaAutorizado">
+  <xsd:all>
+   <xsd:element name="codigo" type="xsd:int"/>
+   <xsd:element name="mensagem" type="xsd:string"/>
+   <xsd:element name="ListaAutorizado" type="tns:Array_Of_TItemRetornoAutorizado"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="TItemRetornoRecebimentoCobradora">
+  <xsd:all>
+   <xsd:element name="dsCPF" type="xsd:string"/>
+   <xsd:element name="NrLoja" type="xsd:int"/>
+   <xsd:element name="NrContrato" type="xsd:string"/>
+   <xsd:element name="NrPrestacao" type="xsd:int"/>
+   <xsd:element name="dtvct" type="xsd:int"/>
+   <xsd:element name="situacao" type="xsd:string"/>
+   <xsd:element name="vlrPago" type="xsd:float"/>
+   <xsd:element name="vlrAberto" type="xsd:float"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="TItemRetornoRecebimentoCobradoraBoleto">
+  <xsd:all>
+   <xsd:element name="nossonumero" type="xsd:string"/>
+   <xsd:element name="linhadigitavel" type="xsd:string"/>
+   <xsd:element name="codigobarras" type="xsd:string"/>
+   <xsd:element name="vlrPago" type="xsd:float"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="TItemRetornoRecebimentoCobradoraSemComissao">
+  <xsd:all>
+   <xsd:element name="dsCPF" type="xsd:string"/>
+   <xsd:element name="NrLoja" type="xsd:int"/>
+   <xsd:element name="NrContrato" type="xsd:string"/>
+   <xsd:element name="NrPrestacao" type="xsd:int"/>
+   <xsd:element name="dtvct" type="xsd:int"/>
+   <xsd:element name="situacao" type="xsd:string"/>
+   <xsd:element name="vlrPago" type="xsd:float"/>
+   <xsd:element name="vlrAberto" type="xsd:float"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="Array_Of_TItemRetornoRecebimentoCobradora">
+  <xsd:complexContent>
+   <xsd:restriction base="SOAP-ENC:Array">
+    <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:TItemRetornoRecebimentoCobradora[]"/>
+   </xsd:restriction>
+  </xsd:complexContent>
+ </xsd:complexType>
+ <xsd:complexType name="Array_Of_TItemRetornoRecebimentoCobradoraBoleto">
+  <xsd:complexContent>
+   <xsd:restriction base="SOAP-ENC:Array">
+    <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:TItemRetornoRecebimentoCobradoraBoleto[]"/>
+   </xsd:restriction>
+  </xsd:complexContent>
+ </xsd:complexType>
+ <xsd:complexType name="TRetornoRecebimentoCobradora">
+  <xsd:all>
+   <xsd:element name="codigo" type="xsd:int"/>
+   <xsd:element name="mensagem" type="xsd:string"/>
+   <xsd:element name="ListaRecebimentoCobradora" type="tns:Array_Of_TItemRetornoRecebimentoCobradora"/>
+   <xsd:element name="ListaRecebimentoCobradoraBoleto" type="tns:Array_Of_TItemRetornoRecebimentoCobradoraBoleto"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="TRetornoRecebimentoCobradoraSemComissao">
+  <xsd:all>
+   <xsd:element name="codigo" type="xsd:int"/>
+   <xsd:element name="mensagem" type="xsd:string"/>
+   <xsd:element name="ListaRecebimentoCobradoraSemComissao" type="tns:Array_Of_TItemRetornoRecebimentoCobradoraSemComissao"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="TItemRetornoRecebimentoDia">
+  <xsd:all>
+   <xsd:element name="NrLoja" type="xsd:int"/>
+   <xsd:element name="NrContrato" type="xsd:string"/>
+   <xsd:element name="NrPrestacao" type="xsd:int"/>
+   <xsd:element name="NrDocumento" type="xsd:string"/>
+   <xsd:element name="RecebidoLoja" type="xsd:boolean"/>
+   <xsd:element name="NomeCliente" type="xsd:string"/>
+   <xsd:element name="CPFCliente" type="xsd:string"/>
+   <xsd:element name="UsuarioBaixa" type="xsd:string"/>
+   <xsd:element name="DadosPrestacao" type="tns:TPrestacao"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="Array_Of_TItemRetornoRecebimentoCobradoraSemComissao">
+  <xsd:complexContent>
+   <xsd:restriction base="SOAP-ENC:Array">
+    <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:TItemRetornoRecebimentoCobradoraSemComissao[]"/>
+   </xsd:restriction>
+  </xsd:complexContent>
+ </xsd:complexType>
+ <xsd:complexType name="Array_">
+  <xsd:complexContent>
+   <xsd:restriction base="SOAP-ENC:Array">
+    <xsd:attribute ref="SOAP-ENC:arrayType" />
+   </xsd:restriction>
+  </xsd:complexContent>
+ </xsd:complexType>
+ <xsd:complexType name="Array_Of_TItemRetornoRecebimentoDia">
+  <xsd:complexContent>
+   <xsd:restriction base="SOAP-ENC:Array">
+    <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:TItemRetornoRecebimentoDia[]"/>
+   </xsd:restriction>
+  </xsd:complexContent>
+ </xsd:complexType>
+ <xsd:complexType name="TRetornoRecebimentoDia">
+  <xsd:all>
+   <xsd:element name="codigo" type="xsd:int"/>
+   <xsd:element name="mensagem" type="xsd:string"/>
+   <xsd:element name="ListaRecebimento" type="tns:Array_Of_TItemRetornoRecebimentoDia"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="TRetornoLimiteClienteValores">
+  <xsd:all>
+   <xsd:element name="nrCodCli" type="xsd:int"/>
+   <xsd:element name="dsNome" type="xsd:string"/>
+   <xsd:element name="dsCPF" type="xsd:string"/>
+   <xsd:element name="dsRG" type="xsd:string"/>
+   <xsd:element name="nrCodCliAntigo" type="xsd:int"/>
+   <xsd:element name="vlLimiteVendaSemEntrada" type="xsd:float"/>
+   <xsd:element name="vlLimiteVendaComEntrada" type="xsd:float"/>
+   <xsd:element name="vlLimiteParcela" type="xsd:float"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="TRetornoLimiteCliente">
+  <xsd:all>
+   <xsd:element name="codigo" type="xsd:int"/>
+   <xsd:element name="mensagem" type="xsd:string"/>
+   <xsd:element name="Dados" type="tns:TRetornoLimiteClienteValores"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="TRetornoConsultaCEPDados">
+  <xsd:all>
+   <xsd:element name="dsCEP" type="xsd:string"/>
+   <xsd:element name="dsTipo" type="xsd:string"/>
+   <xsd:element name="dsEndereco" type="xsd:string"/>
+   <xsd:element name="nrNumeroIni" type="xsd:int"/>
+   <xsd:element name="nrNumeroFim" type="xsd:string"/>
+   <xsd:element name="dsLadoRua" type="xsd:string"/>
+   <xsd:element name="dsBairro" type="xsd:string"/>
+   <xsd:element name="dsCidade" type="xsd:string"/>
+   <xsd:element name="dsEstado" type="xsd:string"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="Array_Of_TRetornoConsultaCEPDados">
+  <xsd:complexContent>
+   <xsd:restriction base="SOAP-ENC:Array">
+    <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:TRetornoConsultaCEPDados[]"/>
+   </xsd:restriction>
+  </xsd:complexContent>
+ </xsd:complexType>
+ <xsd:complexType name="TRetornoConsultaCEP">
+  <xsd:all>
+   <xsd:element name="codigo" type="xsd:int"/>
+   <xsd:element name="mensagem" type="xsd:string"/>
+   <xsd:element name="Dados" type="tns:Array_Of_TRetornoConsultaCEPDados"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="TRetornoConsultaListaCidadeDados">
+  <xsd:all>
+   <xsd:element name="dsCidade" type="xsd:string"/>
+   <xsd:element name="NrCodigo" type="xsd:int"/>
+   <xsd:element name="dsCEP" type="xsd:string"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="Array_Of_TRetornoConsultaListaCidadeDados">
+  <xsd:complexContent>
+   <xsd:restriction base="SOAP-ENC:Array">
+    <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:TRetornoConsultaListaCidadeDados[]"/>
+   </xsd:restriction>
+  </xsd:complexContent>
+ </xsd:complexType>
+ <xsd:complexType name="TRetornoConsultaListaCidade">
+  <xsd:all>
+   <xsd:element name="codigo" type="xsd:int"/>
+   <xsd:element name="mensagem" type="xsd:string"/>
+   <xsd:element name="Dados" type="tns:Array_Of_TRetornoConsultaListaCidadeDados"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="enviaArquivoOfflineParam">
+  <xsd:all>
+   <xsd:element name="lojcodigo" type="xsd:integer"/>
+   <xsd:element name="nomearquivo" type="xsd:string"/>
+   <xsd:element name="arquivo" type="xsd:string"/>
+  </xsd:all>
+ </xsd:complexType>
+</xsd:schema>
+</types>
+<message name="fncIntegraCrediarioRequest">
+  <part name="ParamApp" type="xsd:string" />
+  <part name="Guid" type="xsd:string" />
+  <part name="Etapa" type="xsd:int" />
+  <part name="Instituicao" type="xsd:string" />
+  <part name="Loja" type="xsd:string" />
+  <part name="Usuario" type="xsd:string" />
+  <part name="Senha" type="xsd:string" />
+  <part name="CPFCNPJ" type="xsd:string" />
+  <part name="CdConAnt" type="xsd:string" />
+  <part name="ValorVenda" type="xsd:float" />
+  <part name="ValorEntrada" type="xsd:float" />
+  <part name="QtdePrest" type="xsd:int" />
+  <part name="DataVcto" type="xsd:string" />
+  <part name="UsuarioAval" type="xsd:string" />
+  <part name="SenhaAval" type="xsd:string" />
+  <part name="CdProduto" type="xsd:int" />
+  <part name="QtdeVia" type="xsd:int" />
+  <part name="SenhaWS" type="xsd:string" />
+  <part name="IP" type="xsd:string" />
+  <part name="DadosCliente" type="xsd:string" />
+  <part name="NomeURL" type="xsd:string" /></message>
+<message name="fncIntegraCrediarioResponse">
+  <part name="return" type="xsd:string" /></message>
+<message name="fncEfetuaVendaRequest">
+  <part name="ParamApp" type="xsd:string" />
+  <part name="Guid" type="xsd:string" />
+  <part name="Etapa" type="xsd:int" />
+  <part name="Instituicao" type="xsd:int" />
+  <part name="Loja" type="xsd:string" />
+  <part name="Usuario" type="xsd:string" />
+  <part name="Senha" type="xsd:string" />
+  <part name="CPFCNPJ" type="xsd:string" />
+  <part name="CdConAnt" type="xsd:string" />
+  <part name="ValorVenda" type="xsd:float" />
+  <part name="ValorEntrada" type="xsd:float" />
+  <part name="DataVcto" type="xsd:string" />
+  <part name="UsuarioAval" type="xsd:string" />
+  <part name="SenhaAval" type="xsd:string" />
+  <part name="CdProduto" type="xsd:int" />
+  <part name="QtdeVia" type="xsd:int" />
+  <part name="Autorizado" type="xsd:int" />
+  <part name="SenhaWS" type="xsd:string" />
+  <part name="IP" type="xsd:string" />
+  <part name="DadosCliente" type="xsd:string" />
+  <part name="NomeURL" type="xsd:string" /></message>
+<message name="fncEfetuaVendaResponse">
+  <part name="return" type="xsd:string" /></message>
+<message name="fncConsultaPrestacaoRequest">
+  <part name="ParamApp" type="xsd:string" />
+  <part name="Instituicao" type="xsd:int" />
+  <part name="Loja" type="xsd:int" />
+  <part name="Usuario" type="xsd:string" />
+  <part name="Senha" type="xsd:string" />
+  <part name="CPFCNPJ" type="xsd:string" />
+  <part name="DtPgto" type="xsd:int" />
+  <part name="TipoContrato" type="xsd:int" />
+  <part name="ListContrato" type="tns:TContratoParam" />
+  <part name="SenhaWS" type="xsd:string" />
+  <part name="IP" type="xsd:string" />
+  <part name="DadosCliente" type="xsd:string" />
+  <part name="NomeURL" type="xsd:string" /></message>
+<message name="fncConsultaPrestacaoResponse">
+  <part name="return" type="tns:TRetContrato" /></message>
+<message name="fncEfetuaPagamentoRequest">
+  <part name="ParamApp" type="xsd:string" />
+  <part name="Instituicao" type="xsd:int" />
+  <part name="Loja" type="xsd:int" />
+  <part name="Usuario" type="xsd:string" />
+  <part name="Senha" type="xsd:string" />
+  <part name="CPFCNPJ" type="xsd:string" />
+  <part name="DtPgto" type="xsd:int" />
+  <part name="FormaPgto" type="xsd:int" />
+  <part name="TipoPagamento" type="xsd:int" />
+  <part name="TipoContrato" type="xsd:int" />
+  <part name="LojaContrato" type="xsd:int" />
+  <part name="NrContra" type="xsd:string" />
+  <part name="NrPrestacao" type="xsd:int" />
+  <part name="VlrPgto" type="xsd:float" />
+  <part name="NrBanco" type="xsd:int" />
+  <part name="NrAgencia" type="xsd:int" />
+  <part name="NrCheque" type="xsd:string" />
+  <part name="QtdeVia" type="xsd:int" />
+  <part name="UsuarioAval" type="xsd:string" />
+  <part name="SenhaAval" type="xsd:string" />
+  <part name="SenhaWS" type="xsd:string" />
+  <part name="IP" type="xsd:string" />
+  <part name="DadosCliente" type="xsd:string" />
+  <part name="NomeURL" type="xsd:string" /></message>
+<message name="fncEfetuaPagamentoResponse">
+  <part name="return" type="tns:TRetEfetuaPgto" /></message>
+<message name="fncCadastraClienteRequest">
+  <part name="ParamApp" type="xsd:string" />
+  <part name="Instituicao" type="xsd:string" />
+  <part name="Loja" type="xsd:string" />
+  <part name="Usuario" type="xsd:string" />
+  <part name="Senha" type="xsd:string" />
+  <part name="CPFCNPJ" type="xsd:string" />
+  <part name="SenhaWS" type="xsd:string" />
+  <part name="DadosPessoaisCliente" type="tns:TDadosPessoaisCliente" />
+  <part name="EnderecoCliente" type="tns:TEnderecoCliente" />
+  <part name="DadosTrabalhoCliente" type="tns:TDadosTrabalhoCliente" />
+  <part name="DadosConjugeCliente" type="tns:TDadosConjugeCliente" />
+  <part name="DadosReferenciaCliente" type="tns:TDadosReferenciaCliente" />
+  <part name="DadosReferenciaLista" type="tns:Array_Of_TDadosReferenciaClienteItem" />
+  <part name="DadosRendaFamiliar" type="tns:Array_Of_TDadosRendaFamiliar" />
+  <part name="DadosReferenciaComercial" type="tns:Array_Of_TDadosReferenciaComercial" />
+  <part name="IP" type="xsd:string" />
+  <part name="DadosCliente" type="xsd:string" />
+  <part name="NomeURL" type="xsd:string" /></message>
+<message name="fncCadastraClienteResponse">
+  <part name="return" type="tns:TRetCustom" /></message>
+<message name="fncAlteraCadastroClienteRequest">
+  <part name="ParamApp" type="xsd:string" />
+  <part name="Instituicao" type="xsd:string" />
+  <part name="Loja" type="xsd:string" />
+  <part name="Usuario" type="xsd:string" />
+  <part name="Senha" type="xsd:string" />
+  <part name="CPFCNPJ" type="xsd:string" />
+  <part name="SenhaWS" type="xsd:string" />
+  <part name="DadosPessoaisCliente" type="tns:TDadosPessoaisCliente" />
+  <part name="EnderecoCliente" type="tns:TEnderecoCliente" />
+  <part name="DadosTrabalhoCliente" type="tns:TDadosTrabalhoCliente" />
+  <part name="DadosConjugeCliente" type="tns:TDadosConjugeCliente" />
+  <part name="DadosReferenciaCliente" type="tns:TDadosReferenciaCliente" />
+  <part name="DadosReferenciaLista" type="tns:Array_Of_TDadosReferenciaClienteItem" />
+  <part name="DadosRendaFamiliar" type="tns:Array_Of_TDadosRendaFamiliar" />
+  <part name="DadosReferenciaComercial" type="tns:Array_Of_TDadosReferenciaComercial" />
+  <part name="IP" type="xsd:string" />
+  <part name="DadosCliente" type="xsd:string" />
+  <part name="NomeURL" type="xsd:string" /></message>
+<message name="fncAlteraCadastroClienteResponse">
+  <part name="return" type="tns:TRetCustom" /></message>
+<message name="fncConsultaNomeClienteRequest">
+  <part name="ParamApp" type="xsd:string" />
+  <part name="Instituicao" type="xsd:string" />
+  <part name="Loja" type="xsd:string" />
+  <part name="Usuario" type="xsd:string" />
+  <part name="Senha" type="xsd:string" />
+  <part name="CPFCNPJ" type="xsd:string" />
+  <part name="SenhaWS" type="xsd:string" />
+  <part name="IP" type="xsd:string" />
+  <part name="DadosCliente" type="xsd:string" />
+  <part name="NomeURL" type="xsd:string" /></message>
+<message name="fncConsultaNomeClienteResponse">
+  <part name="return" type="tns:TDadosNomeCliente" /></message>
+<message name="fncConsultaClienteRequest">
+  <part name="ParamApp" type="xsd:string" />
+  <part name="Instituicao" type="xsd:string" />
+  <part name="Loja" type="xsd:string" />
+  <part name="Usuario" type="xsd:string" />
+  <part name="Senha" type="xsd:string" />
+  <part name="CPFCNPJ" type="xsd:string" />
+  <part name="SenhaWS" type="xsd:string" />
+  <part name="IP" type="xsd:string" />
+  <part name="DadosCliente" type="xsd:string" />
+  <part name="NomeURL" type="xsd:string" /></message>
+<message name="fncConsultaClienteResponse">
+  <part name="return" type="tns:TRetDadosCliente" /></message>
+<message name="fncCancelaVendaRequest">
+  <part name="ParamApp" type="xsd:string" />
+  <part name="Instituicao" type="xsd:string" />
+  <part name="Loja" type="xsd:string" />
+  <part name="Usuario" type="xsd:string" />
+  <part name="Senha" type="xsd:string" />
+  <part name="CPFCNPJ" type="xsd:string" />
+  <part name="TipoContrato" type="xsd:int" />
+  <part name="NrContrato" type="xsd:string" />
+  <part name="SenhaWS" type="xsd:string" />
+  <part name="IP" type="xsd:string" />
+  <part name="DadosCliente" type="xsd:string" />
+  <part name="NomeURL" type="xsd:string" /></message>
+<message name="fncCancelaVendaResponse">
+  <part name="return" type="tns:TRetCustom" /></message>
+<message name="fncEstornaPrestacaoRequest">
+  <part name="ParamApp" type="xsd:string" />
+  <part name="Instituicao" type="xsd:int" />
+  <part name="Loja" type="xsd:int" />
+  <part name="Usuario" type="xsd:string" />
+  <part name="Senha" type="xsd:string" />
+  <part name="CPFCNPJ" type="xsd:string" />
+  <part name="TipoContrato" type="xsd:int" />
+  <part name="NrContrato" type="xsd:string" />
+  <part name="LojaContrato" type="xsd:int" />
+  <part name="NrPrestacao" type="xsd:int" />
+  <part name="DtPgto" type="xsd:string" />
+  <part name="VlrPgto" type="xsd:float" />
+  <part name="SenhaWS" type="xsd:string" />
+  <part name="IP" type="xsd:string" />
+  <part name="DadosCliente" type="xsd:string" />
+  <part name="NomeURL" type="xsd:string" /></message>
+<message name="fncEstornaPrestacaoResponse">
+  <part name="return" type="tns:TRetCustom" /></message>
+<message name="fncGravaObservacaoRequest">
+  <part name="ParamApp" type="xsd:string" />
+  <part name="Instituicao" type="xsd:int" />
+  <part name="Loja" type="xsd:int" />
+  <part name="Usuario" type="xsd:string" />
+  <part name="Senha" type="xsd:string" />
+  <part name="CPFCNPJ" type="xsd:string" />
+  <part name="TipoContrato" type="xsd:int" />
+  <part name="NrContrato" type="xsd:string" />
+  <part name="DsObs" type="xsd:string" />
+  <part name="IdPerm" type="xsd:int" />
+  <part name="SenhaWS" type="xsd:string" />
+  <part name="IP" type="xsd:string" />
+  <part name="DadosCliente" type="xsd:string" />
+  <part name="NomeURL" type="xsd:string" /></message>
+<message name="fncGravaObservacaoResponse">
+  <part name="return" type="tns:TRetCustom" /></message>
+<message name="fncListaOcupacaoRequest">
+  <part name="ParamApp" type="xsd:string" />
+  <part name="Instituicao" type="xsd:int" />
+  <part name="Loja" type="xsd:int" />
+  <part name="Usuario" type="xsd:string" />
+  <part name="Senha" type="xsd:string" />
+  <part name="SenhaWS" type="xsd:string" />
+  <part name="IP" type="xsd:string" />
+  <part name="DadosCliente" type="xsd:string" />
+  <part name="NomeURL" type="xsd:string" /></message>
+<message name="fncListaOcupacaoResponse">
+  <part name="return" type="tns:TRetCustomCombo" /></message>
+<message name="fncListaMoradiaRequest">
+  <part name="ParamApp" type="xsd:string" />
+  <part name="Instituicao" type="xsd:int" />
+  <part name="Loja" type="xsd:int" />
+  <part name="Usuario" type="xsd:string" />
+  <part name="Senha" type="xsd:string" />
+  <part name="SenhaWS" type="xsd:string" />
+  <part name="IP" type="xsd:string" />
+  <part name="DadosCliente" type="xsd:string" />
+  <part name="NomeURL" type="xsd:string" /></message>
+<message name="fncListaMoradiaResponse">
+  <part name="return" type="tns:TRetCustomCombo" /></message>
+<message name="fncListaMeioTransporteRequest">
+  <part name="ParamApp" type="xsd:string" />
+  <part name="Instituicao" type="xsd:int" />
+  <part name="Loja" type="xsd:int" />
+  <part name="Usuario" type="xsd:string" />
+  <part name="Senha" type="xsd:string" />
+  <part name="SenhaWS" type="xsd:string" />
+  <part name="IP" type="xsd:string" />
+  <part name="DadosCliente" type="xsd:string" />
+  <part name="NomeURL" type="xsd:string" /></message>
+<message name="fncListaMeioTransporteResponse">
+  <part name="return" type="tns:TRetCustomCombo" /></message>
+<message name="fncListaEstadoCivilRequest">
+  <part name="ParamApp" type="xsd:string" />
+  <part name="Instituicao" type="xsd:int" />
+  <part name="Loja" type="xsd:int" />
+  <part name="Usuario" type="xsd:string" />
+  <part name="Senha" type="xsd:string" />
+  <part name="SenhaWS" type="xsd:string" />
+  <part name="IP" type="xsd:string" />
+  <part name="DadosCliente" type="xsd:string" />
+  <part name="NomeURL" type="xsd:string" /></message>
+<message name="fncListaEstadoCivilResponse">
+  <part name="return" type="tns:TRetCustomCombo" /></message>
+<message name="fncListaTipoEnderecoRequest">
+  <part name="ParamApp" type="xsd:string" />
+  <part name="Instituicao" type="xsd:int" />
+  <part name="Loja" type="xsd:int" />
+  <part name="Usuario" type="xsd:string" />
+  <part name="Senha" type="xsd:string" />
+  <part name="SenhaWS" type="xsd:string" />
+  <part name="IP" type="xsd:string" />
+  <part name="DadosCliente" type="xsd:string" />
+  <part name="NomeURL" type="xsd:string" /></message>
+<message name="fncListaTipoEnderecoResponse">
+  <part name="return" type="tns:TRetCustomCombo" /></message>
+<message name="fncListaDependenteRequest">
+  <part name="ParamApp" type="xsd:string" />
+  <part name="Instituicao" type="xsd:int" />
+  <part name="Loja" type="xsd:int" />
+  <part name="Usuario" type="xsd:string" />
+  <part name="Senha" type="xsd:string" />
+  <part name="SenhaWS" type="xsd:string" />
+  <part name="IP" type="xsd:string" />
+  <part name="DadosCliente" type="xsd:string" />
+  <part name="NomeURL" type="xsd:string" /></message>
+<message name="fncListaDependenteResponse">
+  <part name="return" type="tns:TRetCustomCombo" /></message>
+<message name="fncListaParentescoRequest">
+  <part name="ParamApp" type="xsd:string" />
+  <part name="Instituicao" type="xsd:int" />
+  <part name="Loja" type="xsd:int" />
+  <part name="Usuario" type="xsd:string" />
+  <part name="Senha" type="xsd:string" />
+  <part name="SenhaWS" type="xsd:string" />
+  <part name="IP" type="xsd:string" />
+  <part name="DadosCliente" type="xsd:string" />
+  <part name="NomeURL" type="xsd:string" /></message>
+<message name="fncListaParentescoResponse">
+  <part name="return" type="tns:TRetCustomCombo" /></message>
+<message name="fncListaNacionalidadeRequest">
+  <part name="ParamApp" type="xsd:string" />
+  <part name="Instituicao" type="xsd:int" />
+  <part name="Loja" type="xsd:int" />
+  <part name="Usuario" type="xsd:string" />
+  <part name="Senha" type="xsd:string" />
+  <part name="SenhaWS" type="xsd:string" />
+  <part name="IP" type="xsd:string" />
+  <part name="DadosCliente" type="xsd:string" />
+  <part name="NomeURL" type="xsd:string" /></message>
+<message name="fncListaNacionalidadeResponse">
+  <part name="return" type="tns:TRetCustomCombo" /></message>
+<message name="fncListaTipoArquivoRequest">
+  <part name="ParamApp" type="xsd:string" />
+  <part name="Instituicao" type="xsd:int" />
+  <part name="Loja" type="xsd:int" />
+  <part name="Usuario" type="xsd:string" />
+  <part name="Senha" type="xsd:string" />
+  <part name="SenhaWS" type="xsd:string" />
+  <part name="IP" type="xsd:string" />
+  <part name="DadosCliente" type="xsd:string" />
+  <part name="NomeURL" type="xsd:string" /></message>
+<message name="fncListaTipoArquivoResponse">
+  <part name="return" type="tns:TRetCustomCombo" /></message>
+<message name="fncConsultaSPCRequest">
+  <part name="ParamApp" type="xsd:string" />
+  <part name="Instituicao" type="xsd:int" />
+  <part name="Loja" type="xsd:int" />
+  <part name="Usuario" type="xsd:string" />
+  <part name="Senha" type="xsd:string" />
+  <part name="CPFCNPJ" type="xsd:string" />
+  <part name="SenhaWS" type="xsd:string" />
+  <part name="IP" type="xsd:string" />
+  <part name="DadosCliente" type="xsd:string" />
+  <part name="NomeURL" type="xsd:string" /></message>
+<message name="fncConsultaSPCResponse">
+  <part name="return" type="tns:TRetConsultaSPC" /></message>
+<message name="fncConsultaSituacaoClienteRequest">
+  <part name="ParamApp" type="xsd:string" />
+  <part name="Instituicao" type="xsd:int" />
+  <part name="Loja" type="xsd:int" />
+  <part name="Usuario" type="xsd:string" />
+  <part name="Senha" type="xsd:string" />
+  <part name="CPFCNPJ" type="xsd:string" />
+  <part name="SenhaWS" type="xsd:string" />
+  <part name="IP" type="xsd:string" />
+  <part name="DadosCliente" type="xsd:string" />
+  <part name="NomeURL" type="xsd:string" /></message>
+<message name="fncConsultaSituacaoClienteResponse">
+  <part name="return" type="tns:TRetConsultaSituacao" /></message>
+<message name="fncConsultaArquivosClienteRequest">
+  <part name="ParamApp" type="xsd:string" />
+  <part name="Instituicao" type="xsd:int" />
+  <part name="Loja" type="xsd:int" />
+  <part name="Usuario" type="xsd:string" />
+  <part name="Senha" type="xsd:string" />
+  <part name="CPFCNPJ" type="xsd:string" />
+  <part name="SenhaWS" type="xsd:string" />
+  <part name="IP" type="xsd:string" />
+  <part name="DadosCliente" type="xsd:string" />
+  <part name="NomeURL" type="xsd:string" /></message>
+<message name="fncConsultaArquivosClienteResponse">
+  <part name="return" type="tns:TRetConsultaArquivo" /></message>
+<message name="fncEnviaArquivoClienteRequest">
+  <part name="ParamApp" type="xsd:string" />
+  <part name="Instituicao" type="xsd:int" />
+  <part name="Loja" type="xsd:int" />
+  <part name="Usuario" type="xsd:string" />
+  <part name="Senha" type="xsd:string" />
+  <part name="CPFCNPJ" type="xsd:string" />
+  <part name="nrTipoDoc" type="xsd:int" />
+  <part name="biArqDoc" type="xsd:string" />
+  <part name="SenhaWS" type="xsd:string" />
+  <part name="IP" type="xsd:string" />
+  <part name="DadosCliente" type="xsd:string" />
+  <part name="NomeURL" type="xsd:string" /></message>
+<message name="fncEnviaArquivoClienteResponse">
+  <part name="return" type="tns:TRetCustom" /></message>
+<message name="fncCalculaAcordoRequest">
+  <part name="ParamApp" type="xsd:string" />
+  <part name="Instituicao" type="xsd:int" />
+  <part name="Loja" type="xsd:int" />
+  <part name="Usuario" type="xsd:string" />
+  <part name="Senha" type="xsd:string" />
+  <part name="CPFCNPJ" type="xsd:string" />
+  <part name="ListaContratos" type="tns:Array_Of_TContratoParam" />
+  <part name="vlEntrada" type="xsd:float" />
+  <part name="vlCapital" type="xsd:float" />
+  <part name="vlJuro" type="xsd:float" />
+  <part name="vlMulta" type="xsd:float" />
+  <part name="vlCapitalOri" type="xsd:float" />
+  <part name="vlJuroOri" type="xsd:float" />
+  <part name="vlMultaOri" type="xsd:float" />
+  <part name="dtPriVencto" type="xsd:int" />
+  <part name="qtdParcelas" type="xsd:int" />
+  <part name="vlJurosPMT" type="xsd:float" />
+  <part name="SenhaWS" type="xsd:string" />
+  <part name="IP" type="xsd:string" />
+  <part name="DadosCliente" type="xsd:string" />
+  <part name="NomeURL" type="xsd:string" /></message>
+<message name="fncCalculaAcordoResponse">
+  <part name="return" type="tns:TRetCalculaAcordo" /></message>
+<message name="fncGravaAcordoRequest">
+  <part name="ParamApp" type="xsd:string" />
+  <part name="Instituicao" type="xsd:int" />
+  <part name="Loja" type="xsd:int" />
+  <part name="Usuario" type="xsd:string" />
+  <part name="Senha" type="xsd:string" />
+  <part name="CPFCNPJ" type="xsd:string" />
+  <part name="ListaContratos" type="tns:Array_Of_TContratoParam" />
+  <part name="vlEntrada" type="xsd:float" />
+  <part name="vlCapital" type="xsd:float" />
+  <part name="vlJuro" type="xsd:float" />
+  <part name="vlMulta" type="xsd:float" />
+  <part name="vlCapitalOri" type="xsd:float" />
+  <part name="vlJuroOri" type="xsd:float" />
+  <part name="vlMultaOri" type="xsd:float" />
+  <part name="dtPriVencto" type="xsd:int" />
+  <part name="qtdParcelas" type="xsd:int" />
+  <part name="vlJurosPMT" type="xsd:float" />
+  <part name="percCapital" type="xsd:float" />
+  <part name="percJuro" type="xsd:float" />
+  <part name="percMulta" type="xsd:float" />
+  <part name="SenhaWS" type="xsd:string" />
+  <part name="IP" type="xsd:string" />
+  <part name="DadosCliente" type="xsd:string" />
+  <part name="NomeURL" type="xsd:string" /></message>
+<message name="fncGravaAcordoResponse">
+  <part name="return" type="tns:TRetGravaAcordo" /></message>
+<message name="fncCancelaAcordoRequest">
+  <part name="ParamApp" type="xsd:string" />
+  <part name="Instituicao" type="xsd:string" />
+  <part name="Loja" type="xsd:string" />
+  <part name="Usuario" type="xsd:string" />
+  <part name="Senha" type="xsd:string" />
+  <part name="CPFCNPJ" type="xsd:string" />
+  <part name="CodigoAcordo" type="xsd:int" />
+  <part name="SenhaWS" type="xsd:string" />
+  <part name="IP" type="xsd:string" />
+  <part name="DadosCliente" type="xsd:string" />
+  <part name="NomeURL" type="xsd:string" /></message>
+<message name="fncCancelaAcordoResponse">
+  <part name="return" type="tns:TRetCustom" /></message>
+<message name="fncListaClientesAlteradosRequest">
+  <part name="ParamApp" type="xsd:string" />
+  <part name="Instituicao" type="xsd:string" />
+  <part name="Loja" type="xsd:string" />
+  <part name="Usuario" type="xsd:string" />
+  <part name="Senha" type="xsd:string" />
+  <part name="DataAlteracao" type="xsd:int" />
+  <part name="SenhaWS" type="xsd:string" />
+  <part name="IP" type="xsd:string" />
+  <part name="DadosCliente" type="xsd:string" />
+  <part name="NomeURL" type="xsd:string" /></message>
+<message name="fncListaClientesAlteradosResponse">
+  <part name="return" type="tns:TRetornoClienteAlterado" /></message>
+<message name="fncListaVendasDiaRequest">
+  <part name="ParamApp" type="xsd:string" />
+  <part name="Instituicao" type="xsd:string" />
+  <part name="Loja" type="xsd:string" />
+  <part name="Usuario" type="xsd:string" />
+  <part name="Senha" type="xsd:string" />
+  <part name="DataAlteracao" type="xsd:int" />
+  <part name="SenhaWS" type="xsd:string" />
+  <part name="IP" type="xsd:string" />
+  <part name="DadosCliente" type="xsd:string" />
+  <part name="NomeURL" type="xsd:string" /></message>
+<message name="fncListaVendasDiaResponse">
+  <part name="return" type="tns:TRetornoVendaDia" /></message>
+<message name="fncListaRecebimentosDiaRequest">
+  <part name="ParamApp" type="xsd:string" />
+  <part name="Instituicao" type="xsd:string" />
+  <part name="Loja" type="xsd:string" />
+  <part name="Usuario" type="xsd:string" />
+  <part name="Senha" type="xsd:string" />
+  <part name="DataAlteracao" type="xsd:int" />
+  <part name="SenhaWS" type="xsd:string" />
+  <part name="IP" type="xsd:string" />
+  <part name="DadosCliente" type="xsd:string" />
+  <part name="NomeURL" type="xsd:string" /></message>
+<message name="fncListaRecebimentosDiaResponse">
+  <part name="return" type="tns:TRetornoRecebimentoDia" /></message>
+<message name="fncListaRecebimentosCobradoraRequest">
+  <part name="ParamApp" type="xsd:string" />
+  <part name="Instituicao" type="xsd:string" />
+  <part name="Loja" type="xsd:string" />
+  <part name="Usuario" type="xsd:string" />
+  <part name="Senha" type="xsd:string" />
+  <part name="DataRecebimento" type="xsd:int" />
+  <part name="SenhaWS" type="xsd:string" />
+  <part name="IP" type="xsd:string" />
+  <part name="NomeURL" type="xsd:string" /></message>
+<message name="fncListaRecebimentosCobradoraResponse">
+  <part name="return" type="tns:TRetornoRecebimentoCobradora" /></message>
+<message name="fncListaRecebimentosCobradoraSemComissaoRequest">
+  <part name="ParamApp" type="xsd:string" />
+  <part name="Instituicao" type="xsd:string" />
+  <part name="Loja" type="xsd:string" />
+  <part name="Usuario" type="xsd:string" />
+  <part name="Senha" type="xsd:string" />
+  <part name="DataRecebimento" type="xsd:int" />
+  <part name="SenhaWS" type="xsd:string" />
+  <part name="IP" type="xsd:string" />
+  <part name="NomeURL" type="xsd:string" /></message>
+<message name="fncListaRecebimentosCobradoraSemComissaoResponse">
+  <part name="return" type="tns:TRetornoRecebimentoCobradoraSemComissao" /></message>
+<message name="fncConsultaLimiteClienteRequest">
+  <part name="ParamApp" type="xsd:string" />
+  <part name="Instituicao" type="xsd:string" />
+  <part name="Loja" type="xsd:string" />
+  <part name="Usuario" type="xsd:string" />
+  <part name="Senha" type="xsd:string" />
+  <part name="CPFCNPJ" type="xsd:string" />
+  <part name="SenhaWS" type="xsd:string" />
+  <part name="IP" type="xsd:string" />
+  <part name="DadosCliente" type="xsd:string" />
+  <part name="NomeURL" type="xsd:string" /></message>
+<message name="fncConsultaLimiteClienteResponse">
+  <part name="return" type="tns:TRetornoLimiteCliente" /></message>
+<message name="fncConsultaListaCidadeRequest">
+  <part name="ParamApp" type="xsd:string" />
+  <part name="Instituicao" type="xsd:string" />
+  <part name="Loja" type="xsd:string" />
+  <part name="Usuario" type="xsd:string" />
+  <part name="Senha" type="xsd:string" />
+  <part name="UF" type="xsd:string" />
+  <part name="SenhaWS" type="xsd:string" />
+  <part name="IP" type="xsd:string" />
+  <part name="DadosCliente" type="xsd:string" />
+  <part name="NomeURL" type="xsd:string" /></message>
+<message name="fncConsultaListaCidadeResponse">
+  <part name="return" type="tns:TRetornoConsultaListaCidade" /></message>
+<message name="fncConsultaCEPRequest">
+  <part name="ParamApp" type="xsd:string" />
+  <part name="Instituicao" type="xsd:string" />
+  <part name="Loja" type="xsd:string" />
+  <part name="Usuario" type="xsd:string" />
+  <part name="Senha" type="xsd:string" />
+  <part name="PesquisaCEP" type="xsd:string" />
+  <part name="CodigoCidade" type="xsd:int" />
+  <part name="SenhaWS" type="xsd:string" />
+  <part name="IP" type="xsd:string" />
+  <part name="DadosCliente" type="xsd:string" />
+  <part name="NomeURL" type="xsd:string" /></message>
+<message name="fncConsultaCEPResponse">
+  <part name="return" type="tns:TRetornoConsultaCEP" /></message>
+<message name="enviaArquivoOfflineRequest">
+  <part name="param" type="tns:enviaArquivoOfflineParam" /></message>
+<message name="enviaArquivoOfflineResponse">
+  <part name="return" type="xsd:string" /></message>
+<message name="fncListaAutorizadoRequest">
+  <part name="ParamApp" type="xsd:string" />
+  <part name="Instituicao" type="xsd:string" />
+  <part name="Loja" type="xsd:string" />
+  <part name="Usuario" type="xsd:string" />
+  <part name="Senha" type="xsd:string" />
+  <part name="CPFCNPJ" type="xsd:string" />
+  <part name="SenhaWS" type="xsd:string" />
+  <part name="IP" type="xsd:string" />
+  <part name="DadosCliente" type="xsd:string" />
+  <part name="NomeURL" type="xsd:string" /></message>
+<message name="fncListaAutorizadoResponse">
+  <part name="return" type="tns:TRetornoListaAutorizado" /></message>
+<message name="fncCadastraAutorizadoRequest">
+  <part name="ParamApp" type="xsd:string" />
+  <part name="Instituicao" type="xsd:string" />
+  <part name="Loja" type="xsd:string" />
+  <part name="Usuario" type="xsd:string" />
+  <part name="Senha" type="xsd:string" />
+  <part name="CPFCNPJ" type="xsd:string" />
+  <part name="dsNome" type="xsd:string" />
+  <part name="dsDDD" type="xsd:string" />
+  <part name="dsTelefone" type="xsd:string" />
+  <part name="dsCPF" type="xsd:string" />
+  <part name="dsRG" type="xsd:string" />
+  <part name="DtLimite" type="xsd:int" />
+  <part name="VlLimite" type="xsd:float" />
+  <part name="NrAtivo" type="xsd:int" />
+  <part name="SenhaWS" type="xsd:string" />
+  <part name="IP" type="xsd:string" />
+  <part name="DadosCliente" type="xsd:string" />
+  <part name="NomeURL" type="xsd:string" /></message>
+<message name="fncCadastraAutorizadoResponse">
+  <part name="return" type="tns:TRetCustom" /></message>
+<portType name="server.wsrcsPortType">
+  <operation name="fncIntegraCrediario">
+    <documentation>Função usada para fazer a integração com o Safety Cred.</documentation>
+    <input message="tns:fncIntegraCrediarioRequest"/>
+    <output message="tns:fncIntegraCrediarioResponse"/>
+  </operation>
+  <operation name="fncEfetuaVenda">
+    <documentation>Função usada para realizar uma venda no SafetyCred</documentation>
+    <input message="tns:fncEfetuaVendaRequest"/>
+    <output message="tns:fncEfetuaVendaResponse"/>
+  </operation>
+  <operation name="fncConsultaPrestacao">
+    <documentation>Esta função irá retornar todas as prestações abertas do cliente</documentation>
+    <input message="tns:fncConsultaPrestacaoRequest"/>
+    <output message="tns:fncConsultaPrestacaoResponse"/>
+  </operation>
+  <operation name="fncEfetuaPagamento">
+    <documentation>Esta função irá retornar todas as prestações abertas do cliente</documentation>
+    <input message="tns:fncEfetuaPagamentoRequest"/>
+    <output message="tns:fncEfetuaPagamentoResponse"/>
+  </operation>
+  <operation name="fncCadastraCliente">
+    <documentation>Esta função irá cadastrar um cliente no sistema Tidas Soluções, mas se o cliente já existir irá fazer uma atualização.</documentation>
+    <input message="tns:fncCadastraClienteRequest"/>
+    <output message="tns:fncCadastraClienteResponse"/>
+  </operation>
+  <operation name="fncAlteraCadastroCliente">
+    <documentation>Altera cadastro de cliente no sistema Safety Cred.</documentation>
+    <input message="tns:fncAlteraCadastroClienteRequest"/>
+    <output message="tns:fncAlteraCadastroClienteResponse"/>
+  </operation>
+  <operation name="fncConsultaNomeCliente">
+    <documentation>Esta função irá consultar o NOME do cliente na Tidas Soluções</documentation>
+    <input message="tns:fncConsultaNomeClienteRequest"/>
+    <output message="tns:fncConsultaNomeClienteResponse"/>
+  </operation>
+  <operation name="fncConsultaCliente">
+    <documentation>Esta função irá consultar um cliente do cliente na Tidas Soluções</documentation>
+    <input message="tns:fncConsultaClienteRequest"/>
+    <output message="tns:fncConsultaClienteResponse"/>
+  </operation>
+  <operation name="fncCancelaVenda">
+    <documentation>Esta função irá cancelar uma venda no sistema Tidas Soluções.</documentation>
+    <input message="tns:fncCancelaVendaRequest"/>
+    <output message="tns:fncCancelaVendaResponse"/>
+  </operation>
+  <operation name="fncEstornaPrestacao">
+    <documentation>Esta função irá estornar a parcela da venda.</documentation>
+    <input message="tns:fncEstornaPrestacaoRequest"/>
+    <output message="tns:fncEstornaPrestacaoResponse"/>
+  </operation>
+  <operation name="fncGravaObservacao">
+    <documentation>Esta função irá gravar uma observação no contrato.</documentation>
+    <input message="tns:fncGravaObservacaoRequest"/>
+    <output message="tns:fncGravaObservacaoResponse"/>
+  </operation>
+  <operation name="fncListaOcupacao">
+    <documentation>Retorna a lista de ocupações</documentation>
+    <input message="tns:fncListaOcupacaoRequest"/>
+    <output message="tns:fncListaOcupacaoResponse"/>
+  </operation>
+  <operation name="fncListaMoradia">
+    <documentation>Retorna a lista de moradias</documentation>
+    <input message="tns:fncListaMoradiaRequest"/>
+    <output message="tns:fncListaMoradiaResponse"/>
+  </operation>
+  <operation name="fncListaMeioTransporte">
+    <documentation>Retorna a lista de meios de transportes</documentation>
+    <input message="tns:fncListaMeioTransporteRequest"/>
+    <output message="tns:fncListaMeioTransporteResponse"/>
+  </operation>
+  <operation name="fncListaEstadoCivil">
+    <documentation>Retorna a lista de Estado Civil</documentation>
+    <input message="tns:fncListaEstadoCivilRequest"/>
+    <output message="tns:fncListaEstadoCivilResponse"/>
+  </operation>
+  <operation name="fncListaTipoEndereco">
+    <documentation>Retorna a lista de Tipos de Endereço</documentation>
+    <input message="tns:fncListaTipoEnderecoRequest"/>
+    <output message="tns:fncListaTipoEnderecoResponse"/>
+  </operation>
+  <operation name="fncListaDependente">
+    <documentation>Retorna a lista de Quantidade de Dependentes</documentation>
+    <input message="tns:fncListaDependenteRequest"/>
+    <output message="tns:fncListaDependenteResponse"/>
+  </operation>
+  <operation name="fncListaParentesco">
+    <documentation>Retorna a lista de Tipo de Parentesco</documentation>
+    <input message="tns:fncListaParentescoRequest"/>
+    <output message="tns:fncListaParentescoResponse"/>
+  </operation>
+  <operation name="fncListaNacionalidade">
+    <documentation>Retorna a lista de Nacionalidade</documentation>
+    <input message="tns:fncListaNacionalidadeRequest"/>
+    <output message="tns:fncListaNacionalidadeResponse"/>
+  </operation>
+  <operation name="fncListaTipoArquivo">
+    <documentation>Retorna a lista de tipos de arquivos</documentation>
+    <input message="tns:fncListaTipoArquivoRequest"/>
+    <output message="tns:fncListaTipoArquivoResponse"/>
+  </operation>
+  <operation name="fncConsultaSPC">
+    <documentation>Consulta de SPC</documentation>
+    <input message="tns:fncConsultaSPCRequest"/>
+    <output message="tns:fncConsultaSPCResponse"/>
+  </operation>
+  <operation name="fncConsultaSituacaoCliente">
+    <documentation>Consulta Situação do Cliente</documentation>
+    <input message="tns:fncConsultaSituacaoClienteRequest"/>
+    <output message="tns:fncConsultaSituacaoClienteResponse"/>
+  </operation>
+  <operation name="fncConsultaArquivosCliente">
+    <documentation>Consulta os Arquivos Cadastrados do Cliente</documentation>
+    <input message="tns:fncConsultaArquivosClienteRequest"/>
+    <output message="tns:fncConsultaArquivosClienteResponse"/>
+  </operation>
+  <operation name="fncEnviaArquivoCliente">
+    <documentation>Envia arquivo digitalizado do cliente</documentation>
+    <input message="tns:fncEnviaArquivoClienteRequest"/>
+    <output message="tns:fncEnviaArquivoClienteResponse"/>
+  </operation>
+  <operation name="fncCalculaAcordo">
+    <documentation>Calcula acordo para prestações de um cliente</documentation>
+    <input message="tns:fncCalculaAcordoRequest"/>
+    <output message="tns:fncCalculaAcordoResponse"/>
+  </operation>
+  <operation name="fncGravaAcordo">
+    <documentation>Grava acordo do cliente</documentation>
+    <input message="tns:fncGravaAcordoRequest"/>
+    <output message="tns:fncGravaAcordoResponse"/>
+  </operation>
+  <operation name="fncCancelaAcordo">
+    <documentation>Esta função irá cancelar o acordo ativo do .</documentation>
+    <input message="tns:fncCancelaAcordoRequest"/>
+    <output message="tns:fncCancelaAcordoResponse"/>
+  </operation>
+  <operation name="fncListaClientesAlterados">
+    <documentation>Esta função retorna uma lista de todos os clientes alterados em um determinado dia.</documentation>
+    <input message="tns:fncListaClientesAlteradosRequest"/>
+    <output message="tns:fncListaClientesAlteradosResponse"/>
+  </operation>
+  <operation name="fncListaVendasDia">
+    <documentation>Esta função retorna uma lista de todas as vendas feitas no dia.</documentation>
+    <input message="tns:fncListaVendasDiaRequest"/>
+    <output message="tns:fncListaVendasDiaResponse"/>
+  </operation>
+  <operation name="fncListaRecebimentosDia">
+    <documentation>Esta função retorna uma lista dos recebimentos do dia.</documentation>
+    <input message="tns:fncListaRecebimentosDiaRequest"/>
+    <output message="tns:fncListaRecebimentosDiaResponse"/>
+  </operation>
+  <operation name="fncListaRecebimentosCobradora">
+    <documentation>Esta função retorna uma lista dos recebimentos para atualização do bd da Cobrança Terceirizada.</documentation>
+    <input message="tns:fncListaRecebimentosCobradoraRequest"/>
+    <output message="tns:fncListaRecebimentosCobradoraResponse"/>
+  </operation>
+  <operation name="fncListaRecebimentosCobradoraSemComissao">
+    <documentation>Esta função retorna uma lista dos recebimentos para atualização do bd da Cobrança Terceirizada, valores que não foram cobrados pela mesma e pagos pelo cliente diretamente na loja.</documentation>
+    <input message="tns:fncListaRecebimentosCobradoraSemComissaoRequest"/>
+    <output message="tns:fncListaRecebimentosCobradoraSemComissaoResponse"/>
+  </operation>
+  <operation name="fncConsultaLimiteCliente">
+    <documentation>Esta função retorna os dados do limite do cliente.</documentation>
+    <input message="tns:fncConsultaLimiteClienteRequest"/>
+    <output message="tns:fncConsultaLimiteClienteResponse"/>
+  </operation>
+  <operation name="fncConsultaListaCidade">
+    <documentation>Esta função retorna as cidade do Estado.</documentation>
+    <input message="tns:fncConsultaListaCidadeRequest"/>
+    <output message="tns:fncConsultaListaCidadeResponse"/>
+  </operation>
+  <operation name="fncConsultaCEP">
+    <documentation>Esta função retorna os dados da consulta de CEP.</documentation>
+    <input message="tns:fncConsultaCEPRequest"/>
+    <output message="tns:fncConsultaCEPResponse"/>
+  </operation>
+  <operation name="enviaArquivoOffline">
+    <documentation>Função usada para receber arquivos Offlines para serem processados</documentation>
+    <input message="tns:enviaArquivoOfflineRequest"/>
+    <output message="tns:enviaArquivoOfflineResponse"/>
+  </operation>
+  <operation name="fncListaAutorizado">
+    <documentation>Esta função retorna uma lista dos autorizado do cliente.</documentation>
+    <input message="tns:fncListaAutorizadoRequest"/>
+    <output message="tns:fncListaAutorizadoResponse"/>
+  </operation>
+  <operation name="fncCadastraAutorizado">
+    <documentation>Esta função cadastra e/ou altera um autorizado do cliente.</documentation>
+    <input message="tns:fncCadastraAutorizadoRequest"/>
+    <output message="tns:fncCadastraAutorizadoResponse"/>
+  </operation>
+</portType>
+<binding name="server.wsrcsBinding" type="tns:server.wsrcsPortType">
+  <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+  <operation name="fncIntegraCrediario">
+    <soap:operation soapAction="server.wsrcs#fncIntegraCrediario" style="rpc"/>
+    <input><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+    <output><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+  </operation>
+  <operation name="fncEfetuaVenda">
+    <soap:operation soapAction="server.wsrcs#fncEfetuaVenda" style="rpc"/>
+    <input><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+    <output><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+  </operation>
+  <operation name="fncConsultaPrestacao">
+    <soap:operation soapAction="server.wsrcs#fncConsultaPrestacao" style="rpc"/>
+    <input><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+    <output><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+  </operation>
+  <operation name="fncEfetuaPagamento">
+    <soap:operation soapAction="server.wsrcs#fncEfetuaPagamento" style="rpc"/>
+    <input><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+    <output><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+  </operation>
+  <operation name="fncCadastraCliente">
+    <soap:operation soapAction="server.wsrcs#fncCadastraCliente" style="rpc"/>
+    <input><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+    <output><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+  </operation>
+  <operation name="fncAlteraCadastroCliente">
+    <soap:operation soapAction="server.wsrcs#fncCadastraCliente" style="rpc"/>
+    <input><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+    <output><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+  </operation>
+  <operation name="fncConsultaNomeCliente">
+    <soap:operation soapAction="server.wsrcs#fncConsultaNomeCliente" style="rpc"/>
+    <input><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+    <output><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+  </operation>
+  <operation name="fncConsultaCliente">
+    <soap:operation soapAction="server.wsrcs#fncCadastraCliente" style="rpc"/>
+    <input><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+    <output><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+  </operation>
+  <operation name="fncCancelaVenda">
+    <soap:operation soapAction="server.wsrcs#fncCancelaVenda" style="rpc"/>
+    <input><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+    <output><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+  </operation>
+  <operation name="fncEstornaPrestacao">
+    <soap:operation soapAction="server.wsrcs#fncEstornaPrestacao" style="rpc"/>
+    <input><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+    <output><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+  </operation>
+  <operation name="fncGravaObservacao">
+    <soap:operation soapAction="server.wsrcs#fncGravaObservacao" style="rpc"/>
+    <input><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+    <output><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+  </operation>
+  <operation name="fncListaOcupacao">
+    <soap:operation soapAction="server.wsrcs#fncListaOcupacao" style="rpc"/>
+    <input><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+    <output><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+  </operation>
+  <operation name="fncListaMoradia">
+    <soap:operation soapAction="server.wsrcs#fncListaMoradia" style="rpc"/>
+    <input><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+    <output><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+  </operation>
+  <operation name="fncListaMeioTransporte">
+    <soap:operation soapAction="server.wsrcs#fncListaMeioTransporte" style="rpc"/>
+    <input><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+    <output><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+  </operation>
+  <operation name="fncListaEstadoCivil">
+    <soap:operation soapAction="server.wsrcs#fncListaEstadoCivil" style="rpc"/>
+    <input><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+    <output><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+  </operation>
+  <operation name="fncListaTipoEndereco">
+    <soap:operation soapAction="server.wsrcs#fncListaTipoEndereco" style="rpc"/>
+    <input><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+    <output><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+  </operation>
+  <operation name="fncListaDependente">
+    <soap:operation soapAction="server.wsrcs#fncListaDependente" style="rpc"/>
+    <input><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+    <output><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+  </operation>
+  <operation name="fncListaParentesco">
+    <soap:operation soapAction="server.wsrcs#fncListaParentesco" style="rpc"/>
+    <input><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+    <output><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+  </operation>
+  <operation name="fncListaNacionalidade">
+    <soap:operation soapAction="server.wsrcs#fncListaNacionalidade" style="rpc"/>
+    <input><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+    <output><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+  </operation>
+  <operation name="fncListaTipoArquivo">
+    <soap:operation soapAction="server.wsrcs#fncListaTipoArquivo" style="rpc"/>
+    <input><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+    <output><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+  </operation>
+  <operation name="fncConsultaSPC">
+    <soap:operation soapAction="server.wsrcs#fncConsultaSPC" style="rpc"/>
+    <input><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+    <output><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+  </operation>
+  <operation name="fncConsultaSituacaoCliente">
+    <soap:operation soapAction="server.wsrcs#fncConsultaSituacaoCliente" style="rpc"/>
+    <input><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+    <output><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+  </operation>
+  <operation name="fncConsultaArquivosCliente">
+    <soap:operation soapAction="server.wsrcs#fncConsultaArquivosCliente" style="rpc"/>
+    <input><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+    <output><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+  </operation>
+  <operation name="fncEnviaArquivoCliente">
+    <soap:operation soapAction="server.wsrcs#fncEnviaArquivoCliente" style="rpc"/>
+    <input><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+    <output><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+  </operation>
+  <operation name="fncCalculaAcordo">
+    <soap:operation soapAction="server.wsrcs#fncCalculaAcordo" style="rpc"/>
+    <input><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+    <output><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+  </operation>
+  <operation name="fncGravaAcordo">
+    <soap:operation soapAction="server.wsrcs#fncGravaAcordo" style="rpc"/>
+    <input><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+    <output><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+  </operation>
+  <operation name="fncCancelaAcordo">
+    <soap:operation soapAction="server.wsrcs#fncCancelaAcordo" style="rpc"/>
+    <input><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+    <output><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+  </operation>
+  <operation name="fncListaClientesAlterados">
+    <soap:operation soapAction="server.wsrcs#fncListaClientesAlterados" style="rpc"/>
+    <input><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+    <output><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+  </operation>
+  <operation name="fncListaVendasDia">
+    <soap:operation soapAction="server.wsrcs#fncListaVendasDia" style="rpc"/>
+    <input><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+    <output><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+  </operation>
+  <operation name="fncListaRecebimentosDia">
+    <soap:operation soapAction="server.wsrcs#fncListaRecebimentosDia" style="rpc"/>
+    <input><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+    <output><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+  </operation>
+  <operation name="fncListaRecebimentosCobradora">
+    <soap:operation soapAction="server.wsrcs#fncListaRecebimentosCobradora" style="rpc"/>
+    <input><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+    <output><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+  </operation>
+  <operation name="fncListaRecebimentosCobradoraSemComissao">
+    <soap:operation soapAction="server.wsrcs#fncListaRecebimentosCobradoraSemComissao" style="rpc"/>
+    <input><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+    <output><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+  </operation>
+  <operation name="fncConsultaLimiteCliente">
+    <soap:operation soapAction="server.wsrcs#fncConsultaLimiteCliente" style="rpc"/>
+    <input><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+    <output><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+  </operation>
+  <operation name="fncConsultaListaCidade">
+    <soap:operation soapAction="server.wsrcs#fncConsultaListaCidade" style="rpc"/>
+    <input><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+    <output><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+  </operation>
+  <operation name="fncConsultaCEP">
+    <soap:operation soapAction="server.wsrcs#fncConsultaCEP" style="rpc"/>
+    <input><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+    <output><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+  </operation>
+  <operation name="enviaArquivoOffline">
+    <soap:operation soapAction="server.wsrcs#enviaArquivoOffline" style="rpc"/>
+    <input><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+    <output><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+  </operation>
+  <operation name="fncListaAutorizado">
+    <soap:operation soapAction="server.wsrcs#fncListaAutorizado" style="rpc"/>
+    <input><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+    <output><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+  </operation>
+  <operation name="fncCadastraAutorizado">
+    <soap:operation soapAction="server.wsrcs#fncCadastraAutorizado" style="rpc"/>
+    <input><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+    <output><soap:body use="encoded" namespace="server.wsrcs" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+  </operation>
+</binding>
+<service name="server.wsrcs">
+  <port name="server.wsrcsPort" binding="tns:server.wsrcsBinding">
+    <soap:address location="https://sistema.ocrediario.com.br:443/wsrcs.php"/>
+  </port>
+</service>
+</definitions>

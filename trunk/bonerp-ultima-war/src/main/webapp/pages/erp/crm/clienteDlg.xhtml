@@ -1,0 +1,434 @@
+﻿<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:sec="http://www.springframework.org/security/tags">
+
+	<script type="text/javascript">
+		function checkCnpj() {
+			if (_$('iCnpj').val() == ''
+					|| _$('iCnpj').val() == '__.___.___/____-__') {
+				return false;
+			}
+			return true;
+		}
+
+		function checkCpf() {
+			if (_$('iCpf').val() == '' || _$('iCpf').val() == '___.___.___-__') {
+				return false;
+			}
+			return true;
+		}
+	</script>
+
+
+
+
+	<h:form id="frmCliente">
+
+		<p:dialog id="dlgForm" header="Cadastro de Cliente" position="top"
+			widgetVar="dlgForm" resizable="false" width="900" modal="true"
+			closable="true" closeOnEscape="true">
+
+			<p:outputPanel id="opnDlg">
+
+				<p:tabView id="tabViewCliente">
+
+					<p:tab title="Dados" id="tabDados">
+
+						<p:defaultCommand target="btnSalvar" />
+
+						<p:outputPanel id="opnDados">
+
+							<p:scrollPanel mode="native" style="height: 380px">
+
+
+								<p:outputPanel rendered="#{view.cadastrarSomente eq null}">
+									<fd:labelInput label="Tipo :" breakAfter="true"
+										labelWidth="110px">
+										<h:selectOneRadio value="#{view.e.pessoa.tipoPessoa}"
+											id="selTipoPessoa"
+											style="font-family: Tahoma, Verdana, sans-serif; font-size: 12px; font-weight: bold;">
+											<p:ajax event="change" update="opnDados"
+												process="selTipoPessoa" />
+											<f:selectItems value="#{lmBase.tipoPessoaValues}" var="_"
+												itemLabel="#{_.label}" itemValue="#{_}" />
+										</h:selectOneRadio>
+									</fd:labelInput>
+								</p:outputPanel>
+
+
+								<p:focus />
+
+								<f:validateBean disabled="true">
+									<fd:labelInput label="Código :" labelWidth="110px">
+										<p:inputText size="15" value="#{view.e.codigo}"
+											styleClass="maskInt" id="iCodigo">
+											<f:convertNumber integerOnly="true" />
+										</p:inputText>
+											 * Em branco para preenchimento automático.
+										</fd:labelInput>
+								</f:validateBean>
+
+								<fd:labelInput label="Dt Cadastro :" breakAfter="true"
+									alignRight="true">
+									<p:inputText value="#{view.e.iudt.inserted}" size="10"
+										readonly="true">
+										<f:convertDateTime pattern="dd/MM/yyyy" />
+									</p:inputText>
+								</fd:labelInput>
+
+								<fd:labelInput label="Canais :" labelWidth="110px"
+									breakAfter="true">
+									<p:selectManyCheckbox value="#{view.e.canais}"
+										converter="#{entityIdConverter}"
+										collectionType="java.util.ArrayList">
+										<f:attribute name="collectionType" value="java.util.ArrayList" />
+										<f:selectItems value="#{lmCrm.canais}" var="_"
+											itemLabel="#{_.descricao}" itemValue="#{_}" />
+									</p:selectManyCheckbox>
+								</fd:labelInput>
+
+
+
+								<hr />
+
+								<p:outputPanel
+									rendered="#{view.e.pessoa.tipoPessoa.inicial == 'J'}"
+									id="opnPJ">
+
+									<fd:labelInput label="CNPJ :" labelWidth="110px">
+										<p:inputMask size="20" id="iCnpj"
+											value="#{view.e.pessoa.documento}" mask="99.999.999/9999-99"
+											converter="#{docConverter}">
+											<p:ajax event="blur"
+												listener="#{clienteFormListView.updateDoc}"
+												onstart="return checkCnpj();" />
+										</p:inputMask>
+									</fd:labelInput>
+
+									<fd:labelInput label="Inscr Est :">
+										<p:inputText size="15" id="iInscrEst"
+											value="#{view.e.inscricaoEstadual}" />
+									</fd:labelInput>
+
+									<fd:labelInput label="Inscr Munic :" breakAfter="true">
+										<p:inputText size="15" id="iInscrMunic"
+											value="#{view.e.inscricaoMunicipal}" />
+									</fd:labelInput>
+
+									<fd:labelInput label="Razão Social :" labelWidth="110px"
+										breakAfter="true">
+										<p:inputText size="70" value="#{view.e.pessoa.nome}"
+											id="iNomePJ" />
+									</fd:labelInput>
+
+									<fd:labelInput label="Nome Fantasia :" labelWidth="110px"
+										breakAfter="true">
+										<p:inputText size="60" value="#{view.e.pessoa.nomeFantasia}"
+											id="iNomeFantasia" />
+									</fd:labelInput>
+
+
+								</p:outputPanel>
+
+								<p:outputPanel
+									rendered="#{view.e.pessoa.tipoPessoa.inicial == 'F'}">
+
+									<fd:labelInput label="CPF :" labelWidth="110px">
+										<p:inputMask size="16" id="iCpf"
+											value="#{view.e.pessoa.documento}" mask="999.999.999-99"
+											converter="#{docConverter}">
+											<p:ajax event="blur"
+												listener="#{clienteFormListView.updateDoc}"
+												onstart="return checkCpf();" />
+										</p:inputMask>
+									</fd:labelInput>
+
+									<fd:labelInput label="Nome :">
+										<p:inputText size="50" value="#{view.e.pessoa.nome}"
+											id="iNomePF" />
+									</fd:labelInput>
+
+									<fd:labelInput label="Dt Nasc. :" breakAfter="true"
+										alignRight="true">
+										<p:inputMask size="10" value="#{view.e.dtNascimento}"
+											autocomplete="off" mask="99/99/9999" id="iDtNasc"
+											style="text-align:center">
+											<f:convertDateTime pattern="dd/MM/yyyy" />
+										</p:inputMask>
+									</fd:labelInput>
+
+									<fd:labelInput label="RG :" labelWidth="110px">
+										<p:inputText size="10" value="#{view.e.rg}" id="iRg" />
+									</fd:labelInput>
+
+									<fd:labelInput label="Órgão Emis. :">
+										<p:inputText size="10" value="#{view.e.orgaoEmissorRG}"
+											id="iOrgaoEmisRG" />
+									</fd:labelInput>
+
+									<fd:labelInput label="UF Emis. :">
+										<p:selectOneMenu value="#{view.e.estadoRG}" id="iUfEmisRG">
+											<f:selectItem itemValue="" itemLabel="" />
+											<f:selectItems value="#{lmBase.ufValues}" var="uf"
+												itemLabel="#{uf.sigla}" itemValue="#{uf}" />
+										</p:selectOneMenu>
+									</fd:labelInput>
+
+									<fd:labelInput label="Dt Emis. RG :" breakAfter="true"
+										alignRight="true">
+										<p:inputMask size="10" value="#{view.e.dtEmissaoRG}"
+											autocomplete="off" mask="99/99/9999" id="iDtEmisRG"
+											style="text-align:center">
+											<f:convertDateTime pattern="dd/MM/yyyy" />
+										</p:inputMask>
+									</fd:labelInput>
+
+									<fd:labelInput label="Naturalidade :" labelWidth="110px">
+										<p:inputText size="50" value="#{view.e.naturalidade}"
+											id="iNaturalidade" />
+									</fd:labelInput>
+
+									<fd:labelInput label="Sexo :" labelWidth="50px"
+										breakAfter="true" alignRight="true">
+										<h:selectOneRadio value="#{view.e.sexo}" id="iSexo"
+											style="font-family: Tahoma, Verdana, sans-serif; font-size: 12px;">
+											<f:selectItems value="#{lmBase.sexoValues}" var="_"
+												itemLabel="#{_.label}" itemValue="#{_}" />
+										</h:selectOneRadio>
+									</fd:labelInput>
+								</p:outputPanel>
+
+
+
+								<hr />
+
+
+
+								<fd:labelInput label="Fone (1) :" labelWidth="110px">
+									<p:inputMask size="12" value="#{view.e.fone1}" id="iFone1"
+										mask="(99) 9999-9999?9" />
+								</fd:labelInput>
+
+								<fd:labelInput label="Fone (2) :" labelWidth="70px">
+									<p:inputMask size="12" value="#{view.e.fone2}" id="iFone2"
+										mask="(99) 9999-9999?9" />
+								</fd:labelInput>
+
+								<fd:labelInput label="Fone (3) :" labelWidth="70px">
+									<p:inputMask size="12" value="#{view.e.fone3}" id="iFone3"
+										mask="(99) 9999-9999?9" />
+								</fd:labelInput>
+
+								<fd:labelInput label="Fone (4) :" labelWidth="70px"
+									breakAfter="true">
+									<p:inputMask size="12" value="#{view.e.fone4}" id="iFone4"
+										mask="(99) 9999-9999?9" />
+								</fd:labelInput>
+
+								<fd:labelInput label="E-mail :" labelWidth="110px">
+									<p:inputText size="50" value="#{view.e.email}" id="iEmail"
+										style="text-transform: lowercase;" />
+								</fd:labelInput>
+
+								<fd:labelInput label="Contato :" alignRight="true"
+									breakAfter="true">
+									<p:inputText size="30" value="#{view.e.contato}" id="iContato" />
+								</fd:labelInput>
+
+
+								<hr />
+
+
+
+								<p:outputPanel id="opnEndereco">
+
+									<f:validateBean disabled="true">
+										<fd:labelInput label="Tipo Endereço :" labelWidth="110px"
+											breakAfter="true">
+
+											<h:selectOneRadio value="#{view.e.endereco.tipoEndereco}"
+												id="selTipoEndereco"
+												style="font-family: Tahoma, Verdana, sans-serif; font-size: 12px; font-weight: bold;">
+												<f:selectItems value="#{lmBase.tipoEnderecoValues}" var="_"
+													itemLabel="#{_.label}" itemValue="#{_}" />
+											</h:selectOneRadio>
+
+										</fd:labelInput>
+									</f:validateBean>
+
+									<fd:labelInput label="CEP :" labelWidth="110px"
+										breakAfter="true">
+										<p:inputMask mask="99999-999" size="10" id="iCep"
+											value="#{view.e.endereco.cep}" />
+										<p:commandButton icon="ui-icon-search" update="opnEndereco"
+											process="@this iCep"
+											actionListener="#{viaCEP2Endereco.convert(view.e.endereco)}" />
+									</fd:labelInput>
+
+									<div style="clear: both;" />
+
+									<fd:labelInput label="Logradouro :" labelWidth="110px">
+										<p:inputText size="40" value="#{view.e.endereco.logradouro}"
+											id="logradouro" />
+									</fd:labelInput>
+
+									<fd:labelInput label="Número :">
+										<p:inputText size="5" value="#{view.e.endereco.numero}"
+											id="numero" />
+									</fd:labelInput>
+
+									<fd:labelInput label="Complemento :" alignRight="true"
+										breakAfter="true">
+										<p:inputText size="10" value="#{view.e.endereco.complemento}"
+											id="complemento" />
+									</fd:labelInput>
+
+									<fd:labelInput label="Bairro :" labelWidth="110px"
+										breakAfter="true">
+										<p:inputText size="40" value="#{view.e.endereco.bairro}"
+											id="bairro" />
+									</fd:labelInput>
+
+									<fd:labelInput label="Cidade :" labelWidth="110px">
+										<p:inputText size="40" value="#{view.e.endereco.cidade}"
+											id="cidade" />
+									</fd:labelInput>
+
+									<fd:labelInput label="Estado :" breakAfter="true">
+										<p:selectOneMenu value="#{view.e.endereco.estado}" id="uf"
+											style="width: 180px">
+											<f:selectItem itemValue="" itemLabel="Selecione" />
+											<f:selectItems value="#{lmBase.ufValues}" var="uf"
+												itemLabel="#{uf.sigla}" itemValue="#{uf}" />
+										</p:selectOneMenu>
+									</fd:labelInput>
+
+
+								</p:outputPanel>
+
+								<fd:labelInput label="Obs. :" labelWidth="110px">
+									<p:inputTextarea rows="4" cols="75" value="#{view.e.obs}"
+										id="iObs" />
+								</fd:labelInput>
+
+								<div style="clear: both;" />
+
+								<!-- BOTÃO SALVAR -->
+								<div style="text-align: right; margin-top: -35px;">
+									<p:commandButton title="Salvar o registro atual" id="btnSalvar"
+										icon="ui-icon-save" value="Salvar" process="opnDados"
+										style="width: 110px" actionListener="#{viewAction[action]}"
+										update="#{update}"
+										oncomplete="afterFormSubmit(xhr, status, args);" />
+
+
+								</div>
+
+
+								<div style="clear: both;" />
+
+							</p:scrollPanel>
+
+						</p:outputPanel>
+					</p:tab>
+
+
+
+					<!-- PAINEL PARA ENDEREÇOS -->
+					<p:tab title="Endereços" id="tabEnderecos"
+						rendered="#{view.e ne null and view.e.id ne null and view.e.id gt 0}">
+
+						<p:toolbar>
+							<f:facet name="left">
+
+								<p:commandButton id="btnNovo"
+									actionListener="#{view.novoEndereco}" process="@this"
+									oncomplete="PF('dlgEndereco').show()" update="opnDados"
+									icon="ui-icon-document" title="Novo registro (N)" />
+
+								<p:commandButton id="btnAtualizar" title="Atualizar dados (A)"
+									update=":frm:opnDtList" process="@this" icon="ui-icon-refresh"
+									actionListener="#{view.limparFiltrosECarregar}" />
+
+							</f:facet>
+						</p:toolbar>
+
+
+						<p:outputPanel id="opnDtListEnderecos">
+
+
+
+							<p:dataTable id="dataTable" var="_" value="#{view.e.enderecos}"
+								rowIndexVar="row">
+
+								<p:column headerText="#" style="width: 1px">
+									<h:outputText value="#{row + 1}" />
+								</p:column>
+
+								<p:column headerText="Tipo"
+									style="width: 1px ; white-space: normal">
+									<h:outputText value="#{_.tipoEndereco}" />
+								</p:column>
+
+								<p:column headerText="Logradouro" style="white-space: normal">
+									<h:outputText
+										value="#{_.logradouro}, #{_.numero} (#{_.complemento})" />
+								</p:column>
+
+								<p:column headerText="Bairro" style="white-space: normal">
+									<h:outputText value="#{_.bairro}" />
+								</p:column>
+
+								<p:column headerText="Cidade-UF" style="white-space: normal">
+									<h:outputText value="#{_.cidade}-#{_.estado}" />
+								</p:column>
+
+								<p:column headerText="CEP" style="white-space: normal">
+									<h:outputText value="#{_.cep}" />
+								</p:column>
+
+								<p:column styleClass="noWrapColBtns">
+									<p:commandButton actionListener="#{view.setEndereco(_)}"
+										update=":frmEnderecoCliente:opnDados"
+										oncomplete="PF('dlgEndereco').show()" title="Editar registro"
+										icon="ui-icon-build" />
+
+									<p:commandButton process="@this"
+										update=":frmCliente:tabViewCliente:opnDtListEnderecos"
+										title="Deletar registro" icon="ui-icon-trash"
+										styleClass="red-btn">
+										<p:confirm />
+									</p:commandButton>
+
+								</p:column>
+							</p:dataTable>
+
+						</p:outputPanel>
+
+					</p:tab>
+
+				</p:tabView>
+
+
+			</p:outputPanel>
+
+		</p:dialog>
+
+
+	</h:form>
+
+
+	<ui:include src="/pages/erp/base/enderecoDlg.xhtml">
+		<ui:param name="formId" value="frmEnderecoCliente" />
+		<ui:param name="update"
+			value=":frmCliente:tabViewCliente:opnDtListEnderecos" />
+	</ui:include>
+
+
+
+</ui:composition>

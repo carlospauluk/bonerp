@@ -1,0 +1,120 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags">
+
+
+
+	<p:outputPanel id="opnCampos">
+
+		<p:focus for="iCliente" context="frm" />
+
+		<fd:labelInput label="Código :" labelWidth="100px">
+			<p:inputText size="15" value="#{view.e.id}" readonly="true" />
+		</fd:labelInput>
+
+		<fd:labelInput label="Preenchido por :">
+			<p:inputText size="30" value="#{view.e.preenchidoPor}" />
+		</fd:labelInput>
+
+		<fd:labelInput label="Dt Orçamento :" alignRight="true"
+			breakAfter="true">
+			<p:calendar styleClass="maskData" value="#{view.e.dtPreenchimento}"
+				locale="pt_BR" showOn="button" pattern="dd/MM/yyyy" size="12"
+				selectOtherMonths="true" showOtherMonths="true" />
+		</fd:labelInput>
+
+		<fd:labelInput labelWidth="100px" label="Status :" breakAfter="true">
+			<p:selectOneMenu id="iStatus" value="#{view.e.status}">
+				<f:selectItem itemValue="" itemLabel="" />
+				<f:selectItems value="#{lmOrcamentos.statusOrcamento}" var="st"
+					itemLabel="#{st.label}" itemValue="#{st}" />
+			</p:selectOneMenu>
+		</fd:labelInput>
+
+		<p:outputPanel id="opnCliente">
+			<fd:labelInput labelWidth="100px" label="Cliente :">
+				<p:autoComplete id="iCliente" size="80" value="#{view.e.cliente}"
+					var="c" itemLabel="#{c.pessoa.nome}" itemValue="#{c}" maxResults="50"
+					forceSelection="false" completeMethod="#{clienteFinder.findByStr}"
+					minQueryLength="3" converter="#{entityIdConverter}">
+					
+				</p:autoComplete>
+				<p:spacer width="4" />
+
+				<p:commandButton id="btnBuscaCliente" title="Buscar Clientes"
+					onclick="PF('dlgBuscaCliente').show()"
+					actionListener="#{clienteDlgBuscaView.resetBusca}"
+					update=":frmDlgBuscaCliente:opnDlgBuscaCliente" process="@this"
+					icon="ui-icon-search" />
+
+				<p:commandButton id="btnNovoCliente" title="Inserir novo Cliente"
+					onclick="PF('dlgForm').show()" update=":frmCliente:opnDlg"
+					actionListener="#{clienteFormListView.novo}" process="@this"
+					icon="ui-icon-document" />
+
+			</fd:labelInput>
+		</p:outputPanel>
+
+		<fd:labelInput label="Válido até :" alignRight="true"
+			breakAfter="true">
+			<p:calendar styleClass="maskData" value="#{view.e.dtValidade}"
+				locale="pt_BR" showOn="button" pattern="dd/MM/yyyy" size="12"
+				selectOtherMonths="true" showOtherMonths="true" />
+		</fd:labelInput>
+
+		<fd:labelInput label="Sub-total :" labelWidth="100px">
+			<p:inputText size="10" value="#{view.e.subTotal}" readonly="true"
+				style="text-align: right;" converter="#{doubleConverterAbs}">
+			</p:inputText>
+		</fd:labelInput>
+
+		<fd:labelInput label="Desconto :">
+			<p:inputText size="6" value="#{view.e.desconto}"
+				style="text-align: right;" styleClass="maskMoney"
+				converter="#{doubleConverterAbs}">%
+						</p:inputText>
+		</fd:labelInput>
+
+		<fd:labelInput label="Valor Total :">
+			<p:inputText size="10" value="#{view.e.total}" readonly="true"
+				style="text-align: right;" converter="#{doubleConverterAbs}">
+			</p:inputText>
+		</fd:labelInput>
+
+		<fd:labelInput alignRight="true" breakAfter="true">
+			<p:selectBooleanCheckbox value="#{view.e.exibirTotais}"
+				label="Exibir totais" itemLabel="Exibir Totais" />
+		</fd:labelInput>
+
+		<fd:labelInput label="Cabeçalho :" labelWidth="100px"
+			breakAfter="true">
+			<p:inputTextarea id="iCabecalho" rows="4" cols="130"
+				value="#{view.e.cabecalho}" />
+		</fd:labelInput>
+
+		<p:contextMenu for="iCabecalho">
+			<p:menuitem value="Gerar automaticamente"
+				actionListener="#{view.gerarCabecalho}" update="iCabecalho"
+				icon="ui-icon-refresh" />
+		</p:contextMenu>
+
+		<fd:labelInput label="Obs. :" labelWidth="100px" breakAfter="true">
+			<p:inputTextarea id="iObs" rows="4" cols="130" value="#{view.e.obs}" />
+		</fd:labelInput>
+
+		<p:contextMenu for="iObs">
+			<p:menuitem value="Gerar automaticamente"
+				actionListener="#{view.gerarObsPadrao}" update="iObs"
+				icon="ui-icon-refresh" />
+		</p:contextMenu>
+
+
+
+	</p:outputPanel>
+
+
+</ui:composition>

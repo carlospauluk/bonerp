@@ -1,0 +1,571 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.0.1.final using JasperReports Library version 6.0.0  -->
+<!-- 2016-05-07T15:11:41 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rpOrcamento" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isSummaryWithPageHeaderAndFooter="true" uuid="2a67a703-1e4b-425d-9d18-40e739567676">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="63"/>
+	<property name="ireport.callouts" value="##Mon Nov 10 10:25:51 BRST 2014"/>
+	<parameter name="orcamentoId" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+    o.id,
+    o.cabecalho,
+    o.dt_preenchimento,
+    o.dt_validade,
+    o.exibir_totais,
+    o.obs,
+    o.preenchido_por,
+    o.tipo_orcamento,
+    o.updated,
+    o.desconto,
+    g.id as grupoId,
+    g.ordem as grupoOrdem,
+    g.titulo,
+    g.obs as grupoObs,
+    i.ordem as itemOrdem,
+    i.descricao as itemDescricao,
+    i.qtde,
+    i.valor_unit,
+    (i.qtde * i.valor_unit) as sub_total,
+    (SELECT round(truncate(( SUM(i_.qtde * i_.valor_unit * ((100-o_.desconto)/100) ) ), 3) + 0.0001, 2)
+FROM
+    orc_orcamento o_,
+    orc_orcamento_grupo_item g_,
+    orc_orcamento_item i_
+WHERE
+	o_.id = o.id AND
+	i_.orcamento_grupo_id = g_.id AND g_.orcamento_id = o_.id) as valor_total
+FROM
+    orc_orcamento o,
+    orc_orcamento_grupo_item g,
+    orc_orcamento_item i
+WHERE
+	o.id = $P{orcamentoId} AND
+	i.orcamento_grupo_id = g.id AND g.orcamento_id = o.id
+ORDER BY
+	g.ordem, i.ordem]]>
+	</queryString>
+	<field name="id" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="cabecalho" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="dt_preenchimento" class="java.sql.Timestamp">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="dt_validade" class="java.sql.Timestamp">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="exibir_totais" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="obs" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="preenchido_por" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="tipo_orcamento" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="updated" class="java.sql.Timestamp">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="desconto" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="grupoId" class="java.lang.Long"/>
+	<field name="grupoOrdem" class="java.lang.Integer"/>
+	<field name="titulo" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="grupoObs" class="java.lang.String"/>
+	<field name="itemOrdem" class="java.lang.Integer"/>
+	<field name="itemDescricao" class="java.lang.String"/>
+	<field name="qtde" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="valor_unit" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="sub_total" class="java.lang.Double"/>
+	<field name="valor_total" class="java.lang.Double"/>
+	<variable name="sub_total_1" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{sub_total}]]></variableExpression>
+	</variable>
+	<group name="grupoId">
+		<groupExpression><![CDATA[$F{grupoId}]]></groupExpression>
+		<groupHeader>
+			<band height="17">
+				<textField>
+					<reportElement mode="Opaque" x="0" y="0" width="555" height="17" backcolor="#CCCCCC" uuid="4d7064fb-b677-4c5b-bfe6-eba96df8242e"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" isBold="true" isItalic="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{titulo}]]></textFieldExpression>
+				</textField>
+			</band>
+			<band height="30">
+				<staticText>
+					<reportElement x="0" y="0" width="25" height="30" uuid="0f722fc1-88e9-46b7-9fed-6a982224609e"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[#]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="25" y="0" width="336" height="30" uuid="e599051d-0e82-4f51-9621-4957a377bc06"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Item]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="486" y="0" width="69" height="30" uuid="be33c420-93ca-49e7-ba7d-d54b1505d97b"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Valor Total
+(R$)]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="417" y="0" width="69" height="30" uuid="0b4500a9-d3bc-4a8d-9e55-526b3bf12533"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Valor Unit.
+(R$)]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="361" y="0" width="56" height="30" uuid="b765b6fe-3d2b-48dc-afef-5b4a8779b9fc"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Qtde]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="15">
+				<printWhenExpression><![CDATA[$F{grupoObs} != null]]></printWhenExpression>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="0" y="0" width="555" height="15" uuid="85b5aee5-7641-46c6-ae6c-9d3e38f37602"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="6" isItalic="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{grupoObs}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="119" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement isPrintRepeatedValues="false" x="0" y="71" width="555" height="31" uuid="185fa0cd-c078-47ee-acaf-7212e38f2216"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Lucida Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cabecalho}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="0" y="0" width="190" height="55" uuid="9b39bbdf-6c49-475a-8cba-99a8ca043cf1"/>
+				<imageExpression><![CDATA["../LOGO_COMPLETO_400px.jpg"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="263" y="0" width="292" height="32" uuid="7c87a2c9-af2d-484e-a824-32fd537abe1e"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="24" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Orçamento]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="59" width="555" height="1" uuid="9a7ff124-7392-4313-95da-59e5fc154a23"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<textField pattern="0000000">
+				<reportElement x="499" y="36" width="56" height="20" uuid="5d18f100-4eb0-4f0a-abc9-af79185055af"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{id}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="399" y="36" width="100" height="20" uuid="ba42ba61-3b22-43f6-8fec-8025c1a406fd"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Lucida Sans"/>
+				</textElement>
+				<text><![CDATA[Nº:]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="25" height="15" uuid="82f0ee33-1152-4470-9807-2b6091edb9e7"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{itemOrdem}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="25" y="0" width="336" height="15" uuid="d9932d14-3119-4739-8dd4-b73c67fcef34"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{itemDescricao}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,###,##0.000" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="361" y="0" width="56" height="15" uuid="f9f94096-d589-473f-8dca-ceaf126fbef6"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{qtde}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,###,##0.00" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="417" y="0" width="69" height="15" uuid="2a76a723-8ec9-40ba-8537-4c4fd93513c6"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_unit}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,###,##0.00" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="486" y="0" width="69" height="15" uuid="37c375a0-1746-44b3-a493-ec516d4b9118"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sub_total}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="84">
+			<staticText>
+				<reportElement x="525" y="72" width="15" height="12" uuid="351d9b87-113f-4c94-90d0-76334a5f2303"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[de]]></text>
+			</staticText>
+			<textField pattern="00">
+				<reportElement x="510" y="72" width="15" height="12" uuid="0593f3e3-6f2e-4e78-96e7-7dbe4741e68f"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="00">
+				<reportElement x="540" y="72" width="15" height="12" uuid="87933d26-6425-4bb1-8212-f735913d6f80"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="7" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="44" width="246" height="10" uuid="c0255e42-8890-4989-abc2-95371ed60e28"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="8"/>
+				</textElement>
+				<text><![CDATA[COMERCIAL DE TECIDOS PAULUK LTDA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="309" y="44" width="246" height="10" uuid="7312aa30-e0c4-4818-bad9-aab31dc8e01c"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="8"/>
+				</textElement>
+				<text><![CDATA[I.E.: 20103024-23          CNPJ: 77.498.442/0001-34]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="54" width="246" height="10" uuid="a8a778b9-6838-4a90-9fd9-f0adb6d3a1fe"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="8"/>
+				</textElement>
+				<text><![CDATA[Av. Dom Pedro II, 337  .  Nova Rússia  .  Ponta Grossa-PR  .  CEP 84053-000]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="246" y="54" width="309" height="10" uuid="df5daca7-befa-4e10-b45e-e446f6275dd8"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="8"/>
+				</textElement>
+				<text><![CDATA[(42) 3227.6657   (42) 3227.6650     contato@casabonsucesso.com.br]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="41" width="555" height="1" uuid="062d8f98-acf3-4676-bb6a-ac9a2b0eeec5"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<textField>
+				<reportElement x="0" y="72" width="378" height="12" uuid="dbb9b888-d16f-4750-9fe8-c0c1c3b8f121"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="6" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Preenchido por " + $F{preenchido_por} + " em " + new SimpleDateFormat("dd/MM/YYYY").format($F{dt_preenchimento})]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="258" splitType="Immediate">
+			<staticText>
+				<reportElement x="169" y="169" width="217" height="82" uuid="dc2accf6-d270-4513-af4b-3690bbff2782"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Lucida Sans"/>
+				</textElement>
+				<text><![CDATA[COMERCIAL DE TECIDOS PAULUK LTDA]]></text>
+			</staticText>
+			<textField>
+				<reportElement positionType="Float" x="0" y="149" width="555" height="20" uuid="b6560f54-f469-43a4-a20b-b7ab6f7eebc5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="8" isBold="true" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("'PONTA GROSSA,' dd 'de' MMMM 'de' YYYY").format( $F{dt_preenchimento} )]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="0" y="128" width="555" height="18" uuid="696a1fd8-4c65-497b-aed9-a1aa33825d4e"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{obs}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="88" width="56" height="16" uuid="edc215bd-43c5-424d-987f-9b56afa9bb8e"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="8" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Válido até:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="56" y="88" width="100" height="16" uuid="d58340b6-e483-4149-ac48-41bebdd0f332"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{dt_validade}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="108" width="100" height="20" uuid="412f3323-cad3-4a5e-9d0a-e04be4e8622c">
+					<printWhenExpression><![CDATA[$F{obs} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="8" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Observações:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="149" y="169" width="257" height="67" uuid="5a044fc9-d125-4b33-ba26-24ef6094e519"/>
+				<box>
+					<bottomPen lineWidth="0.25"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<frame>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="555" height="32" isRemoveLineWhenBlank="true" uuid="17ced22a-75e0-4396-bc78-6b4474c49bad"/>
+				<textField pattern="#,##0.00" isBlankWhenNull="false">
+					<reportElement mode="Opaque" x="486" y="0" width="69" height="16" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#CCCCCC" uuid="8329c795-d9c7-4e94-986a-92dee3f5cfc6">
+						<printWhenExpression><![CDATA[$F{exibir_totais}.equals( true ) && $F{desconto} != 0.0]]></printWhenExpression>
+					</reportElement>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Lucida Sans" size="9" isBold="true" isItalic="true" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{sub_total_1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="">
+					<reportElement mode="Opaque" x="486" y="16" width="69" height="16" isRemoveLineWhenBlank="true" backcolor="#CCCCCC" uuid="d5483aeb-4cda-4aa4-9359-b5720196fe65">
+						<printWhenExpression><![CDATA[$F{exibir_totais}.equals( true ) && $F{desconto} != 0.0]]></printWhenExpression>
+					</reportElement>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[new java.text.DecimalFormat( "#,###,###,##0.00" ).format($F{desconto}) + "%"]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement mode="Opaque" x="0" y="16" width="486" height="16" isRemoveLineWhenBlank="true" backcolor="#CCCCCC" uuid="c45e4405-1182-4380-a3cd-c7ba687f2ec8">
+						<printWhenExpression><![CDATA[$F{exibir_totais}.equals( true ) && $F{desconto} != 0.0]]></printWhenExpression>
+					</reportElement>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="9" isItalic="true"/>
+					</textElement>
+					<text><![CDATA[Desconto (%):]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="0" y="0" width="486" height="16" isRemoveLineWhenBlank="true" backcolor="#CCCCCC" uuid="e13eca84-8c4b-4185-99fb-9a6ae4c018e0">
+						<printWhenExpression><![CDATA[$F{exibir_totais}.equals( true ) && $F{desconto} != 0.0]]></printWhenExpression>
+					</reportElement>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="9" isItalic="true"/>
+					</textElement>
+					<text><![CDATA[Sub-total (R$):]]></text>
+				</staticText>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="0" y="32" width="555" height="25" uuid="d2de5c7c-9d59-4565-a3a1-d877434fba03"/>
+				<staticText>
+					<reportElement mode="Opaque" x="0" y="0" width="486" height="25" backcolor="#CCCCCC" uuid="b8bac16b-f733-40ed-af73-99fa5f123645">
+						<printWhenExpression><![CDATA[$F{exibir_totais}.equals( true )]]></printWhenExpression>
+					</reportElement>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="9" isItalic="true"/>
+					</textElement>
+					<text><![CDATA[Total (R$):]]></text>
+				</staticText>
+				<textField pattern="#,##0.00">
+					<reportElement mode="Opaque" x="486" y="0" width="69" height="25" backcolor="#CCCCCC" uuid="f8eff9fd-3b9d-4366-92b7-10fb42314cbd">
+						<printWhenExpression><![CDATA[$F{exibir_totais}.equals( true )]]></printWhenExpression>
+					</reportElement>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Lucida Sans" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{valor_total}]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</summary>
+</jasperReport>

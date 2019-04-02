@@ -1,0 +1,253 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/templates/template.xhtml">
+
+
+	<ui:define name="content">
+
+		<div id="_slnm_graficoVendas" />
+
+		<ui:param name="view" value="#{graficoVendasView}" />
+
+		<h:form id="frm">
+
+			<p:panel id="panel" header="Relatório Vendas">
+
+				<p:spacer height="8" />
+
+				<p:outputPanel id="opnVendedores">
+					<fd:labelInput label="Funcionário :" labelWidth="100px"
+						breakAfter="true">
+						<p:selectOneMenu value="#{view.vendedor}" id="iFuncionario"
+							converter="#{entityIdConverter}"
+							style="font-family: Tahoma, Verdana, sans-serif; font-size: 12px; font-weight: bold;">
+
+							<p:ajax event="change" update=":frm" process="@all" />
+
+							<f:selectItem itemValue="" itemLabel="" />
+							<f:selectItems value="#{view.getVendedores()}" var="f"
+								itemLabel="#{f.pessoa.nome}" itemValue="#{f}" />
+						</p:selectOneMenu>
+						 - 
+						<p:selectBooleanCheckbox value="#{view.somenteVendedoresAtuais}">
+							<p:ajax event="change" update="opnVendedores" process="@this" />
+						</p:selectBooleanCheckbox> Somente atuais
+					</fd:labelInput>
+				</p:outputPanel>
+
+				<fd:labelInput label="Período (ini) :" labelWidth="100px">
+					<p:inputText styleClass="maskData" value="#{view.periodoIni}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</p:inputText>
+				</fd:labelInput>
+
+				<fd:labelInput label="Período (fim) :">
+					<p:inputText styleClass="maskData" value="#{view.periodoFim}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</p:inputText>
+				</fd:labelInput>
+
+				<fd:labelInput label="Tipo de Gráfico :">
+					<p:selectOneRadio value="#{view.tipoGrafico}" id="iTipoGrafico"
+						style="font-family: Tahoma, Verdana, sans-serif; font-size: 12px; font-weight: bold;">
+
+						<f:selectItem itemValue="T" itemLabel="Totais de Vendas" />
+						<f:selectItem itemValue="P" itemLabel="Posições" />
+					</p:selectOneRadio>
+				</fd:labelInput>
+
+				<fd:labelInput label="Exibir Ranking Geral :" breakAfter="true">
+					<p:selectBooleanButton value="#{view.exibirRankingGeral}"
+						id="iExibirRankingGeral" onLabel="Sim" offLabel="Não"
+						style="font-family: Tahoma, Verdana, sans-serif; font-size: 12px; font-weight: bold;" />
+				</fd:labelInput>
+
+				<fd:labelInput label="Média Posições :" labelWidth="100px"
+					breakAfter="true">
+					<p:inputText styleClass="maskQtde"
+						value="#{view.getMediaPosicoes(view.vendedor)}" readonly="true" />
+				</fd:labelInput>
+
+				<fd:labelInput label="Média % Meta :" labelWidth="100px">
+					<p:inputText styleClass="maskQtde"
+						value="#{view.getMediaPorcentMeta(view.vendedor)}" readonly="true"
+						converter="#{doubleConverterNull}" />%
+				</fd:labelInput>
+
+				<fd:labelInput noLabel="true" breakAfter="true">
+
+					<p:defaultCommand target="btnAtualizar" scope="frm" />
+
+					<p:commandButton id="btnAtualizar" update=":frm"
+						icon="ui-icon-save" value="Atualizar" style="width: 200px" />
+
+					<p:commandButton id="btnReprocessar" update=":frm"
+						icon="ui-icon-save" value="Reprocessar"
+						actionListener="#{view.processar}" />
+
+				</fd:labelInput>
+
+				<p:spacer height="10px" />
+
+				<div style="clear: both;" />
+
+				<p:outputPanel id="opnGrafico"
+					rendered="#{view.totaisVendasModel ne null}">
+
+					<p:outputPanel rendered="#{view.tipoGrafico eq 'T'}">
+
+						<p:outputPanel
+							rendered="#{view.getTotalVendasModelByVendedor() ne null}">
+							<p:chart type="line" id="lineChartVendas"
+								model="#{view.getTotalVendasModelByVendedor()}"
+								rendered="#{view.tipoGrafico eq 'T'}" style="height:300px;" />
+						</p:outputPanel>
+
+						<p:spacer height="30px" />
+
+						<p:panel header="Histórico Vendas">
+
+							<p:dataTable value="#{view.historicoVendas[view.vendedor]}"
+								rowIndexVar="row" var="_">
+
+								<p:column headerText="#" style="width: 1px">
+									<h:outputText value="#{row + 1}" />
+								</p:column>
+
+								<p:column headerText="Mês/Ano">
+									<h:outputText value="#{_.mesAno}">
+										<f:convertDateTime pattern="MMM/yyyy" />
+									</h:outputText>
+								</p:column>
+
+								<p:column headerText="Histórico">
+								R$ <h:outputText value="#{_.historico}"
+										converter="#{doubleConverterNull}" />
+								</p:column>
+
+								<p:column headerText="Meta">
+								R$ <h:outputText value="#{_.meta}"
+										converter="#{doubleConverterNull}" />
+								</p:column>
+
+								<p:column headerText="Total Vendedor">
+								R$ <h:outputText value="#{_.totalVendas}"
+										converter="#{doubleConverterNull}" />
+								</p:column>
+
+								<p:column headerText="%">
+									<h:outputText value="#{_.porcent}"
+										converter="#{doubleConverterNull}" />%
+							</p:column>
+
+								<p:column headerText="Considera Mês">
+									<h:outputText value="#{_.mesConsidera ? 'Sim' : 'Não'}" />
+								</p:column>
+
+							</p:dataTable>
+
+						</p:panel>
+
+					</p:outputPanel>
+
+					<p:outputPanel rendered="#{view.tipoGrafico eq 'P'}">
+
+						<p:outputPanel
+							rendered="#{view.getPosicaoModelByVendedor() ne null}">
+
+
+							<p:chart type="bar" id="barChartVendas"
+								model="#{view.getPosicaoModelByVendedor()}"
+								style="height:300px;" />
+
+						</p:outputPanel>
+
+						<div style="clear: both;" />
+						<p:spacer height="10px" />
+
+						<div style="clear: both;" />
+
+						<p:spacer height="20px" />
+
+						<p:panel header="Histórico Posições">
+
+							<p:dataTable value="#{view.posicoesMes[view.vendedor]}"
+								rowIndexVar="row" var="_">
+
+								<p:column headerText="#" style="width: 1px">
+									<h:outputText value="#{row + 1}" />
+								</p:column>
+
+								<p:column headerText="Mês/Ano">
+									<h:outputText value="#{_.mesAno}">
+										<f:convertDateTime pattern="MMM/yyyy" />
+									</h:outputText>
+								</p:column>
+
+								<p:column headerText="Posição">
+									<h:outputText value="#{_.posicao}" />
+								</p:column>
+							</p:dataTable>
+
+						</p:panel>
+
+					</p:outputPanel>
+
+
+
+
+					<p:outputPanel rendered="#{view.exibirRankingGeral}">
+
+						<div style="clear: both;" />
+
+						<p:spacer height="20px" />
+
+						<p:panel header="Ranking Geral">
+
+							<p:dataTable value="#{view.rankingGeral}" rowIndexVar="row"
+								var="_">
+								<p:column headerText="#" style="width: 1px">
+									<h:outputText value="#{row + 1}" />
+								</p:column>
+
+								<p:column headerText="Funcionário">
+									<h:outputText value="#{_.vendedor.pessoa.nome}" />
+								</p:column>
+
+								<p:column headerText="Média Posições">
+									<h:outputText value="#{_.mediaPosicoes}"
+										converter="#{doubleConverterNull}" />
+								</p:column>
+
+								<p:column headerText="Média % Meta">
+									<h:outputText value="#{_.mediaPorcentMeta}"
+										converter="#{doubleConverterNull}" />%
+							</p:column>
+
+							</p:dataTable>
+
+						</p:panel>
+
+					</p:outputPanel>
+
+
+				</p:outputPanel>
+
+
+				<p:spacer height="10px" />
+
+				<div style="clear: both;" />
+
+
+			</p:panel>
+
+		</h:form>
+
+
+	</ui:define>
+
+</ui:composition>

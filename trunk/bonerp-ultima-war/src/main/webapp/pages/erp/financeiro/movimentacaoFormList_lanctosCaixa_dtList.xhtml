@@ -1,0 +1,172 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:param name="__TOTAL_ENTRADAS" value="TOTAL_ENTRADAS_#{sufixoTotalizacao}" />
+	<ui:param name="__TOTAL_SAIDAS" value="TOTAL_SAIDAS_#{sufixoTotalizacao}" />
+	<ui:param name="__TOTAL_MOVIMENTADO" value="TOTAL_MOVIMENTADO_#{sufixoTotalizacao}" />
+
+	
+	<p:dataTable var="_" rowIndexVar="row" rowKey="#{_}" rendered="#{dtList.size() gt 0}"	
+		emptyMessage="Nenhum registro encontrado."
+		value="#{dtList}" sortBy="#{_.valorTotal}"
+		rowStyleClass="#{movimentacaoExtratoListView.getRowStyleClass(_)}">
+		
+		<f:facet name="header">#{tituloDtList}</f:facet>
+
+		<p:columnGroup type="header">
+			<p:row rendered="#{exibirSaldoAnterior eq true and view.totalizacoes['SALDO_ANTERIOR'] ne null}">
+				<p:column colspan="6" headerText="Saldo Anterior (R$): "
+					style="text-align: right" />
+				<p:column style="text-align: right; font-weight: bold">
+					<f:facet name="header">
+						<h:outputText value="#{view.totalizacoes['SALDO_ANTERIOR']}"
+							converter="#{doubleConverter}" />
+					</f:facet>
+				</p:column>
+				<p:column />
+				<p:column style="height: 50px" />
+			</p:row>
+
+			<p:row>
+				<p:column headerText="#" width="15" />
+				<p:column headerText="Código" width="30" />
+				<p:column headerText="Tipo Lancto" width="150" />
+				<p:column headerText="Categoria" width="200" />
+				<p:column headerText="Modo" width="150" />
+				<p:column headerText="Descrição" />
+				<p:column headerText="Valor Total" sortBy="#{_.valorTotal}" width="80" />
+				<p:column headerText="Alterado em" width="80" />
+				<p:column headerText="" />
+			</p:row>
+
+		</p:columnGroup>
+
+		<p:column>
+			<h:outputText value="#{row + 1}" />
+		</p:column>
+
+		<p:column>
+			<h:outputText value="#{_.id}" />
+		</p:column>
+
+		<p:column>
+			<h:outputText value="#{_.tipoLancto.label}" />
+		</p:column>
+
+		<p:column>
+			<h:outputText
+				value="#{_.categoria.codigoM} - #{_.categoria.descricao}" />
+		</p:column>
+
+		<p:column>
+			<h:outputText value="#{_.modo.codigo} - #{_.modo.descricao}" />
+		</p:column>
+
+		<p:column>
+			<div style="float: left">
+				<h:outputText value="#{_.descricaoMontada}" escape="false"
+					style="white-space: pre-wrap;" />
+			</div>
+
+			<p:outputPanel rendered="#{_.cadeia ne null}" style="float: right">
+				<p:commandButton action="#{movimentacaoFormView.iniEdit(_)}"
+					process="@this" update=":frmDlgCadeia:opnDlg"
+					oncomplete="PF('dlgCadeia').show()"
+					title="Exibir cadeia de movimentações" icon="ui-icon-list" />
+			</p:outputPanel>
+		</p:column>
+
+		<p:column>
+			<div style="text-align: right">
+				<h:outputText value="#{_.valorTotal}"
+					converter="#{doubleConverter}" />
+			</div>
+		</p:column>
+
+		<p:column>
+			<h:outputText value="#{_.iudt.updated}">
+				<f:convertDateTime pattern="dd/MM/yy HH:mm" />
+			</h:outputText>
+		</p:column>
+
+
+		<p:column styleClass="noWrapColBtns">
+
+			<p:commandButton action="#{view.setE(_)}" process="@this"
+				update=":frmDlg:opnDlg" oncomplete="PF('dlgMovimentacao').show()"
+				title="Editar registro" icon="ui-icon-build" />
+
+			<p:commandButton action="#{view.deletar(_)}" title="Deletar registro"
+				process="@this" icon="ui-icon-trash" update=":frm" styleClass="red-btn">
+				<p:confirm />
+			</p:commandButton>
+		</p:column>
+
+		<p:columnGroup type="footer">
+
+			<p:row
+				rendered="#{view.totalizacoes[__TOTAL_SAIDAS] ne null}">
+				<p:column colspan="6" footerText="Total Débitos (R$): "
+					style="text-align: right; font-weight: bold" />
+				<p:column style="text-align: right; font-weight: bold">
+					<f:facet name="footer">
+						<h:outputText value="#{view.totalizacoes[__TOTAL_SAIDAS]}"
+							converter="#{doubleConverter}" />
+					</f:facet>
+				</p:column>
+				<p:column />
+				<p:column />
+			</p:row>
+			<p:row
+				rendered="#{view.totalizacoes[__TOTAL_ENTRADAS] ne null}">
+				<p:column colspan="6" footerText="Total Créditos (R$): "
+					style="text-align: right; font-weight: bold" />
+				<p:column style="text-align: right; font-weight: bold">
+					<f:facet name="footer">
+						<h:outputText
+							value="#{view.totalizacoes[__TOTAL_ENTRADAS]}"
+							converter="#{doubleConverter}" />
+					</f:facet>
+				</p:column>
+				<p:column />
+				<p:column />
+			</p:row>
+			<p:row
+				rendered="#{view.totalizacoes[__TOTAL_MOVIMENTADO] ne null}">
+				<p:column colspan="6" footerText="Total Movimentado (R$): "
+					style="text-align: right; font-weight: bold" />
+				<p:column style="text-align: right; font-weight: bold">
+					<f:facet name="footer">
+						<h:outputText
+							value="#{view.totalizacoes[__TOTAL_MOVIMENTADO]}"
+							converter="#{doubleConverter}" />
+					</f:facet>
+				</p:column>
+				<p:column />
+				<p:column />
+			</p:row>
+
+			<p:row rendered="#{exibirSaldoPosterior eq true and view.totalizacoes['SALDO_POSTERIOR'] ne null}">
+				<p:column colspan="6" footerText="Saldo Posterior (R$): "
+					style="text-align: right; font-weight: bold" />
+				<p:column style="text-align: right; font-weight: bold">
+					<f:facet name="footer">
+						<h:outputText value="#{view.totalizacoes['SALDO_POSTERIOR']}"
+							converter="#{doubleConverter}" />
+					</f:facet>
+				</p:column>
+				<p:column />
+				<p:column style="height: 50px" />
+			</p:row>
+
+
+		</p:columnGroup>
+	</p:dataTable>
+
+</ui:composition>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.0.1.final using JasperReports Library version 6.0.0  -->
+<!-- 2016-01-05T15:31:49 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Catalogo_fotos" columnCount="2" printOrder="Horizontal" pageWidth="566" pageHeight="595" columnWidth="278" columnSpacing="10" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="174b962a-1e2d-46cd-afd7-4ae2d6376ae2">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="bonerp_prod"/>
+	<property name="com.jaspersoft.studio.unit." value="cm"/>
+	<parameter name="catalogo_item_id" class="java.lang.Long">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+	</parameter>
+	<parameter name="arquivosDir" class="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT
+    foto.id,
+	foto.nome_arquivo,
+    COALESCE(artigo.descricao,'') as descricao
+FROM 
+	prod_catalogo_item_foto foto 
+    	LEFT JOIN prod_catalogo_fotoitemartigo fia ON fia.foto_id = foto.id
+        LEFT JOIN prod_catalogo_item_artigo artigo ON fia.item_artigo_id = artigo.id
+WHERE
+    foto.catalogo_item_id = $P{catalogo_item_id}
+	AND artigo.descricao NOT LIKE '%JAQUETA%'
+GROUP BY foto.id
+ORDER BY foto.nome_arquivo]]>
+	</queryString>
+	<field name="descricao" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="nome_arquivo" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="id" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="165" splitType="Stretch">
+			<property name="local_mesure_unitheight" value="pixel"/>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.HorizontalRowLayout"/>
+			<image hAlign="Center" vAlign="Middle" isLazy="true">
+				<reportElement x="0" y="0" width="278" height="165" uuid="32ee9726-8116-40e6-9862-3bc60de7d024">
+					<property name="local_mesure_unitwidth" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="local_mesure_unitx" value="cm"/>
+					<property name="com.jaspersoft.studio.unit.x" value="cm"/>
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<imageExpression><![CDATA[$P{arquivosDir} + $F{nome_arquivo}]]></imageExpression>
+			</image>
+		</band>
+	</detail>
+</jasperReport>

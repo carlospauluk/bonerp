@@ -1,0 +1,36 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags">
+
+
+	<!-- Passar como parâmetro a variável 'update' -->
+		
+	<h:form id="frmDlgBusca">
+		<p:dialog id="dlgBusca" header="Buscar Orcamento"
+			widgetVar="dlgBusca" resizable="false" position="top"
+			modal="true"   closable="true"
+			closeOnEscape="true" >
+
+			<p:outputPanel id="opnDlgBusca">
+			
+				<p:defaultCommand target="btnBuscar" scope="frmDlgBusca" />
+
+				<fd:labelInput label="dejkle: ">
+					<p:inputText size="65"
+						value="#{orcamentoCortinaListView.filtros['filtro1']}" />					
+				</fd:labelInput>
+
+				<fd:labelInput noLabel="true" breakAfter="true" alignRight="true">
+					<p:commandButton actionListener="#{orcamentoCortinaListView.buscar}"
+						id="btnBuscar"	icon="ui-icon-search" update="opnDlgBusca" />
+				</fd:labelInput>
+				
+			</p:outputPanel>
+		</p:dialog>
+	</h:form>
+
+</ui:composition>

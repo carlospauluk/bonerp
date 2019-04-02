@@ -1,0 +1,400 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:p="http://primefaces.org/ui" template="/templates/template.xhtml">
+
+
+
+	<ui:define name="headFirst">
+		<script src="#{resource['js/helpers.js']}" type="text/javascript"></script>
+	</ui:define>
+
+	<ui:param name="view" value="#{movimentacaoListagemListView}" />
+
+	<ui:define name="content">
+	
+	<div id="_slnm_movimentacaoList_listagem" />
+
+		<style type="text/css">
+
+.movimentEntrada {
+	color: blue;
+}
+
+.movimentSaida {
+	color: red;
+}
+
+.movimentSaida:hover {
+	background: #ff9999 !important;
+}
+
+.movimentEntrada:hover {
+	background: #99ccff !important;
+}
+</style>
+
+		<!-- exibição de mensagem caso usuário não tenha permissão de acesso -->
+		<sec:authorize ifNotGranted="ROLE_FINANCEIRO">
+			<div class="errorMsg">Usuário sem autorização para acessar este
+				recurso.</div>
+		</sec:authorize>
+
+		<sec:authorize ifAnyGranted="ROLE_FINANCEIRO">
+
+
+			<h:form id="frm">
+
+				<p:panel id="panel" header="Listagem - Movimentações Financeiras">
+
+					<p:spacer height="8" />
+
+					<p:outputPanel id="opnToolbar">
+						<p:toolbar>
+							<f:facet name="left">
+
+								<p:splitButton value="Lançar Conta a Pagar/Receber"
+									actionListener="#{movimentacaoFormView.novo('A_PAGAR_RECEBER')}"
+									title="Lançar uma movimentação 'a pagar' ou 'a receber'"
+									oncomplete="PF('dlgMovimentacao_A_PAGAR_RECEBER').show()"
+									process="@this"
+									update=":frmMovimentacao_A_PAGAR_RECEBER:opnDlgMovimentacao"
+									icon="ui-icon-document" id="splitButtonMovimentacao">
+
+									<p:menuitem value="Lançar Movimentação 'Realizada'"
+										style="width: 300px"
+										actionListener="#{movimentacaoFormView.novo('REALIZADA')}"
+										title="Lançar uma movimentação já 'realizada'"
+										oncomplete="PF('dlgMovimentacao_REALIZADA').show()"
+										process="@this"
+										update=":frmMovimentacao_REALIZADA:opnDlgMovimentacao"
+										icon="ui-icon-document" />
+
+									<p:menuitem value="Lançar Cheque Próprio"
+										actionListener="#{movimentacaoFormView.novo('CHEQUE_PROPRIO')}"
+										title="Lançar uma movimentação realizada com cheque próprio"
+										oncomplete="PF('dlgMovimentacao_CHEQUE_PROPRIO').show()"
+										process="@this"
+										update=":frmMovimentacao_CHEQUE_PROPRIO:opnDlgMovimentacao"
+										icon="ui-icon-document" />
+
+									<p:menuitem value="Lançar Cheque de Terceiro"
+										actionListener="#{movimentacaoFormView.novo('CHEQUE_TERCEIROS')}"
+										title="Lançar uma movimentação realizada com cheque de terceiros"
+										oncomplete="PF('dlgMovimentacao_CHEQUE_TERCEIROS').show()"
+										process="@this"
+										update=":frmMovimentacao_CHEQUE_TERCEIROS:opnDlgMovimentacao"
+										icon="ui-icon-document" />
+
+									<p:menuitem value="Lançar Transferência Própria"
+										actionListener="#{movimentacaoFormView.novo('TRANSF_PROPRIA')}"
+										title="Lançar uma transferência entre carteiras próprias"
+										oncomplete="PF('dlgMovimentacao_TRANSF_PROPRIA').show()"
+										process="@this"
+										update=":frmMovimentacao_TRANSF_PROPRIA:opnDlgMovimentacao"
+										icon="ui-icon-document" />
+
+									<p:menuitem value="Lançar Transf./Recolhimento de Caixa"
+										actionListener="#{movimentacaoFormView.novo('TRANSF_CAIXA')}"
+										title="Lançar uma movimentação de tranferência/recolhimento de caixa"
+										oncomplete="PF('dlgMovimentacao_TRANSF_CAIXA').show()"
+										process="@this"
+										update=":frmMovimentacao_TRANSF_CAIXA:opnDlgMovimentacao"
+										icon="ui-icon-document" />
+
+									<p:menuitem value="Lançar Estorno/Correção"
+										actionListener="#{movimentacaoFormView.novo('ESTORNO_CORRECAO')}"
+										title="Lançar uma cadeia de estorno/correção"
+										oncomplete="PF('dlgMovimentacao_ESTORNO_CORRECAO').show()"
+										process="@this"
+										update=":frmMovimentacao_ESTORNO_CORRECAO:opnDlgMovimentacao"
+										icon="ui-icon-document" />
+
+								</p:splitButton>
+
+								<p:commandButton id="btnAtualizar" title="Atualizar dados (A)"
+									update="opnDtList opnToolbar :frm:opnCamposPesquisa"
+									process="@this" icon="ui-icon-refresh"
+									action="#{view.limparFiltrosECarregar}" />
+
+								<p:spacer width="20px" />
+
+								<p:inputText
+									value="#{view.isFiltrando() ? 'FILTRANDO' : 'SEM FILTROS'}"
+									readonly="true" />
+
+								<p:spacer width="20px" />
+
+								<p:menuButton value="Imprimir">
+
+									<p:menuitem value="Contas a Pagar"
+										actionListener="#{view.checkRelContasAbertas}"
+										icon="ui-icon-print" oncomplete="openDlg(xhr, status, args)"
+										process="opnToolbar" />
+
+									<p:menuitem value="Ficha de Movimentação"
+										actionListener="#{movimentacaoFormView.checkRelFichaMovimentacao}"
+										icon="ui-icon-print" oncomplete="openDlg(xhr, status, args)"
+										process="@this :frm:opnDtList" />
+
+								</p:menuButton>
+
+								<p:spacer width="10px" />
+
+								<p:commandButton icon="ui-icon-play-circle-outline" value="Alterar em Lote"
+									oncomplete="openDlg(xhr, status, args);"
+									actionListener="#{movimentacaoFormView.iniAlterarEmLote}"
+									process="@this :frm:opnDtList" title="Alterar em Lote"
+									update=":frmMovimentacao_lote:opnDlgMovimentacaoLote" />
+
+								<p:spacer width="10px" />
+
+							</f:facet>
+
+							<f:facet name="right">
+
+
+								<p:outputPanel id="opnPesquisaRapida">
+
+
+									<h:outputText value="Registros: " />
+									<p:selectOneMenu editable="true" value="#{view.qtdeRegistros}"
+										id="selQtdeRegistros">
+										<p:ajax event="change" listener="#{view.updateQtdeRegistros}"
+											update=":frm:opnDtList" process="@this" />
+										<f:selectItems value="#{lmView.qtdeRegistrosValues}" var="_"
+											itemLabel="#{_}" itemValue="#{_}" />
+									</p:selectOneMenu>
+
+								</p:outputPanel>
+
+							</f:facet>
+						</p:toolbar>
+					</p:outputPanel>
+
+					<p:spacer height="10" />
+
+
+					<p:outputPanel id="opnLoadList">
+						<p:remoteCommand id="rcLoadList" name="loadList"
+							actionListener="#{view.loadList}"
+							oncomplete="postAjaxSortTable(PF('dataTable1Widget'))"
+							autoRun="false" update="opnDtList opnToolbar opnCamposPesquisa"
+							process="@this dtList" />
+					</p:outputPanel>
+
+					<div class="ui-grid ui-grid-responsive">
+
+						<div class="ui-grid-row">
+
+							<div class="ui-grid-col-2">
+
+								<p:panel id="horizontal" header="Pesquisa" toggleable="true"
+									closable="false" toggleOrientation="horizontal">
+
+									<ui:include src="movimentacaoList_camposPesquisa.xhtml" />
+
+								</p:panel>
+
+							</div>
+
+							<div class="ui-grid-col-10">
+
+								<p:outputPanel id="opnDtList">
+
+									<p:dataTable id="dtList" var="_" rowIndexVar="row"
+										selection="#{movimentacaoFormView.selecteds}" rowKey="#{_}"
+										widgetVar="dataTable1Widget" binding="#{view.dataTable}"
+										emptyMessage="Nenhum registro encontrado."
+										value="#{view.list}"
+										rowStyleClass="#{view.getRowStyleClass(_)}">
+
+										<p:ajax event="sort" listener="#{view.onSort}" />
+
+										<p:column selectionMode="multiple" style="width:2%" />
+
+										<p:column headerText="Código" sortBy="#{_.id}" width="50">
+											<h:outputText value="#{_.id}" id="otId" />
+										</p:column>
+
+
+										<p:column headerText="St" width="30">
+											<h:graphicImage
+												value="#{resource['images/'.concat(_.status.icone).concat('.png')]}"
+												title="#{_.status.label}" width="24" />
+										</p:column>
+
+										<p:column>
+											<f:facet name="header">
+												<h:outputText value="Categoria" />
+												<br />
+												<h:outputText value="Carteira" />
+											</f:facet>
+
+											<h:outputText
+												value="#{_.categoria.codigoM} - #{_.categoria.descricao}" />
+											<br />
+											<h:outputText
+												value="#{_.carteira.codigo} - #{_.carteira.descricao}" />
+										</p:column>
+
+										<p:column sortBy="#{_.descricaoMontada}">
+											<f:facet name="header">
+												<h:outputText value="Descrição" />
+												<br />
+												<h:outputText value="Sacado/Cedente" />
+											</f:facet>
+											<div style="float: left">
+												<b> <h:outputText value="#{_.descricaoMontada}"
+														escape="false" style="white-space: pre-wrap;" /></b>
+												<p:outputPanel rendered="#{_.pessoa.nomeExibicao ne null}">
+													<h:outputText value="#{_.pessoa.nomeExibicao}" />
+												</p:outputPanel>
+											</div>
+											<p:outputPanel rendered="#{_.cadeia ne null}"
+												style="float: right">
+												<p:commandButton action="#{movimentacaoFormView.iniEdit(_)}"
+													process="@this" update=":frmDlgCadeia:opnDlg"
+													oncomplete="PF('dlgCadeia').show()"
+													title="Exibir cadeia de movimentações"
+													icon="ui-icon-list" />
+											</p:outputPanel>
+											<!-- é de um parcelamento -->
+											<p:outputPanel rendered="#{_.parcelamento ne null}"
+												style="float: right">
+												<p:commandButton
+													actionListener="#{movimentacaoFormView.iniEdit(_)}"
+													process="@this" update=":frmDlgParcelamento:opnDlg"
+													oncomplete="PF('dlgParcelamento').show()"
+													title="Exibir parcelamento" icon="ui-icon-list" />
+											</p:outputPanel>
+
+										</p:column>
+
+										<p:column sortBy="#{_.dtUtil}" headerText="Data" width="50">
+											<div style="text-align: center">
+												<h:outputText value="#{_.dtUtil}" id="otDtUtil" title="#{_.infoDatas()}">
+													<f:convertDateTime pattern="dd/MM/yyyy" />
+												</h:outputText>
+											</div>
+										</p:column>
+
+										<p:column headerText="Valor Total" sortBy="#{_.valorTotal}"
+											width="80">
+											<div style="text-align: right">
+												<h:outputText value="#{_.valorTotal}" id="otValorTotal"
+													converter="#{doubleConverter}" title="#{_.infoValores()}" />
+											</div>
+										</p:column>
+
+										<p:column styleClass="noWrapColBtns" style="width: 115px"
+											sortBy="#{_.iudt.updated}">
+											<ui:include src="movimentacaoList_btns.xhtml" />
+											<div style="text-align: center">
+												<p:spacer height="15px" />
+												<h:outputText value="#{_.iudt.updated}" style="">
+													<f:convertDateTime pattern="dd/MM/yy HH:mm" />
+												</h:outputText>
+											</div>
+										</p:column>
+
+										<p:columnGroup type="footer">
+											<p:row
+												rendered="#{view.totalizacoes['TOTAL_SAIDAS'] ne null}">
+												<p:column colspan="6" footerText="Total Débitos (R$): "
+													style="text-align: right; font-weight: bold" />
+												<p:column style="text-align: right; font-weight: bold">
+													<f:facet name="footer">
+														<h:outputText value="#{view.totalizacoes['TOTAL_SAIDAS']}"
+															converter="#{doubleConverter}" />
+													</f:facet>
+												</p:column>
+												<p:column colspan="2" />
+											</p:row>
+											<p:row
+												rendered="#{view.totalizacoes['TOTAL_ENTRADAS'] ne null}">
+												<p:column colspan="6" footerText="Total Créditos (R$): "
+													style="text-align: right; font-weight: bold" />
+												<p:column style="text-align: right; font-weight: bold">
+													<f:facet name="footer">
+														<h:outputText
+															value="#{view.totalizacoes['TOTAL_ENTRADAS']}"
+															converter="#{doubleConverter}" />
+													</f:facet>
+												</p:column>
+												<p:column colspan="2" />
+											</p:row>
+											<p:row
+												rendered="#{view.totalizacoes['TOTAL_MOVIMENTADO'] ne null}">
+												<p:column colspan="6" footerText="Total Movimentado (R$): "
+													style="text-align: right; font-weight: bold" />
+												<p:column style="text-align: right; font-weight: bold">
+													<f:facet name="footer">
+														<h:outputText
+															value="#{view.totalizacoes['TOTAL_MOVIMENTADO']}"
+															converter="#{doubleConverter}" />
+													</f:facet>
+												</p:column>
+												<p:column colspan="2" />
+											</p:row>
+
+										</p:columnGroup>
+
+										<f:facet name="footer"> Total de Registros: #{fn:length(view.list)}</f:facet>
+									</p:dataTable>
+
+
+
+								</p:outputPanel>
+
+
+
+
+							</div>
+						</div>
+					</div>
+
+
+				</p:panel>
+
+
+
+
+			</h:form>
+
+
+
+			<ui:include src="/pages/erp/base/pessoaForm.xhtml" />
+
+			<ui:include src="movimentacaoList_includes_forms.xhtml" />
+
+			<ui:include src="movimentacaoForm_dlg.xhtml" />
+
+			<ui:include src="movimentacaoForm_alterarEmLote.xhtml" />
+
+			<ui:include src="/templates/dlgRelatorio.xhtml">
+				<ui:param name="sufix" value="FichaMovimentacao" />
+				<ui:param name="titulo" value="Ficha de Movimentação" />
+				<ui:param name="view" value="#{movimentacaoFormView}" />
+			</ui:include>
+
+			<ui:include src="/templates/dlgRelatorio.xhtml">
+				<ui:param name="sufix" value="ContasAbertas" />
+				<ui:param name="titulo" value="Contas a Pagar" />
+			</ui:include>
+
+			<ui:include src="/templates/entityIdDlg.xhtml" />
+
+
+		</sec:authorize>
+	</ui:define>
+
+
+
+
+
+</ui:composition>

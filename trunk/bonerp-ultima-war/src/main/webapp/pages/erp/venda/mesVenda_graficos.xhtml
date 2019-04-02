@@ -1,0 +1,31 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:p="http://primefaces.org/ui">
+
+
+	<ui:param name="view" value="#{mesVendaGraficosView}" />
+
+	<h:form id="frmMesVendaGraficos">
+
+		<p:dialog id="dlgPieVendas" widgetVar="dlgPieVendas" position="top"
+			fitViewport="true" header="Qtde Vendas / Vendedores" modal="true"
+			resizable="false" closeOnEscape="true" width="800">
+
+			<p:outputPanel id="opnDlg">
+
+				<p:chart type="bar"
+					responsive="true"
+					model="#{view.chartModelVendasVendedores}" style="width:700px;height:600px" />
+			
+			</p:outputPanel>
+			
+		</p:dialog>
+	</h:form>
+	
+
+</ui:composition>

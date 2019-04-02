@@ -1,0 +1,142 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:fd="http://ocabit.com.br/facelets">
+
+	<h:form id="frmItem">
+
+		<p:dialog id="dlgItem" header="Item" widgetVar="dlgItem"
+			resizable="false" width="1000" modal="true" position="top"
+			closable="true" closeOnEscape="true">
+
+			<p:outputPanel id="opnDlgItem">
+
+				<p:focus for="iCodigo" context="opnDlgItem" />
+
+				<fd:labelInput label="Código :" labelWidth="130px">
+					<p:inputText size="8" value="#{view.item.codigo}" id="iCodigo" />
+				</fd:labelInput>
+
+				<fd:labelInput label="NCM :">
+					<p:inputText id="iNCM" size="12" value="#{view.item.ncm}"
+						styleClass="maskIntSemPonto" maxlength="8" />
+				</fd:labelInput>
+				
+				<fd:labelInput label="Ordem :">
+					<p:inputText id="iOrdem" size="12" value="#{view.item.ordem}"
+						styleClass="maskIntSemPonto" maxlength="8" />
+				</fd:labelInput>
+
+				<fd:labelInput label="CFOP :" alignRight="true" breakAfter="true">
+					<p:inputText id="iCFOP" size="12" value="#{view.item.cfop}" />
+				</fd:labelInput>
+
+				<fd:labelInput label="ICMS Alíquota:" labelWidth="130px">
+					<p:inputText value="#{view.item.icmsAliquota}" id="iIcms"
+						styleClass="maskQtde" size="15">
+						<f:convertNumber maxFractionDigits="3" minFractionDigits="3" />
+					</p:inputText>%
+				</fd:labelInput>
+				
+				<fd:labelInput label="ICMS Valor BC :">
+					<p:inputText value="#{view.item.icmsValorBC}" id="iIcmsValorBC"
+						styleClass="maskMoney" size="10" converter="#{doubleConverterAbsNull}" />
+				</fd:labelInput>
+				
+				<fd:labelInput label="ICMS Valor :" alignRight="true" breakAfter="true">
+					<p:inputText value="#{view.item.icmsValor}" id="iIcmsValor"
+						styleClass="maskMoney" size="10" converter="#{doubleConverterAbsNull}" />
+				</fd:labelInput>
+
+
+				<fd:labelInput label="Descrição :" labelWidth="130px">
+					<p:inputTextarea id="iDescricao" rows="4" cols="80"
+						value="#{view.item.descricao}" />
+				</fd:labelInput>
+
+				<fd:labelInput label="Unidade :" alignRight="true" breakAfter="true">
+					<p:selectOneMenu id="iUnidade" value="#{view.item.unidade}">
+						<f:selectItem itemLabel="" itemValue="" />
+						<f:selectItems value="#{lmEstoque.unidadesProduto}" var="u"
+							itemLabel="#{u.label}" itemValue="#{u.label}"
+							itemDescription="#{u.descricao}" />
+					</p:selectOneMenu>
+				</fd:labelInput>
+
+				<p:outputPanel id="iValores">
+					<fd:labelInput label="Qtde :" labelWidth="130px">
+						<p:inputText value="#{view.item.qtde}" id="iQtde"
+							styleClass="maskQtde" size="8">
+							<f:convertNumber maxFractionDigits="3" minFractionDigits="3" />
+						</p:inputText>
+					</fd:labelInput>
+
+					<fd:labelInput label="Valor Unit. :">
+						<p:inputText value="#{view.item.valorUnit}" size="9"
+							styleClass="maskMoney" id="iValorUnit"
+							converter="#{doubleConverterAbsNull}">
+							<p:ajax listener="#{view.item.calculaTotais}" event="blur"
+								process="iQtde iValorUnit" global="false" update="iValores" />
+						</p:inputText>
+					</fd:labelInput>
+
+					<fd:labelInput label="Subtotal :">
+						<p:inputText value="#{view.item.subTotal}" size="9"
+							styleClass="maskMoney" id="iSubTotal"
+							converter="#{doubleConverterAbsNull}">
+						</p:inputText>
+					</fd:labelInput>
+
+					<fd:labelInput label="Desconto :">
+						<p:inputText value="#{view.item.valorDesconto}" size="9"
+							styleClass="maskMoney" id="iDesconto"
+							converter="#{doubleConverterAbsNull}">
+							<p:ajax listener="#{view.item.calculaTotais}" event="blur"
+								process="iSubTotal iDesconto" global="false" update="iValores" />
+						</p:inputText>
+					</fd:labelInput>
+
+					<div class="fieldsRight">
+						<fd:labelInput noLabel="true">
+							<p:ajaxStatus widgetVar="asValorTotal">
+								<f:facet name="start">
+									<h:graphicImage value="#{resource['images/ajaxloading.gif']}" />
+								</f:facet>
+								<f:facet name="complete">
+									<h:outputText value="" />
+								</f:facet>
+							</p:ajaxStatus>
+						</fd:labelInput>
+						<fd:labelInput label="Valor Total :">
+							<p:inputText value="#{view.item.valorTotal}" size="11"
+								id="iValorTotal" styleClass="maskMoney"
+								converter="#{doubleConverterAbsNull}" />
+						</fd:labelInput>
+					</div>
+				</p:outputPanel>
+				<div style="clear: both" />
+				<p:spacer height="30px" />
+
+				<!-- BUTTONS -->
+				<div style="float: right;">
+
+					<p:commandButton title="Salvar o registro atual" id="btnSalvarItem"
+						icon="ui-icon-save" value="Salvar" style="width: 150px"
+						actionListener="#{view.saveItem}" update=":frm" process=":frmItem:opnDlgItem"
+						oncomplete="afterFormSubmit(xhr, status, args);" />
+
+					<p:defaultCommand target="btnSalvarItem" scope="frmItem" />
+
+				</div>
+			</p:outputPanel>
+
+		</p:dialog>
+
+	</h:form>
+
+
+
+</ui:composition>

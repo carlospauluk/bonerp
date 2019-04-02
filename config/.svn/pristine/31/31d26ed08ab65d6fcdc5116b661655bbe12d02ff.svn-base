@@ -1,0 +1,4 @@
+database.driver=com.mysql.jdbc.Driver
+database.url=jdbc:mysql://www.ocabit.com/bonerp?useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true
+database.username=bonerp
+database.password=BonERP@Bonsu1954-

@@ -1,0 +1,194 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	template="/templates/template.xhtml">
+
+	<ui:define name="headFirst">
+		<script src="#{resource['js/helpers.js']}" type="text/javascript"></script>
+	</ui:define>
+
+	<ui:define name="content">
+	
+		<div id="_slnm_vincularCupom" />
+
+		<sec:authorize ifNotGranted="ROLE_CRM_ADMIN">
+			<div class="errorMsg">Usuário sem autorização para acessar este
+				recurso.</div>
+		</sec:authorize>
+
+		<sec:authorize ifAnyGranted="ROLE_CRM_ADMIN">
+
+			<ui:param name="view" value="#{cupomFormListView}" />
+
+			<h:form id="frm">
+
+				<p:panel id="panel" header="Vincular Cupom a Cliente"
+					style="width: 1000px">
+
+					<p:focus for="iCupomCodigo" />
+
+
+					<p:outputPanel id="opnDlgCupom">
+
+						<p:messages severity="warn,error" />
+
+						<fd:labelInput label="Cupom :" labelWidth="100px"
+							breakAfter="true">
+							<p:inputText size="50" value="#{view.e.codigo}" id="iCupomCodigo">
+								<p:ajax process="@this" update="opnDlgCupom"
+									listener="#{view.updateCupomVincular}" />
+							</p:inputText>
+							<p:commandButton actionListener="#{view.novo}" update=":frm"
+								value="Limpar" process="@this" />
+						</fd:labelInput>
+
+
+
+						<p:spacer height="50px" />
+
+						<fd:labelInput labelWidth="100px" label="Campanha :"
+							breakAfter="true">
+							<p:inputText size="80" id="iCampanha"
+								value="#{view.e.loteCupom.campanhaPromo.descricao}"
+								readonly="true" />
+						</fd:labelInput>
+
+						<fd:labelInput labelWidth="100px" label="Lote :" breakAfter="true">
+							<p:inputText size="50" value="#{view.e.loteCupom.numLote}"
+								readonly="true" />
+						</fd:labelInput>
+
+						<fd:labelInput label="Emitido por :" labelWidth="100px">
+							<p:inputText size="30" value="#{view.e.loteCupom.emitidoPor}"
+								readonly="true" />
+						</fd:labelInput>
+
+						<fd:labelInput label="Dt Emissão :" breakAfter="true">
+							<p:inputText value="#{view.e.loteCupom.dtEmissao}"
+								id="iDtEmissao" widgetVar="iDtEmissao" readonly="true">
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</p:inputText>
+						</fd:labelInput>
+
+						<fd:labelInput label="Dt Início :" labelWidth="100px">
+							<p:calendar styleClass="maskData"
+								value="#{view.e.loteCupom.campanhaPromo.dtInicio}"
+								locale="pt_BR" showOn="button" pattern="dd/MM/yyyy" size="12"
+								selectOtherMonths="true" showOtherMonths="true" />
+						</fd:labelInput>
+
+						<fd:labelInput label="Dt Validade :" breakAfter="true">
+							<p:calendar styleClass="maskData"
+								value="#{view.e.loteCupom.campanhaPromo.dtFim}" locale="pt_BR"
+								pages="2" pattern="dd/MM/yyyy" size="12"
+								selectOtherMonths="true" showOtherMonths="true" />
+						</fd:labelInput>
+
+						<fd:labelInput label="Status :" labelWidth="100px">
+							<p:inputText size="30" value="#{view.e.status.label}"
+								readonly="true" />
+						</fd:labelInput>
+
+						<fd:labelInput label="Dt Vinculação :">
+							<p:calendar styleClass="maskData" value="#{view.e.dtVinculacao}"
+								readonly="true" locale="pt_BR" showOn="button" pattern="dd/MM/yyyy"
+								size="12" selectOtherMonths="true" showOtherMonths="true" />
+						</fd:labelInput>
+
+						<fd:labelInput label="Dt Utilização :" breakAfter="true">
+							<p:calendar styleClass="maskData" value="#{view.e.dtUtilizacao}"
+								readonly="true" locale="pt_BR" showOn="button" pattern="dd/MM/yyyy"
+								size="12" selectOtherMonths="true" showOtherMonths="true" />
+						</fd:labelInput>
+
+						<p:outputPanel id="opnCliente">
+							<fd:labelInput labelWidth="100px" label="Cliente :"
+								breakAfter="true">
+								
+								<p:inputMask size="20" id="iCpf" value="#{view.e.cliente.pessoa.documento}"
+									mask="999.999.999-99" converter="#{docConverter}" disabled="#{!view.vinculavel}">
+									<p:ajax event="blur" listener="#{view.updateCpf}" process="@this" update="opnCliente" />
+								</p:inputMask>									
+								
+								<p:autoComplete id="iCliente" size="50"
+									disabled="#{!view.vinculavel}"
+									value="#{view.e.cliente}" var="cliente"
+									itemLabel="#{cliente.pessoa.nome}" itemValue="#{cliente}"
+									forceSelection="false" maxResults="99999"
+									completeMethod="#{instituicaoFinder.findVinculosClientesPossiveis}"
+									minQueryLength="0" converter="#{entityIdConverter}">
+									<p:ajax event="itemSelect" process="@this" update="iCpf" /> 
+								</p:autoComplete>
+								
+								<p:spacer width="4" />
+
+								<p:commandButton id="btnBuscaCliente" title="Buscar Clientes"
+									disabled="#{!view.vinculavel}"
+									onclick="PF('dlgBuscaCliente').show()"
+									actionListener="#{clienteDlgBuscaView.resetBusca}"
+									update=":frmDlgBuscaCliente:opnDlgBuscaCliente" process="@this"
+									icon="ui-icon-search" />
+
+								<p:commandButton id="btnNovoCliente"
+									disabled="#{!view.vinculavel}" title="Inserir novo Cliente"
+									onclick="PF('dlgForm').show()" update=":frmCliente:opnDlg"
+									actionListener="#{clienteFormListView.novo('PESSOA_FISICA')}" process="@this"
+									icon="ui-icon-document" />
+							</fd:labelInput>
+						</p:outputPanel>
+
+						<fd:labelInput label="Obs. :" labelWidth="100px" breakAfter="true">
+							<p:inputTextarea id="iObs" rows="4" cols="160"
+								disabled="#{!view.vinculavel}" value="#{view.e.obs}" />
+						</fd:labelInput>
+
+
+						<p:spacer width="20" />
+
+
+						<fd:labelInput noLabel="true" alignRight="true">
+							<p:commandButton title="Vincular o cliente ao cupom"
+								rendered="#{view.vinculavel}" id="btnVincular" update=":frm"
+								icon="ui-icon-save" value="Vincular" style="width: 110px"
+								actionListener="#{view.vincular}">
+								<p:confirm />
+							</p:commandButton>
+
+							<p:defaultCommand target="btnVincular" scope=":frm" />
+
+						</fd:labelInput>
+
+
+
+					</p:outputPanel>
+
+				</p:panel>
+
+			</h:form>
+
+			<ui:include src="/pages/erp/crm/clienteDlgBusca.xhtml">
+				<ui:param name="update" value=":frm:opnCliente" />
+				<ui:param name="viewSelec" value="#{view}" />
+				<ui:param name="action" value="selCliente" />
+			</ui:include>
+
+			<ui:include src="/pages/erp/crm/clienteDlg.xhtml">
+				<ui:param name="view" value="#{cupomFormListView.clienteFormListView}" />
+				<ui:param name="viewAction" value="#{cupomFormListView}" />
+				<ui:param name="action" value="saveCliente" />
+				<ui:param name="update" value=":frm:opnCliente" />
+			</ui:include>
+			
+			
+
+		</sec:authorize>
+
+	</ui:define>
+
+
+</ui:composition>

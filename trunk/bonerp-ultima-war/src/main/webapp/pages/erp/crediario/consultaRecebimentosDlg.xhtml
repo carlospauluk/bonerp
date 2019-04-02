@@ -1,0 +1,181 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags">
+
+	<sec:authorize ifNotGranted="ROLE_CREDIARIO_ADMIN">
+		<div class="errorMsg">Usuário sem autorização para acessar este
+			recurso.</div>
+	</sec:authorize>
+
+	<sec:authorize ifAnyGranted="ROLE_CREDIARIO_ADMIN">
+
+
+		<!-- FORM ALTERAR EM LOTE -->
+		<h:form id="frmDlg">
+
+			<p:dialog id="dlgForm" header="Detalhes da Parcela (PREV2000)" widgetVar="dlgForm"
+				resizable="false" width="850" modal="true"  position="top"
+				 closable="true" closeOnEscape="true">
+
+				<p:outputPanel id="opnDlg">
+
+
+
+					<fd:labelInput label="Código da Venda :" labelWidth="120px"
+						breakAfter="true">
+						<p:inputText size="15" value="#{e.vendaParcela.codVenda}"
+							readonly="true" />
+					</fd:labelInput>
+
+					<fd:labelInput label="Cliente :" labelWidth="120px"
+						breakAfter="true">
+						<p:inputText size="15" value="#{e.vendaParcela.codCliente}"
+							readonly="true" />
+						<p:inputText size="50" value="#{e.vendaParcela.nome}"
+							readonly="true" />
+					</fd:labelInput>
+
+					<fd:labelInput label="CPF :" labelWidth="120px" breakAfter="true">
+						<p:inputMask size="50" value="#{e.vendaParcela.cpf}"
+							readonly="true" mask="999.999.999-99" converter="#{docConverter}" />
+					</fd:labelInput>
+
+					<fd:labelInput label="PV :" labelWidth="120px">
+						<p:inputText size="15" value="#{e.vendaParcela.pv}"
+							readonly="true" />
+					</fd:labelInput>
+
+					<fd:labelInput label="Ano :">
+						<p:inputText size="10" value="#{e.vendaParcela.ano}"
+							readonly="true" />
+					</fd:labelInput>
+
+					<fd:labelInput label="Cartão :" breakAfter="true">
+						<p:inputText size="10"
+							value="#{e.vendaParcela.cartao ? 'Sim' : 'Não'}" readonly="true" />
+					</fd:labelInput>
+
+					<fd:labelInput label="Fatura :" labelWidth="120px">
+						<p:inputText size="15" value="#{e.vendaParcela.fatura}"
+							readonly="true" />
+					</fd:labelInput>
+
+					<fd:labelInput label="Dt Compra :" breakAfter="true">
+						<p:inputText size="15" value="#{e.vendaParcela.dtCompra}"
+							readonly="true">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</p:inputText>
+					</fd:labelInput>
+
+					<fd:labelInput label="Total da Compra :" labelWidth="120px">
+						<p:inputText size="15" value="#{e.vendaParcela.vlrTotalCompra}"
+							readonly="true" style="text-align: right;"
+							converter="#{doubleConverterAbsNull}" />
+					</fd:labelInput>
+
+					<div style="clear: both" />
+					<p:spacer height="30px" />
+					<div style="clear: both" />
+
+					<fd:labelInput label="Núm. da Parcela :" labelWidth="120px">
+						<p:inputText size="7" value="#{e.vendaParcela.numParcela}"
+							readonly="true" style="text-align: right;" />
+					</fd:labelInput>
+
+					<fd:labelInput label="Dt Vencto :" breakAfter="true">
+						<p:inputText size="15" value="#{e.vendaParcela.dtVencto}"
+							readonly="true">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</p:inputText>
+					</fd:labelInput>
+
+					<fd:labelInput label="Valor da Parcela :" labelWidth="120px">
+						<p:inputText size="15" value="#{e.vendaParcela.vlrParcela}"
+							readonly="true" style="text-align: right;"
+							converter="#{doubleConverterAbsNull}" />
+					</fd:labelInput>
+
+					<fd:labelInput label="Juros :">
+						<p:inputText size="10" value="#{e.vendaParcela.juros}"
+							readonly="true" style="text-align: right;"
+							converter="#{doubleConverterAbsNull}" />
+					</fd:labelInput>
+
+					<fd:labelInput label="Desconto :">
+						<p:inputText size="10" value="#{e.vendaParcela.desconto}"
+							readonly="true" style="text-align: right;"
+							converter="#{doubleConverterAbsNull}" />
+					</fd:labelInput>
+
+					<fd:labelInput label="Valor Pago :" alignRight="true"
+						breakAfter="true">
+						<p:inputText size="15" value="#{e.vendaParcela.vlrPago}"
+							readonly="true" style="text-align: right;"
+							converter="#{doubleConverterAbsNull}" />
+					</fd:labelInput>
+
+					<fd:labelInput label="Dt Pagto :" labelWidth="120px"
+						breakAfter="true">
+						<p:inputText size="15" value="#{e.vendaParcela.dtPagto}"
+							readonly="true">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</p:inputText>
+					</fd:labelInput>
+
+					<p:spacer height="30px" />
+
+
+					<p:outputPanel id="opnBaixa">
+
+						<fd:labelInput label="Dt Baixa :" labelWidth="120px"
+							breakAfter="true">
+							<p:inputText size="15" value="#{e.vendaParcela.dtBaixa}"
+								readonly="true">
+								<f:convertDateTime pattern="dd/MM/yy HH:mm" />
+							</p:inputText>
+						</fd:labelInput>
+
+						<fd:labelInput label="Motivo Baixa :" labelWidth="120px"
+							breakAfter="true">
+							<p:inputTextarea cols="100" rows="6" value="#{e.vendaParcela.motivoBaixa}"
+								readonly="true" />
+						</fd:labelInput>
+
+						<p:outputPanel
+							rendered="#{e.vendaParcela.dtPagto eq null and e.vendaParcela.dtBaixa eq null}">
+
+							<div style="text-align: right; margin-top: -30px">
+							
+								<p:defaultCommand target="btnBaixar" scope="frmDlg" />
+								
+								<p:commandButton id="btnBaixar" icon="ui-icon-save"
+									value="Baixar Parcela" process="@this" update="opnDlg"
+									oncomplete="afterFormSubmit(xhr, status, args);"
+									actionListener="#{view.baixarParcela}">
+									<p:confirm />
+								</p:commandButton>
+								
+							</div>
+
+						</p:outputPanel>
+
+					</p:outputPanel>
+
+
+				</p:outputPanel>
+
+				<p:spacer height="10px" />
+				<div style="clear: both;" />
+
+			</p:dialog>
+
+		</h:form>
+
+	</sec:authorize>
+
+
+</ui:composition>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<f:metadata>
+	<f:event type="preRenderView" listener="#{loginView.onPageLoad}" />
+</f:metadata>
+
+<f:view contentType="text/html">
+
+	<h:head>
+		<f:facet name="first">
+			<meta content='text/html; charset=UTF-8' http-equiv="Content-Type" />
+			<title>BonERP v.${project.version}</title>
+			<link rel="icon" type="image/png"
+				href="#{request.contextPath}/images/favicon.png" />
+		</f:facet>
+
+		<link href="#{resource['styles/overPrimefaces-new.css']}"
+			rel="stylesheet" type="text/css" />
+		<link href="#{resource['styles/default-new.css']}" rel="stylesheet"
+			type="text/css" />
+		<link href="#{resource['styles/messages.css']}" rel="stylesheet"
+			type="text/css" />
+		<link href="#{resource['styles/labelInputComponent.css']}"
+			rel="stylesheet" type="text/css" media="screen" />
+
+
+		<style>
+#mask {
+	position: absolute;
+	left: 0;
+	top: 0;
+	z-index: 9000;
+	background-color: #000;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+	filter: alpha(opacity =         50);
+	-moz-opacity: 0.5;
+	-khtml-opacity: 0.5;
+	opacity: 0.5;
+	display: none;
+}
+
+.mydiv {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	width: 400px;
+	height: 140px;
+	margin-top: -150px; /*set to a negative number 1/2 of your height*/
+	margin-left: -200px; /*set to a negative number 1/2 of your width*/
+}
+
+.centered {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 400px;
+	height: 140px;
+	margin-top: -70px; /*set to a negative number 1/2 of your height*/
+	margin-left: -200px; /*set to a negative number 1/2 of your width*/
+}
+</style>
+
+	</h:head>
+
+
+
+	<h:body>
+
+		<p:growl id="mainGrowl" showDetail="false" />
+
+		<div class="centered" id="divLogin">
+			<p:panel header="Login">
+
+				<!-- ATENÇÃO: neste formulário o prependId tem que ser 
+			"false" porque é importante que os IDs fiquem exatamente
+			como foram definidos ("j_username" e "j_password") -->
+				<h:form prependId="false" id="frm">
+				
+				<input type="hidden" name="${_csrf.parameterName}"
+			value="${_csrf.token}" />
+
+
+					<p:outputPanel rendered="#{param['errodelogin']}">
+					<div id="j_idt88:messages" class="ui-messages ui-widget"
+						aria-live="polite" data-global="false" data-summary="data-summary"
+						data-detail="data-detail" data-severity="all,error"
+						data-redisplay="true">
+						<div class="ui-messages-error ui-corner-all">
+							<a href="#" class="ui-messages-close"
+								onclick="$(this).parent().slideUp();return false;"><span
+								class="ui-icon ui-icon-close"></span></a><span
+								class="ui-messages-error-icon"></span>
+							<ul>
+								<li><span class="ui-messages-error-summary">Erro:</span><span
+									class="ui-messages-error-detail">Nome de usuário ou senha inválido.</span></li>
+							</ul>
+						</div>
+					</div>
+					</p:outputPanel>
+					
+				
+					
+
+					<fd:labelInput label="Usuário: " labelWidth="90px"
+						breakAfter="true">
+
+						<input id="username" name="username" type="text" size="25"
+							style="text-transform: lowercase"
+							class="ui-inputfield ui-inputtext ui-widget ui-state-default ui-corner-all"
+							role="textbox" aria-disabled="false" aria-readonly="false" />
+					</fd:labelInput>
+
+					<fd:labelInput label="Senha: " labelWidth="90px">
+
+						<input id="password" name="password" type="password"
+							class="ui-inputfield ui-password ui-widget ui-state-default ui-corner-all"
+							size="20" role="textbox" aria-disabled="false"
+							aria-readonly="false" />
+					</fd:labelInput>
+
+					<fd:labelInput noLabel="true" breakAfter="true">
+						<p:outputPanel
+							rendered="#{jsfUtils.requestParameterMap['login_error'] eq 'true'}">
+							<h:graphicImage url="#{resource['images/warning.png']}" />
+							<h:outputText value=" Usuário ou Senha inválidos!" />
+						</p:outputPanel>
+					</fd:labelInput>
+
+
+					<fd:labelInput label="Lembre-se de mim:">
+						<input type="checkbox" id="remember-me" name="remember-me" />
+					</fd:labelInput>
+
+
+					<fd:labelInput noLabel="true" breakAfter="true" alignRight="true">
+						<p:commandButton ajax="false" id="btnLogin"
+							actionListener="#{loginView.login}" icon="ui-icon-locked"
+							value="Login" style="width: 120px;" />
+					</fd:labelInput>
+
+
+					<p:idleMonitor onidle="window.location.reload(true);"
+						timeout="#{10 * 1000 }" />
+
+
+				</h:form>
+
+			</p:panel>
+		</div>
+
+	</h:body>
+
+</f:view>
+
+</html>

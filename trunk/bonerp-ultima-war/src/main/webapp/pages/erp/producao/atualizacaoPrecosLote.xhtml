@@ -1,0 +1,57 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	template="/templates/template.xhtml">
+
+	<ui:define name="content">
+
+		<div id="_slnm_atualizacaoPrecosLoteView" />
+
+		<!-- exibição de mensagem caso usuário não tenha permissão de acesso -->
+		<sec:authorize ifNotGranted="ROLE_PRODUCAO">
+			<div class="errorMsg">Usuário sem autorização para acessar este
+				recurso.</div>
+		</sec:authorize>
+
+		<sec:authorize ifAnyGranted="ROLE_PRODUCAO">
+
+			<ui:param name="view" value="#{atualizacaoPrecosLoteView}" />
+
+			<h:form id="frm">
+
+				<p:panel id="panel" header="Atualização de Preços em Lote">
+				
+					<p:selectManyMenu id="iInstituicoes" style="width: 100%"
+						value="#{view.instituicoesSel}"
+						converter="#{entityIdConverter}" var="i" filter="true"
+						filterMatchMode="contains" showCheckbox="true">
+						
+						<f:selectItems value="#{view.instituicoes}" var="_"
+							itemLabel="#{_.nome}" itemValue="#{_}" />
+
+						<p:column>
+							<h:outputText value="#{i.fornecedor.codigo} - #{i.nome}" />
+						</p:column>
+						
+					</p:selectManyMenu>
+					
+					<p:spacer height="20px" />
+					
+					<p:commandButton actionListener="#{view.recriarPrecos}" value="Recalcular Preços">
+						<p:confirm />
+					</p:commandButton>
+
+				</p:panel>
+
+			</h:form>
+
+
+		</sec:authorize>
+
+	</ui:define>
+
+</ui:composition>

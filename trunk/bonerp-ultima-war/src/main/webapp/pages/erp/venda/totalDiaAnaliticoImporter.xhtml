@@ -1,0 +1,180 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/templates/template.xhtml">
+
+
+	<ui:define name="content">
+
+		<div id="_slnm_totalDiaAnaliticoImporter" />
+
+
+		<ui:param name="view" value="#{totalDiaAnaliticoImporterView}" />
+
+		<h:form id="frm">
+
+			<p:panel id="panel" header="Total Diário (Analítico)">
+
+				<p:spacer height="8" />
+
+				<fd:labelInput label="Data :">
+					<p:calendar id="cal" value="#{view.dia}" navigator="true"
+						mode="inline" pattern="dd/MM/yyyy" mask="true">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+						<p:ajax event="dateSelect" listener="#{view.updateDia}"
+							update=":frm" />
+					</p:calendar>
+				</fd:labelInput>
+
+				<fd:labelInput label="Total Mês :">
+					<p:inputText value="#{view.totalMes}" styleClass="maskMoney"
+						readonly="true" converter="#{doubleConverterNull}" />
+				</fd:labelInput>
+
+				<fd:labelInput noLabel="true" breakAfter="true">
+					<p:commandButton title="Atualizar" id="btnAtualizar"
+						update=":frm:opnDataList" icon="ui-icon-refresh" value="Atualizar"
+						process="@this" style="width: 120px" />
+				</fd:labelInput>
+
+				<p:spacer height="10px" />
+
+				<div style="clear: both;" />
+
+				<p:outputPanel id="opnDataList">
+
+
+					<p:dataTable value="#{view.dtListTotalDia}" rowIndexVar="row"
+						var="_" editable="true" editMode="cell" id="dtDatalist"
+						sortBy="#{_.vendedor.pessoa.nome}">
+
+						<p:ajax event="cellEdit" />
+
+						<p:column headerText="#" style="width: 1px">
+							<h:outputText value="#{row + 1}" />
+						</p:column>
+
+						<p:column headerText="Vendedor" sortBy="#{_.vendedor.pessoa.nome}">
+							<h:outputText value="#{_.vendedor.pessoa.nome}" />
+
+							<f:facet name="footer">
+								<div style="text-align: right;">
+									<b>TOTAL DIA:</b>
+								</div>
+							</f:facet>
+						</p:column>
+
+						<p:column headerText="Total" sortBy="#{_.total}">
+
+							<div style="text-align: right;">
+								R$
+								<h:outputText value="#{_.total}"
+									converter="#{doubleConverterNull}" />
+							</div>
+							<f:facet name="footer">
+								<div style="text-align: right;">
+									<b>R$ <h:outputText value="#{view.totalDia}"
+											converter="#{doubleConverterNull}" />
+									</b>
+								</div>
+							</f:facet>
+
+						</p:column>
+
+					</p:dataTable>
+
+
+				</p:outputPanel>
+
+
+				<p:spacer height="10px" />
+
+				<div style="clear: both;" />
+
+
+			</p:panel>
+
+		</h:form>
+
+
+		<h:form id="frmImport">
+			<p:panel header="Importar Arquivo de Vendas/Dia (Analítico)">
+
+
+				<p:inputTextarea rows="30" value="#{view.linhas}" autoResize="false"
+					style="width: 100% ; font-family: 'Lucida Console', 'Courier New', Courier, monospace" />
+
+
+				<fd:labelInput noLabel="true" labelWidth="150px" breakAfter="true" alignRight="true">
+					<p:commandButton value="Importar" ajax="true"
+						style="width: 250px; height: 80px"
+						actionListener="#{view.processarArquivo}" update="opnDtList" />
+				</fd:labelInput>
+			</p:panel>
+
+
+			<p:outputPanel id="opnDtList">
+
+				<p:panel header="Totais" rendered="#{view.dtListTotalDia ne null}">
+
+					<p:toolbar>
+						<f:facet name="right">
+							<p:commandButton title="Salvar" update=":frm :frmImport"
+								process="@this" value="Salvar" icon="ui-icon-save"
+								actionListener="#{view.salvarTudo}" style="width: 180px">
+								<p:confirm />
+							</p:commandButton>
+						</f:facet>
+					</p:toolbar>
+
+					<p:dataTable id="dtListTotalDia" var="_" rowIndexVar="row"
+						emptyMessage="Nenhum registro encontrado."
+						value="#{view.dtListTotalDia}" sortBy="#{_.vendedor.pessoa.nome}">
+
+						<p:column headerText="#" style="width: 1px">
+							<h:outputText value="#{row + 1}" />
+						</p:column>
+
+						<p:column headerText="Vendedor" sortBy="#{_.vendedor.pessoa.nome}">
+							<h:outputText value="#{_.vendedor.pessoa.nome}" />
+							<f:facet name="footer">
+								<div style="text-align: right;">
+									<b>TOTAL DIA:</b>
+								</div>
+							</f:facet>
+						</p:column>
+
+						<p:column headerText="Total" style="width: 1px"
+							styleClass="noWrap" sortBy="#{_.total}">
+							<div style="text-align: right;">
+								R$
+								<h:outputText value="#{_.total}"
+									converter="#{doubleConverterNull}" />
+							</div>
+
+							<f:facet name="footer">
+								<div style="text-align: right;">
+									<b>R$ <h:outputText value="#{view.totalDia}"
+											converter="#{doubleConverterNull}" /></b>
+								</div>
+							</f:facet>
+
+						</p:column>
+
+					</p:dataTable>
+				</p:panel>
+			</p:outputPanel>
+
+
+
+
+		</h:form>
+
+
+
+	</ui:define>
+
+</ui:composition>

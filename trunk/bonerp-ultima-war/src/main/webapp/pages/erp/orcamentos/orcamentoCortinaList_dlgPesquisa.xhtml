@@ -1,0 +1,141 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:param name="view" value="#{cotacaoListView}" />
+
+
+	<h:form id="frmDlgPesquisa">
+		<p:dialog id="dlgPesquisa" header="Pesquisar" widgetVar="dlgPesquisa"
+			resizable="false" width="700" modal="true" position="top">
+
+			<p:outputPanel id="opnDlgPesquisa">
+
+				<fd:labelInput label="Descrição " labelWidth="90px"
+					breakAfter="true">
+					<p:inputText size="40" value="#{view.filtros['titulo']}" />
+				</fd:labelInput>
+
+				<p:outputPanel id="opnCliente">
+					<fd:labelInput labelWidth="90px" label="Cliente :">
+						<p:autoComplete id="iCliente" global="false" size="50"
+							value="#{view.filtrosCliente}" var="cliente"
+							itemLabel="#{cliente.pessoa.nome}" itemValue="#{cliente}"
+							forceSelection="false" maxResults="99999"
+							completeMethod="#{acOperacionalDAO.cliente}" minQueryLength="0"
+							converter="#{entityIdConverter}" />
+						<p:spacer width="4" />
+						<p:commandButton id="btnBuscaCliente" title="Buscar Cliente"
+							onclick="PF('dlgBuscaCliente').show()"
+							actionListener="#{cotacaoFormView.updateBuscaCliente}"
+							process="@this" icon="ui-icon-search" />
+					</fd:labelInput>
+				</p:outputPanel>
+
+				<fd:labelInput label="Status :" labelWidth="90px" alignRight="true"
+					breakAfter="true">
+					<p:selectOneMenu id="iStatus" value="#{view.filtros['status']}">
+						<f:selectItem itemValue="" itemLabel="" />
+						<f:selectItems value="#{lfOperacional.statusCotacaoValues}"
+							var="st" itemLabel="#{st.label}" itemValue="#{st}" />
+					</p:selectOneMenu>
+				</fd:labelInput>
+
+				<fd:labelInput label="Dt Emissão :" labelWidth="90px"
+					breakAfter="true">
+					Entre 
+					<p:calendar styleClass="maskData"
+						value="#{view.filtros['dtEmissaoIni']}" id="iDtEmissaoIni"
+						locale="pt_BR" showOn="button" pattern="dd/MM/yyyy" size="12"
+						selectOtherMonths="true" showOtherMonths="true" />
+					 e 
+					<p:calendar styleClass="maskData"
+						value="#{view.filtros['dtEmissaoFim']}" id="iDtEmissaoFim"
+						locale="pt_BR" showOn="button" pattern="dd/MM/yyyy" size="12"
+						selectOtherMonths="true" showOtherMonths="true" />
+				</fd:labelInput>
+
+
+
+
+				<div style="text-align: right; margin-bottom: 10px;">
+					<p:outputPanel>
+						<p:commandButton value="Pesquisar" title="Pesquisar"
+							icon="ui-icon-search" actionListener="#{view.pesquisar}"
+							onclick="PF('dlgPesquisa').hide()" update=":frm:opnDtList" />
+
+						<p:commandButton actionListener="#{view.limparPesquisa}"
+							value="Cancelar" title="Cancelar"
+							onclick="PF('dlgPesquisa').hide()" icon="ui-icon-cancel"
+							update=":frm:opnDtList, :frmDlgPesquisa:opnDlgPesquisa" />
+					</p:outputPanel>
+				</div>
+
+			</p:outputPanel>
+
+
+		</p:dialog>
+	</h:form>
+
+	<h:form id="frmDlgBuscaCliente">
+		<p:dialog id="dlgBuscaCliente" header="Pesquisar Clientes"
+			position="top" widgetVar="dlgBuscaCliente" resizable="false"
+			width="800" height="600" modal="true">
+
+			<p:outputPanel id="opnDlgBuscaCliente">
+
+				<fd:labelInput noLabel="true">
+					<p:inputText id="iBuscaCliente" size="65"
+						value="#{cotacaoFormView.strBuscaCliente}" />
+					<p:watermark value="Pesquisar..." for="iBuscaCliente" />
+				</fd:labelInput>
+
+				<fd:labelInput noLabel="true" breakAfter="true" alignRight="true">
+					<p:commandButton
+						actionListener="#{cotacaoFormView.pesquisarClientes}"
+						id="cbtnBuscaCliente"
+						process=":frmDlgBuscaCliente:iBuscaCliente, @this"
+						icon="ui-icon-check"
+						update=":frmDlgBuscaCliente:dtListBuscaCliente" />
+				</fd:labelInput>
+
+
+				<p:dataTable id="dtListBuscaCliente" var="_" rowIndexVar="row"
+					emptyMessage="Nenhum registro encontrado."
+					value="#{cotacaoFormView.listBuscaCliente}" selectionMode="single">
+
+					<p:ajax event="rowSelect"
+						listener="#{cotacaoListView.onRowSelectCliente}" process="@this"
+						oncomplete="PF('dlgBuscaCliente').hide()"
+						update=":frmDlgPesquisa:opnDlgPesquisa" />
+
+					<p:column headerText="#" style="width: 20px">
+						<h:outputText value="#{row + 1}" />
+					</p:column>
+
+					<p:column headerText="CPF/CNPJ" style="width: 80px">
+						<h:outputText value="#{_.pessoa.documento}"
+							converter="#{docConverter}" />
+					</p:column>
+
+					<p:column headerText="Nome" sortBy="#{_.nome}">
+						<h:outputText value="#{_.pessoa.nome}" />
+					</p:column>
+
+				</p:dataTable>
+
+
+			</p:outputPanel>
+
+		</p:dialog>
+
+
+	</h:form>
+
+
+
+</ui:composition>

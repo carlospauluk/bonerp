@@ -1,0 +1,64 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:param name="view" value="#{fornecedorFormListView}" />
+	
+	<div id="_slnm_fornecedorList" />
+
+	<ui:decorate template="/templates/list.xhtml">
+	
+		<ui:param name="role" value="ESTOQUE" />
+
+		<ui:param name="titulo" value="Fornecedores" />
+		<ui:param name="viewForm" value="#{fornecedorFormListView}" />
+		<ui:param name="updateDlg" value=":frmFornecedor#{sufix}:opnDlg" />
+		<ui:param name="widgetDlgForm" value="dlgFornecedor#{sufix}" />
+
+
+
+		<ui:define name="cols">
+
+			<p:column headerText="Código" styleClass="noWrapSmall"
+				sortBy="#{_.codigo}">
+				<h:outputText value="#{_.codigo}" />
+			</p:column>
+
+			<p:column headerText="CPF/CNPJ" styleClass="noWrapSmall"
+				sortBy="#{_.pessoa.documento}">
+				<h:outputText value="#{_.pessoa.documento}" converter="#{docConverter}" />
+			</p:column>
+
+			<p:column headerText="Nome Fantasia" styleClass="noWrap"
+				sortBy="#{_.pessoa.nomeFantasia}">
+				<h:outputText value="#{_.pessoa.nomeFantasia}" />
+			</p:column>
+
+			<p:column headerText="Razão Social" styleClass="noWrap"
+				sortBy="#{_.pessoa.nome}">
+				<h:outputText value="#{_.pessoa.nome}" />
+			</p:column>
+
+			<p:column styleClass="noWrap" headerText="Representante">
+				<h:outputText value="#{_.representante}" />
+			</p:column>
+
+			<p:column styleClass="noWrap" headerText="Representante Contato">
+				<h:outputText value="#{_.representanteContatoInfo}" />
+			</p:column>
+
+		</ui:define>
+	</ui:decorate>
+
+	<ui:include src="fornecedorDlg.xhtml">
+		<ui:param name="update" value=":frm:opnLoadList" />
+	</ui:include>
+
+	<ui:include src="fornecedorList_dlgPesquisa.xhtml" />
+
+
+</ui:composition>

@@ -1,0 +1,120 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags">
+
+
+	<h:form id="frmDlgBuscaProduto">
+		<p:dialog id="dlgBuscaProduto" header="Buscar Produtos"
+			widgetVar="dlgBuscaProduto" resizable="false" position="top"
+			modal="true"   closable="true"
+			closeOnEscape="true" width="900px" >
+
+			<p:outputPanel id="opnDlgBuscaProduto">
+			
+				<p:defaultCommand target="btnBuscarProduto" scope="frmDlgBuscaProduto" />
+
+				<fd:labelInput noLabel="true">
+					<p:inputText id="iBuscaProduto" size="65"
+						value="#{produtoListView.strBusca}" />
+					<p:watermark value="Pesquisar..." for="iBuscaProduto" />
+				</fd:labelInput>
+
+				<fd:labelInput noLabel="true" breakAfter="true" alignRight="true">
+					<p:commandButton actionListener="#{produtoListView.buscar}"
+						id="btnBuscarProduto"
+						icon="ui-icon-search" update="opnDlgBuscaProduto" />
+				</fd:labelInput>
+
+				<p:scrollPanel style="height:400px" mode="native">  
+					<p:dataTable id="dtListBuscaProduto" var="_" rowIndexVar="row"
+						emptyMessage="Nenhum registro encontrado."
+						value="#{produtoListView.dtListBusca}">
+	
+						<p:column headerText="#" style="width: 20px">
+							<h:outputText value="#{row + 1}" />
+						</p:column>
+	
+						<p:column headerText="Reduzido" sortBy="#{_.reduzido}"
+							style="width: 1px ; white-space: normal">
+							<h:outputText value="#{_.reduzido}" />
+						</p:column>
+
+						<p:column headerText="Descrição" sortBy="#{_.descricao}" style="white-space: normal">
+							<h:outputText value="#{_.descricao}" />
+							<p:outputPanel rendered="#{_.tipoProduto eq 'TECIDO'}">
+								<br />
+								<br />
+
+								<h:outputText value="Largura: " style="font-weight: bold" />
+								<h:outputText value="#{_.tecido.largura}">
+									<f:convertNumber maxFractionDigits="3" minFractionDigits="3" />
+								</h:outputText>
+								<br />
+
+								<h:outputText value="Orientação Padrão: "
+									style="font-weight: bold" />
+								<h:outputText value=" #{_.tecido.orientacaoPadrao.descricao}" />
+								<br />
+
+								<h:outputText value="Fator Padrão: " style="font-weight: bold" />
+								<h:outputText value="#{_.tecido.fatorPadrao}">
+									<f:convertNumber maxFractionDigits="3" minFractionDigits="3" />
+								</h:outputText>x
+								<br />
+								<h:outputText value="Alt Barra Padrão: "
+									style="font-weight: bold" />
+								<h:outputText value=" #{_.tecido.alturaBarraPadrao}">
+									<f:convertNumber maxFractionDigits="3" minFractionDigits="3" />
+								</h:outputText>m
+								<br />
+								<h:outputText value="Alt Máx Horiz: " style="font-weight: bold" />
+								<h:outputText value="#{_.tecido.alturaMaxHorizontal}">
+									<f:convertNumber maxFractionDigits="3" minFractionDigits="3" />
+								</h:outputText>m
+								<br />
+
+							</p:outputPanel>
+						</p:column>
+
+						<p:column headerText="Fornecedor" sortBy="#{_.fornecedor.pessoa.nomeFantasia}"
+							style="white-space: normal">
+							<h:outputText value="#{_.fornecedor.pessoa.nomeFantasia}" />
+							(<h:outputText value="#{_.fornecedor.representante}" />)
+						</p:column>
+
+						
+						<p:column headerText="Preço Prazo" sortBy="#{_.precoAtual.precoPrazo}" style="width: 80px">
+							<div style="text-align: right;">
+								R$
+								<h:outputText value="#{_.precoAtual.precoPrazo}"
+									converter="#{doubleConverterNull}" />
+							</div>
+						</p:column>
+						
+						<p:column headerText="Preço Promo" sortBy="#{_.precoAtual.precoPromo}" style="width: 80px">
+							<div style="text-align: right;">
+								R$
+								<h:outputText value="#{_.precoAtual.precoPromo}"
+									converter="#{doubleConverterNull}" />
+							</div>
+						</p:column>
+	
+	
+						<p:column width="1%">
+							<p:commandButton actionListener="#{view.selProduto(_)}"
+								icon="ui-icon-check" process="@this"
+								update="#{update}"
+								oncomplete="PF('dlgBuscaProduto').hide()" />
+						</p:column>
+					</p:dataTable>
+				</p:scrollPanel>
+				
+			</p:outputPanel>
+		</p:dialog>
+	</h:form>
+
+</ui:composition>

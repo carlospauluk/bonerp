@@ -1,0 +1,89 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:param name="view" value="#{resumoConferenciaGeralView}" />
+
+	<h:form id="frmDlgErrosTransf">
+
+		<p:dialog id="dlgErrosTransf" widgetVar="dlgErrosTransf" dynamic="true"
+			position="top" header="Erros de Transferências entre Carteiras"
+			modal="true" resizable="false" closeOnEscape="true" width="750px">
+
+			<p:outputPanel id="opnDlg">
+
+				<p:dataTable var="_" rowIndexVar="row" rowKey="#{_}"
+					emptyMessage="Nenhum registro encontrado."
+					value="#{view.errosTransf}"
+					rowStyleClass="#{movimentacaoListagemListView.getRowStyleClass(_)}">
+
+
+
+
+					<p:column>
+						<h:outputText value="#{_.id}" id="otId" />
+					</p:column>
+
+
+					<p:column rendered="#{true}">
+						<h:outputText
+							value="#{_.categoria.codigoM} - #{_.categoria.descricao}" />
+						<br />
+						<h:outputText value="#{_.modo.codigo} - #{_.modo.descricao}" />
+						<br />
+						<b>
+						<h:outputText
+							value="#{_.carteira.codigo} - #{_.carteira.descricao}" /></b>
+					</p:column>
+
+					<p:column>
+						<div style="float: left">
+							<b> <h:outputText value="#{_.descricaoMontada}"
+									escape="false" style="white-space: pre-wrap;" /></b>
+							<p:outputPanel rendered="#{_.pessoa.nomeExibicao ne null}">
+								<br />
+								<h:outputText value="#{_.pessoa.nomeExibicao}" />
+							</p:outputPanel>
+						</div>
+					</p:column>
+
+					<p:column>
+						<h:outputText value="#{_.dtVenctoEfetiva}">
+							<f:convertDateTime pattern="dd/MM/yy" />
+						</h:outputText>
+					</p:column>
+
+					<p:column>
+						<h:outputText value="#{_.dtPagto}">
+							<f:convertDateTime pattern="dd/MM/yy" />
+						</h:outputText>
+					</p:column>
+
+					<p:column>
+						<div style="text-align: right">
+							<h:outputText value="#{_.valorTotal}" id="otValorTotal"
+								converter="#{doubleConverter}" />
+						</div>
+					</p:column>
+
+
+
+
+
+				</p:dataTable>
+
+
+			</p:outputPanel>
+
+		</p:dialog>
+
+
+	</h:form>
+
+
+</ui:composition>

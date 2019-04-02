@@ -1,0 +1,480 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags">
+
+
+
+	<!-- exibição de mensagem caso usuário não tenha permissão de acesso -->
+	<sec:authorize ifNotGranted="ROLE_PRODUCAO">
+		<div class="errorMsg">Usuário sem autorização para acessar este
+			recurso.</div>
+	</sec:authorize>
+
+	<sec:authorize ifAnyGranted="ROLE_PRODUCAO">
+
+		<style>
+.colInsumo {
+	max-width: 150px;
+	font-size: 11px;
+	overflow: hidden;
+	padding: 0;
+}
+
+.colPreco {
+	width: 50px;
+	font-size: 11px;
+	overflow: hidden;
+	padding: 0px;
+}
+
+.colsTamanhos {
+	width: 30px;
+	font-size: 11px;
+	overflow: hidden;
+	padding: 0px;
+}
+
+.colBotoes {
+	white-space: nowrap;
+	width: 75px;
+	overflow: hidden;
+	padding: 0px;
+}
+
+.ui-datatable thead th, .ui-datatable tbody td, .ui-datatable tfoot td {
+	padding: 3px;
+}
+</style>
+
+		<ui:param name="view" value="#{loteConfeccaoFormListView}" />
+
+		<h:form id="frmDlg">
+
+			<p:dialog id="dlgForm" header="Lote de Confecções" height="550"
+				widgetVar="dlgForm" resizable="true" width="1100" modal="true"
+				closable="true" closeOnEscape="true" position="top" dynamic="true">
+
+				<p:outputPanel id="opnDlg">
+
+					<p:outputPanel autoUpdate="true">
+						<script type="text/javascript">
+							aplicarMasks();
+						</script>
+					</p:outputPanel>
+
+					<fd:labelInput label="Descrição do Lote :" labelWidth="150px"
+						breakAfter="true">
+						<p:inputText size="55" value="#{view.e.descricao}" />
+					</fd:labelInput>
+
+					<f:validateBean disabled="true">
+						<fd:labelInput label="Código do Lote :" labelWidth="150px"
+							breakAfter="true">
+							<p:inputText size="10" value="#{view.e.codigo}" />
+							* Em branco para preenchimento automático.
+						</fd:labelInput>
+					</f:validateBean>
+
+					<fd:labelInput label="Dt Lote :" labelWidth="150px">
+						<p:calendar value="#{view.e.dtLote}" id="iDtLote" locale="pt_BR"
+							pages="2" pattern="dd/MM/yyyy" size="15" selectOtherMonths="true"
+							showOtherMonths="true" styleClass="maskData" />
+					</fd:labelInput>
+
+
+					<!-- BOTÃO SALVAR -->
+					<fd:labelInput noLabel="true" breakAfter="true" alignRight="true">
+						<p:commandButton title="Salvar o registro atual" id="btnSalvar"
+							update=":frm:opnDtList" icon="ui-icon-save" value="Salvar"
+							style="width: 90px" actionListener="#{view.save}"
+							oncomplete="afterFormSubmit(xhr, status, args);" />
+					</fd:labelInput>
+
+
+					<style>
+.ui-menu.ui-widget {
+	min-width: 250px;
+}
+</style>
+
+
+
+					<p:spacer height="10px" />
+
+					<div style="clear: both;" />
+
+
+					<p:outputPanel id="opnDlgItemCotacoes">
+
+						<p:panel header="Itens do Lote">
+
+							<p:toolbar>
+								<f:facet name="left">
+
+									<p:commandButton icon="ui-icon-document"
+										actionListener="#{view.newItem}"
+										oncomplete="PF('dlgItem').show()" id="btnItem"
+										update=":frmItem:opnDlgItem" title="Novo Item"
+										style="width: 26; height: 26;" />
+
+
+									<span class="ui-separator"> <span
+										class="ui-icon ui-icon-grip-dotted-vertical" />
+									</span>
+
+									<p:commandButton icon="ui-icon-check"
+										actionListener="#{view.selecionarTodos(true)}"
+										update="opnDtListItens" title="Selecionar todos"
+										style="width: 26; height: 26;" />
+
+									<p:commandButton icon="ui-icon-cancel"
+										actionListener="#{view.selecionarTodos(false)}"
+										update="opnDtListItens" title="Deselecionar todos"
+										style="width: 26; height: 26;" />
+
+								</f:facet>
+								<f:facet name="right">
+
+									<p:menuButton value="Relatórios">
+
+										<p:menuitem
+											actionListener="#{view.checkSelecionados('CustosProducao')}"
+											title="Imprimir Relatório de Custos de Produção"
+											update=":frm:opnDtList" process="@this opnDtListItens"
+											icon="ui-icon-print" value="Relatório de Custos de Produção"
+											oncomplete="openDlg(xhr, status, args);" />
+
+										<p:menuitem
+											actionListener="#{view.checkSelecionados('PlanilhaCorte')}"
+											title="Imprimir Planilha de Corte" update=":frm:opnDtList"
+											process="@this opnDtListItens" icon="ui-icon-print"
+											value="Planilha de Corte"
+											oncomplete="openDlg(xhr, status, args);" />
+
+									</p:menuButton>
+
+								</f:facet>
+							</p:toolbar>
+
+							<p:spacer height="10px" />
+
+
+
+							<p:outputPanel id="opnDtListItens">
+
+								<p:scrollPanel mode="native" style="height: 340px">
+
+									<ui:repeat value="#{view.grades}" var="grade">
+
+										<p:dataTable var="itemLote" rowIndexVar="row"
+											emptyMessage="Nenhum registro encontrado."
+											value="#{view.itensLotePorGrade[grade]}" rowKey="#{itemLote}">
+
+											<p:column style="width: 20px">
+												<p:selectBooleanCheckbox
+													value="#{view.itensLoteSelecionados[itemLote]}" />
+											</p:column>
+
+											<p:column headerText="Confecção"
+												style="white-space: normal; width:300px"
+												sortBy="#{itemLote.confeccao.descricao}">
+												<h:outputText
+													value="#{stringUtils.zerofill(itemLote.id,3)} - #{itemLote.confeccao.descricao}" />
+
+												<p:outputPanel
+													rendered="#{itemLote.obs ne null and itemLote.obs ne ''}">
+													<h:outputText value=">> Obs.: #{itemLote.obs}"
+														style="font-style:italic; font-weight: bold" />
+												</p:outputPanel>
+
+											</p:column>
+
+											<p:column styleClass="colsTamanhos"
+												headerText="#{view.getTamanhoNaGradeSeExistir(grade,1).tamanho}">
+												<div style="text-align: right;">
+													<h:outputText
+														value="#{itemLote.mapaGradeQtdes[view.getTamanhoNaGradeSeExistir(grade,1)]}" />
+												</div>
+											</p:column>
+											<p:column styleClass="colsTamanhos"
+												headerText="#{view.getTamanhoNaGradeSeExistir(grade,2).tamanho}">
+												<div style="text-align: right;">
+													<h:outputText
+														value="#{itemLote.mapaGradeQtdes[view.getTamanhoNaGradeSeExistir(grade,2)]}" />
+												</div>
+											</p:column>
+											<p:column styleClass="colsTamanhos"
+												headerText="#{view.getTamanhoNaGradeSeExistir(grade,3).tamanho}">
+												<div style="text-align: right;">
+													<h:outputText
+														value="#{itemLote.mapaGradeQtdes[view.getTamanhoNaGradeSeExistir(grade,3)]}" />
+												</div>
+											</p:column>
+											<p:column styleClass="colsTamanhos"
+												headerText="#{view.getTamanhoNaGradeSeExistir(grade,4).tamanho}">
+												<div style="text-align: right;">
+													<h:outputText
+														value="#{itemLote.mapaGradeQtdes[view.getTamanhoNaGradeSeExistir(grade,4)]}" />
+												</div>
+											</p:column>
+											<p:column styleClass="colsTamanhos"
+												headerText="#{view.getTamanhoNaGradeSeExistir(grade,5).tamanho}">
+												<div style="text-align: right;">
+													<h:outputText
+														value="#{itemLote.mapaGradeQtdes[view.getTamanhoNaGradeSeExistir(grade,5)]}" />
+												</div>
+											</p:column>
+											<p:column styleClass="colsTamanhos"
+												headerText="#{view.getTamanhoNaGradeSeExistir(grade,6).tamanho}">
+												<div style="text-align: right;">
+													<h:outputText
+														value="#{itemLote.mapaGradeQtdes[view.getTamanhoNaGradeSeExistir(grade,6)]}" />
+												</div>
+											</p:column>
+											<p:column styleClass="colsTamanhos"
+												headerText="#{view.getTamanhoNaGradeSeExistir(grade,7).tamanho}">
+												<div style="text-align: right;">
+													<h:outputText
+														value="#{itemLote.mapaGradeQtdes[view.getTamanhoNaGradeSeExistir(grade,7)]}" />
+												</div>
+											</p:column>
+											<p:column styleClass="colsTamanhos"
+												headerText="#{view.getTamanhoNaGradeSeExistir(grade,8).tamanho}">
+												<div style="text-align: right;">
+													<h:outputText
+														value="#{itemLote.mapaGradeQtdes[view.getTamanhoNaGradeSeExistir(grade,8)]}" />
+												</div>
+											</p:column>
+											<p:column styleClass="colsTamanhos"
+												headerText="#{view.getTamanhoNaGradeSeExistir(grade,9).tamanho}">
+												<div style="text-align: right;">
+													<h:outputText
+														value="#{itemLote.mapaGradeQtdes[view.getTamanhoNaGradeSeExistir(grade,9)]}" />
+												</div>
+											</p:column>
+											<p:column styleClass="colsTamanhos"
+												headerText="#{view.getTamanhoNaGradeSeExistir(grade,10).tamanho}">
+												<div style="text-align: right;">
+													<h:outputText
+														value="#{itemLote.mapaGradeQtdes[view.getTamanhoNaGradeSeExistir(grade,10)]}" />
+												</div>
+											</p:column>
+											<p:column styleClass="colsTamanhos"
+												headerText="#{view.getTamanhoNaGradeSeExistir(grade,11).tamanho}">
+												<div style="text-align: right;">
+													<h:outputText
+														value="#{itemLote.mapaGradeQtdes[view.getTamanhoNaGradeSeExistir(grade,11)]}" />
+												</div>
+											</p:column>
+											<p:column styleClass="colsTamanhos"
+												headerText="#{view.getTamanhoNaGradeSeExistir(grade,12).tamanho}">
+												<div style="text-align: right;">
+													<h:outputText
+														value="#{itemLote.mapaGradeQtdes[view.getTamanhoNaGradeSeExistir(grade,12)]}" />
+												</div>
+											</p:column>
+											<p:column styleClass="colsTamanhos"
+												headerText="#{view.getTamanhoNaGradeSeExistir(grade,13).tamanho}">
+												<div style="text-align: right;">
+													<h:outputText
+														value="#{itemLote.mapaGradeQtdes[view.getTamanhoNaGradeSeExistir(grade,13)]}" />
+												</div>
+											</p:column>
+											<p:column styleClass="colsTamanhos"
+												headerText="#{view.getTamanhoNaGradeSeExistir(grade,14).tamanho}">
+												<div style="text-align: right;">
+													<h:outputText
+														value="#{itemLote.mapaGradeQtdes[view.getTamanhoNaGradeSeExistir(grade,14)]}" />
+												</div>
+											</p:column>
+
+											<p:column headerText="Total" style="white-space: normal">
+												<div style="text-align: right;">
+													<h:outputText value="#{itemLote.totalQtdes}" />
+												</div>
+											</p:column>
+
+
+											<p:column styleClass="noWrapColBtns">
+
+												<p:button id="btnEditarO" outcome="confeccaoBuilderView.jsf"
+													icon="ui-icon-arrowthick-1-n" target="blank" title="Novo registro (N)">
+													<f:param name="confeccaoId" value="#{itemLote.confeccao.id}" />
+												</p:button>
+
+												<p:commandButton actionListener="#{view.setItem(itemLote)}"
+													icon="ui-icon-build" update=":frmItem:opnDlgItem"
+													oncomplete="PF('dlgItem').show()" title="Editar registro" />
+
+												<p:commandButton
+													actionListener="#{view.deleteItem(itemLote)}"
+													styleClass="red-btn" update=":frmDlg:opnDtListItens"
+													process="@this" title="Deletar item" icon="ui-icon-trash">
+													<p:confirm />
+												</p:commandButton>
+
+											</p:column>
+										</p:dataTable>
+
+										<hr />
+
+									</ui:repeat>
+
+								</p:scrollPanel>
+
+							</p:outputPanel>
+
+
+						</p:panel>
+
+					</p:outputPanel>
+
+
+				</p:outputPanel>
+
+			</p:dialog>
+
+		</h:form>
+
+
+		<h:form id="frmItem">
+
+			<p:dialog id="dlgItem" header="Item do Lote" widgetVar="dlgItem"
+				resizable="false" width="900" modal="true" closable="true"
+				closeOnEscape="true" position="top">
+
+				<p:outputPanel id="opnDlgItem">
+
+					<fd:labelInput label="Confecção :" labelWidth="150px"
+						breakAfter="true">
+						<p:autoComplete forceSelection="true"
+							itemLabel="#{confeccao.descricao}" queryDelay="1500"
+							completeMethod="#{view.acConfeccao}" minQueryLength="3"
+							var="confeccao" converter="#{entityIdConverter}"
+							itemValue="#{confeccao}" value="#{view.item.confeccao}" size="80"
+							scrollHeight="300" title="#{view.item.confeccao.descricao}">
+							<p:ajax event="itemSelect" process="@this"
+								listener="#{view.updateConfeccao}" update=":frmItem:opnTamanhos"
+								partialSubmit="true" />
+						</p:autoComplete>
+					</fd:labelInput>
+
+					<fd:labelInput label="Obs :" labelWidth="150px" breakAfter="true">
+						<p:inputText value="#{view.item.obs}" size="100" />
+					</fd:labelInput>
+
+					<p:spacer height="10px" />
+
+
+
+					<p:outputPanel id="opnTamanhos">
+						<p:outputPanel rendered="#{view.item.confeccao.id ne null}">
+							<ui:repeat value="#{view.item.confeccao.grade.tamanhos}" var="t">
+								<fd:labelInput label="#{t.tamanho} :" labelWidth="150px"
+									breakAfter="true">
+									<p:inputText value="#{view.item.mapaGradeQtdes[t]}"
+										styleClass="maskIntComZero">
+										<f:convertNumber integerOnly="true" />
+									</p:inputText>
+								</fd:labelInput>
+							</ui:repeat>
+						</p:outputPanel>
+					</p:outputPanel>
+
+					<!-- BOTÃO SALVAR -->
+					<fd:labelInput noLabel="true" breakAfter="true" alignRight="true">
+						<p:commandButton title="Salvar o registro atual" id="btnSalvar"
+							update=":frmDlg:opnDlgItemCotacoes" icon="ui-icon-save"
+							value="Salvar" style="width: 90px"
+							actionListener="#{view.saveItem}"
+							oncomplete="afterFormSubmit(xhr, status, args);" />
+					</fd:labelInput>
+
+
+
+				</p:outputPanel>
+			</p:dialog>
+		</h:form>
+
+
+
+		<ui:decorate template="/templates/dlgRelatorio.xhtml">
+
+			<ui:param name="titulo" value="Relatório" />
+			<ui:param name="sufix" value="Relatorios" />
+			<ui:param name="action" value="imprimirRelatorios" />
+			<ui:define name="customContent">
+				<p:panel header="Tipos de Insumos">
+
+					<script>
+						$(document)
+								.ready(
+										function() {
+											selectAllTiposInsumo(true);
+											$(
+													'#frmDlgRelRelatorios\\:cbTiposInsumo\\:0')
+													.click(
+															function(event) {
+																var checked = this.checked;
+																selectAllTiposInsumo(checked);
+															})
+										});
+
+						function selectAllTiposInsumo(checked) {
+							$(':checkbox[id*="cbTiposInsumo"]').attr('checked',
+									checked);
+
+							if (checked) {
+								$('.checkboxTiposInsumo .ui-chkbox-box')
+										.each(
+												function() {
+													$(this).addClass(
+															'ui-state-active');
+													$(this)
+															.children('span')
+															.addClass(
+																	'ui-icon-check');
+													$(this)
+															.children('span')
+															.removeClass(
+																	'ui-icon-blank');
+												});
+							} else {
+								$('.checkboxTiposInsumo .ui-chkbox-box').each(
+										function() {
+											$(this).removeClass(
+													'ui-state-active');
+											$(this).children('span').addClass(
+													'ui-icon-blank');
+											$(this).children('span')
+													.removeClass(
+															'ui-icon-check');
+										});
+							}
+						}
+					</script>
+
+					<p:selectManyCheckbox columns="1" layout="grid" id="cbTiposInsumo"
+						styleClass="checkboxTiposInsumo" converter="#{entityIdConverter}"
+						value="#{view.tiposInsumosRelatorios}">
+						<f:selectItem itemLabel="TODOS" itemValue="#{null}" />
+						<f:selectItems value="#{lmProducao.tiposInsumo}" var="_"
+							itemLabel="#{_.descricao}" itemValue="#{_}" />
+					</p:selectManyCheckbox>
+				</p:panel>
+
+			</ui:define>
+		</ui:decorate>
+
+
+
+
+
+	</sec:authorize>
+
+
+</ui:composition>

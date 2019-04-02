@@ -1,0 +1,167 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:p="http://primefaces.org/ui" template="/templates/template.xhtml">
+
+
+
+	<ui:define name="content">
+
+		<ui:include src="categoriaDlgBusca.xhtml" />
+
+		<ui:param name="view" value="#{grupoFormListView}" />
+
+		<div id="_slnm_grupoFormList" />
+
+		<h:form id="frm">
+
+			<p:panel id="panel" header="Grupos de Movimentação">
+
+				<p:outputPanel id="opnGrupo">
+					<fd:labelInput label="Grupo :" labelWidth="120px">
+						<p:selectOneMenu id="iGrupo" value="#{view.e}"
+							converter="#{entityIdConverter}">
+							<f:selectItem itemLabel="" itemValue="" />
+							<f:selectItems
+								value="#{view.somenteAtivos ? lmFinanc.grupoAtivoValues : lmFinanc.grupoValues}"
+								var="g" itemLabel="#{g.descricao}" itemValue="#{g}" />
+
+							<p:ajax event="change" listener="#{view.updateGrupo}"
+								process="@this" partialSubmit="true" update="pnItens opnGrupo" />
+						</p:selectOneMenu>
+					</fd:labelInput>
+
+
+					<fd:labelInput noLabel="true">
+						<h:outputText value="Somente ativos:" />
+						<p:selectBooleanCheckbox value="#{view.somenteAtivos}">
+							<p:ajax update="opnGrupo" process="@this" partialSubmit="true" />
+						</p:selectBooleanCheckbox>
+					</fd:labelInput>
+
+
+					<fd:labelInput noLabel="true">
+						<p:commandButton id="btnGerarProxima"
+							action="#{view.gerarProximoGrupoItem}" update=":frm"
+							disabled="#{view.e eq null or view.e.id eq null}"
+							icon="ui-icon-document" value="Gerar próximo" process="@this">
+							<p:confirm />
+						</p:commandButton>
+					</fd:labelInput>
+
+
+					<fd:labelInput noLabel="true" alignRight="true" breakAfter="true">
+
+						<p:commandButton id="btnNovo" action="#{view.novo}"
+							oncomplete="PF('dlgGrupo').show()" update=":frmDlg:opnDlgGrupo"
+							icon="ui-icon-document" title="Novo registro (N)" process="@this" />
+
+						<p:commandButton process="@this opnGrupo"
+							update=":frmDlg:opnDlgGrupo" oncomplete="PF('dlgGrupo').show()"
+							title="Editar registro" icon="ui-icon-build" />
+
+						<p:commandButton action="#{view.deletar}" title="Deletar registro"
+							process="@this" icon="ui-icon-trash" update=":frm"
+							styleClass="red-btn">
+							<p:confirm />
+						</p:commandButton>
+
+					</fd:labelInput>
+
+				</p:outputPanel>
+
+				<p:panel header="Itens" id="pnItens">
+
+					<p:dataTable id="dtList" var="_" rowIndexVar="row"
+						emptyMessage="Nenhum registro encontrado." value="#{view.e.itens}">
+
+						<p:column sortBy="#{_.id}" headerText="Id">
+							<h:outputText value="#{_.id}" />
+						</p:column>
+
+						<p:column sortBy="#{_.descricao}">
+							<f:facet name="header">Descrição</f:facet>
+							<h:outputText value="#{_.descricao}" />
+						</p:column>
+
+						<p:column styleClass="noWrapSmall" headerText="Dt Vencto"
+							sortBy="#{_.dtVencto}">
+							<h:outputText value="#{_.dtVencto}">
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</h:outputText>
+						</p:column>
+
+						<p:column styleClass="noWrapSmall" headerText="Fechado">
+							<h:outputText value="#{_.fechado ? 'SIM' : 'NÃO'}" />
+						</p:column>
+
+						<p:column styleClass="noWrapSmall" headerText="Valor Inf"
+							sortBy="#{_.valorInformado}">
+							<div style="text-align: right">
+								<h:outputText value="#{_.valorInformado}"
+									converter="#{doubleConverter}" />
+							</div>
+						</p:column>
+
+						<p:column styleClass="noWrapSmall" headerText="Valor Lanctos"
+							sortBy="#{_.valorLanctos}">
+							<div style="text-align: right">
+								<h:outputText value="#{_.valorLanctos}"
+									converter="#{doubleConverter}" />
+							</div>
+						</p:column>
+
+						<p:column styleClass="noWrapSmall" headerText="Carteira Pagante">
+							<h:outputText
+								value="#{_.carteiraPagante.codigo} - #{_.carteiraPagante.descricao}" />
+						</p:column>
+
+						<p:column headerText="" styleClass="noWrapColBtns">
+
+							<p:button outcome="movimentacaoList_extratoGrupo.jsf"
+								title="Ir para extrato" icon="ui-icon-script">
+								<f:param name="grupoItemId" value="#{_.id}" />
+							</p:button>
+
+							<p:spacer width="10" />
+
+							<p:commandButton action="#{view.setGrupoItem(_)}" process="@this"
+								update=":frmDlg:opnDlgGrupoItem"
+								oncomplete="PF('dlgGrupoItem').show()" title="Editar registro"
+								icon="ui-icon-build" />
+
+							<p:commandButton action="#{view.deletarGrupoItem(_)}"
+								title="Deletar registro" process="@this" icon="ui-icon-trash"
+								update=":frm" styleClass="red-btn">
+								<p:confirm />
+							</p:commandButton>
+
+						</p:column>
+
+
+					</p:dataTable>
+
+				</p:panel>
+
+
+
+			</p:panel>
+
+		</h:form>
+
+		<ui:include src="grupoFormList_dlg.xhtml" />
+
+	</ui:define>
+
+
+
+
+
+
+
+
+</ui:composition>

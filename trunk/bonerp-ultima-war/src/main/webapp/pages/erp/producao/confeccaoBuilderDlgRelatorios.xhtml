@@ -1,0 +1,48 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags">
+
+
+
+	<!-- exibição de mensagem caso usuário não tenha permissão de acesso -->
+	<sec:authorize ifNotGranted="ROLE_PRODUCAO">
+		<div class="errorMsg">Usuário sem autorização para acessar este
+			recurso.</div>
+	</sec:authorize>
+
+	<sec:authorize ifAnyGranted="ROLE_PRODUCAO">
+
+		<ui:param name="view" value="#{confeccaoBuilderView}" />
+
+
+		<ui:decorate template="/templates/dlgRelatorio.xhtml">
+
+			<ui:param name="titulo" value="Planilha de Confecção" />
+			<ui:param name="sufix" value="PlanilhaConfeccao" />
+			<ui:param name="action" value="imprimirRelPlanilhaConfeccao" />
+			<ui:define name="customContent">
+				<p:panel header="Tipos de Insumos">
+
+					<p:selectManyCheckbox columns="1" layout="grid" id="cbTiposInsumo"
+						styleClass="checkboxTiposInsumo" converter="#{entityIdConverter}"
+						value="#{view.tiposInsumosRelatorios}">
+						<f:selectItems value="#{lmProducao.tiposInsumo}" var="_"
+							itemLabel="#{_.descricao}" itemValue="#{_}" />
+					</p:selectManyCheckbox>
+				</p:panel>
+
+			</ui:define>
+		</ui:decorate>
+
+
+
+
+
+	</sec:authorize>
+
+
+</ui:composition>

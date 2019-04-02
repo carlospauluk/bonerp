@@ -1,0 +1,10 @@
+insert into crtn_depreciacao_preco(prazo_ini,prazo_fim,porcentagem,inserted,updated,version) values (0,15,1.000,now(),now(),0);
+insert into crtn_depreciacao_preco(prazo_ini,prazo_fim,porcentagem,inserted,updated,version) values (16,30,0.981,now(),now(),0);
+insert into crtn_depreciacao_preco(prazo_ini,prazo_fim,porcentagem,inserted,updated,version) values (31,45,0.969,now(),now(),0);
+insert into crtn_depreciacao_preco(prazo_ini,prazo_fim,porcentagem,inserted,updated,version) values (46,60,0.958,now(),now(),0);
+insert into crtn_depreciacao_preco(prazo_ini,prazo_fim,porcentagem,inserted,updated,version) values (61,75,0.946,now(),now(),0);
+insert into crtn_depreciacao_preco(prazo_ini,prazo_fim,porcentagem,inserted,updated,version) values (76,90,0.935,now(),now(),0);
+insert into crtn_depreciacao_preco(prazo_ini,prazo_fim,porcentagem,inserted,updated,version) values (91,105,0.924,now(),now(),0);
+insert into crtn_depreciacao_preco(prazo_ini,prazo_fim,porcentagem,inserted,updated,version) values (106,120,0.914,now(),now(),0);
+insert into crtn_depreciacao_preco(prazo_ini,prazo_fim,porcentagem,inserted,updated,version) values (121,135,0.904,now(),now(),0);
+insert into crtn_depreciacao_preco(prazo_ini,prazo_fim,porcentagem,inserted,updated,version) values (136,999999,0.894,now(),now(),0);

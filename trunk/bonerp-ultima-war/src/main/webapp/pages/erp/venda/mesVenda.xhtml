@@ -1,0 +1,753 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/templates/template.xhtml">
+
+	<ui:define name="content">
+
+
+		<ui:param name="view" value="#{mesVendaFormListView}" />
+
+		<h:form id="frm">
+
+			<f:metadata>
+				<f:viewParam valueChangeListener="#{mesVendaFormListView.updateId}"
+					name="id" />
+			</f:metadata>
+
+			<p:remoteCommand name="loadList" process="@none" update="@none" />
+
+			<p:remoteCommand name="checkId" process="@this" update="@none"
+				autoRun="true" actionListener="#{mesVendaFormListView.checkId()}" />
+
+			<p:panel id="panel" header="Mês/Vendas">
+
+				<p:spacer height="8" />
+
+				<fd:labelInput label="Mês/Ano :" labelWidth="110px">
+					<p:inputText readonly="true" value="#{view.e.mesAno}">
+						<f:convertDateTime pattern="MMMM/yyyy" />
+					</p:inputText>
+				</fd:labelInput>
+
+				<fd:labelInput label="" alignRight="true" breakAfter="true">
+
+					<p:button outcome="/pages/erp/venda/mesVendaList.jsf"
+						icon="ui-icon-list" title="Listar meses/vendas"
+						styleClass="amber-btn" value="Listar" />
+
+					<p:commandButton id="btnAtualizarMes" icon="ui-icon-refresh"
+						value="Atualizar" process="@form" update=":frm"
+						actionListener="#{view.atualizarMes}">
+						<p:confirm />
+					</p:commandButton>
+
+					<p:commandButton icon="ui-icon-triangle-1-w"
+						actionListener="#{view.irPara(false)}" process="@this"
+						partialSubmit="true" oncomplete="PF('dlgStatusDialog').show()" />
+
+					<p:commandButton icon="ui-icon-triangle-1-e"
+						actionListener="#{view.irPara(true)}" process="@this"
+						partialSubmit="true" oncomplete="PF('dlgStatusDialog').show()" />
+				</fd:labelInput>
+
+
+				<fd:labelInput label="Dias Úteis :" labelWidth="110px">
+					<p:inputText readonly="true"
+						value="#{view.e.qtdeDiasUteisAteHoje} / #{view.e.qtdeDiasUteisComerciais} (#{view.e.qtdeDiasUteisRestantes})" />
+				</fd:labelInput>
+
+				<fd:labelInput label=" Vendedores :">
+					<p:inputText value="#{view.e.qtdeVendedores}" size="5" />
+				</fd:labelInput>
+
+				<fd:labelInput label=" IGPM: ">
+					<p:inputText styleClass="maskDec2" size="11" id="iInflacao"
+						value="#{view.e.inflacao}" style="text-align: right;"
+						converter="#{doubleConverterNull}" />%
+				</fd:labelInput>
+
+				<fd:labelInput label="" breakAfter="true">
+					<p:commandButton id="btnSalvarMes" update=":frm"
+						icon="ui-icon-save" value="Salvar" process="@form"
+						actionListener="#{view.save}" />
+				</fd:labelInput>
+
+
+				<p:spacer height="30px" />
+				<div style="clear: both;" />
+
+				<div id="frm:dtList"
+					class="ui-datatable ui-widget ui-datatable-reflow">
+
+
+					<div class="ui-datatable-tablewrapper">
+						<table role="grid">
+							<thead id="frm:dtList_head">
+								<tr role="row">
+									<th class="ui-state-default" role="columnheader" aria-label="#"
+										style="width: 500px">
+										<span class="ui-column-title"></span>
+									</th>
+									<th class="ui-state-default ui-state-active"
+										role="columnheader" style="width: 90px">
+										<span class="ui-column-title">Global</span>
+									</th>
+									<th class="ui-state-default noWrap" role="columnheader"
+										style="width: 90px">
+										<span class="ui-column-title">Vendedores</span>
+									</th>
+									<th class="ui-state-default noWrap" role="columnheader"
+										style="width: 90px">
+										<span class="ui-column-title">Externos</span>
+									</th>
+								</tr>
+							</thead>
+							<tbody class="ui-datatable-data ui-widget-content">
+								<tr class="ui-widget-content" role="row">
+									<td role="gridcell">
+										<span>Total Histórico</span>
+									</td>
+									<td role="gridcell">
+										<div style="font-weight: bold; text-align: right;">
+											<h:outputText value="#{view.e.totalHistorico}"
+												converter="#{doubleConverterNull}" />
+										</div>
+									</td>
+									<td role="gridcell">
+										<div style="font-weight: bold; text-align: right;">
+											<h:outputText value="#{view.e.totalHistoricoVendedores}"
+												converter="#{doubleConverterNull}" />
+										</div>
+									</td>
+									<td role="gridcell">
+										<div style="font-weight: bold; text-align: right;">
+											<p:commandLink
+												actionListener="#{view.updateVendasByTipo('EXTERNOS-HISTORICO')}"
+												oncomplete="PF('dlgVendas').show()"
+												update=":frm:opnDlgVendas">
+												<h:outputText value="#{view.e.totalHistoricoExternos}"
+													converter="#{doubleConverterNull}" />
+											</p:commandLink>
+										</div>
+									</td>
+								</tr>
+								<tr class="ui-widget-content" role="row">
+									<td role="gridcell">
+										<span>Total Realizado</span>
+									</td>
+									<td role="gridcell">
+										<div style="text-align: right;">
+											<div style="font-weight: bold">
+												<h:outputText value="#{view.e.totalVendidoGlobal}"
+													converter="#{doubleConverterNull}" />
+											</div>
+											<p:outputPanel rendered="#{view.e.ehMesAtual eq false}">
+												<div style="font-size: 10px; color: red">
+													<h:outputText value="#{view.e.variacaoBruta}"
+														title="Variação bruta" converter="#{doubleConverterNull}" />
+													%<br />
+													<h:outputText value="#{view.e.variacaoInflacao}"
+														title="Variação considerando a inflação"
+														converter="#{doubleConverterNull}" />
+													%
+												</div>
+											</p:outputPanel>
+										</div>
+									</td>
+									<td role="gridcell">
+										<div style="text-align: right;">
+											<div style="font-weight: bold">
+												<h:outputText value="#{view.e.totalVendidoVendedores}"
+													converter="#{doubleConverterNull}" />
+											</div>
+											<p:outputPanel rendered="#{view.e.ehMesAtual eq false}">
+												<div style="font-size: 10px; color: red">
+													<h:outputText value="#{view.e.variacaoBrutaVendedores}"
+														title="Variação bruta" converter="#{doubleConverterNull}" />
+													%<br />
+													<h:outputText value="#{view.e.variacaoInflacaoVendedores}"
+														title="Variação considerando a inflação"
+														converter="#{doubleConverterNull}" />
+													%
+												</div>
+											</p:outputPanel>
+										</div>
+									</td>
+									<td role="gridcell">
+										<div style="text-align: right;">
+											<div style="font-weight: bold">
+												<p:commandLink
+													actionListener="#{view.updateVendasByTipo('EXTERNOS-REALIZADO')}"
+													oncomplete="PF('dlgVendas').show()"
+													update=":frm:opnDlgVendas">
+													<h:outputText value="#{view.e.totalVendidoExternos}"
+														converter="#{doubleConverterNull}" />
+												</p:commandLink>
+											</div>
+											<p:outputPanel rendered="#{view.e.ehMesAtual eq false}">
+												<div style="font-size: 10px; color: red">
+													<h:outputText value="#{view.e.variacaoBrutaExternos}"
+														title="Variação bruta" converter="#{doubleConverterNull}" />
+													%<br />
+													<h:outputText value="#{view.e.variacaoInflacaoExternos}"
+														title="Variação considerando a inflação"
+														converter="#{doubleConverterNull}" />
+													%
+												</div>
+											</p:outputPanel>
+										</div>
+									</td>
+								</tr>
+								
+								<p:outputPanel rendered="#{view.e.ehMesAtual eq true}">
+									<tr class="ui-widget-content" role="row">
+										<td role="gridcell">
+											<span>Total Provável</span>
+										</td>
+										<td role="gridcell">
+											<div style="text-align: right;">
+												<div>
+													<h:outputText style="font-weight: bold;"
+														value="#{view.e.totalProvavelGlobal}"
+														converter="#{doubleConverterNull}" />
+												</div>
+												<div style="font-size: 10px; color: red">
+													<h:outputText value="#{view.e.variacaoBruta}"
+														title="Variação bruta" converter="#{doubleConverterNull}" />
+													%<br />
+													<h:outputText value="#{view.e.variacaoInflacao}"
+														title="Variação considerando a inflação"
+														converter="#{doubleConverterNull}" />
+													%
+												</div>
+											</div>
+										</td>
+										<td role="gridcell">
+											<div style="text-align: right;">
+												<div>
+													<h:outputText style="font-weight: bold;"
+														value="#{view.e.totalProvavelVendedoresPonderado}"
+														converter="#{doubleConverterNull}" />
+												</div>
+												<div style="font-size: 10px; color: red">
+													<h:outputText value="#{view.e.variacaoBrutaVendedores}"
+														title="Variação bruta" converter="#{doubleConverterNull}" />
+													%<br />
+													<h:outputText value="#{view.e.variacaoInflacaoVendedores}"
+														title="Variação considerando a inflação"
+														converter="#{doubleConverterNull}" />
+													%
+												</div>												
+											</div>
+										</td>
+										<td role="gridcell">
+											<div style="text-align: right;">
+												<div>
+													<h:outputText style="font-weight: bold;"
+														value="#{view.e.totalProvavelExternos}"
+														converter="#{doubleConverterNull}" />
+												</div>
+												<div style="font-size: 10px; color: red">
+													<h:outputText value="#{view.e.variacaoBrutaExternos}"
+														title="Variação bruta" converter="#{doubleConverterNull}" />
+													%<br />
+													<h:outputText value="#{view.e.variacaoInflacaoExternos}"
+														title="Variação considerando a inflação"
+														converter="#{doubleConverterNull}" />
+													%
+												</div>
+											</div>
+										</td>
+									</tr>
+								</p:outputPanel>
+
+								<tr>
+									<td colspan="4" />
+								</tr>
+
+								<tr class="ui-widget-content" role="row">
+									<td role="gridcell">
+										<span>Meta Mínima</span>
+									</td>
+									<td role="gridcell">
+										<div style="text-align: right;">
+											<div style="font-weight: bold">
+												<h:outputText value="#{view.e.metaMinima}"
+													converter="#{doubleConverterNull}" />
+											</div>
+										</div>
+									</td>
+									<td role="gridcell">
+										<div style="text-align: right;">
+											<div style="font-weight: bold">
+												<h:outputText value="#{view.e.metaMinimaVendedores}"
+													converter="#{doubleConverterNull}" />
+											</div>
+											<div style="font-weight: bold">
+												<h:outputText value="#{view.e.metaMinimaVendedor}"
+													converter="#{doubleConverterNull}" />
+											</div>
+
+										</div>
+									</td>
+									<td role="gridcell">
+										<div style="text-align: right;">
+											<div style="font-weight: bold">
+												<h:outputText value="#{view.e.metaMinimaExternos}"
+													converter="#{doubleConverterNull}" />
+											</div>
+										</div>
+									</td>
+								</tr>
+
+								<tr class="ui-widget-content" role="row">
+									<td role="gridcell">
+										<span>Meta Esperada</span>
+									</td>
+									<td role="gridcell">
+										<div style="text-align: right;">
+											<div style="font-weight: bold">
+												<h:outputText value="#{view.e.metaEsperada}"
+													converter="#{doubleConverterNull}" />
+											</div>
+										</div>
+									</td>
+									<td role="gridcell">
+										<div style="text-align: right;">
+											<div style="font-weight: bold">
+												<h:outputText value="#{view.e.metaEsperadaVendedores}"
+													converter="#{doubleConverterNull}" />
+											</div>
+											<div style="font-weight: bold">
+												<h:outputText value="#{view.e.metaEsperadaVendedor}"
+													converter="#{doubleConverterNull}" />
+											</div>
+										</div>
+									</td>
+									<td role="gridcell">
+										<div style="text-align: right;">
+											<div style="font-weight: bold">
+												<h:outputText value="#{view.e.metaEsperadaExternos}"
+													converter="#{doubleConverterNull}" />
+											</div>
+										</div>
+									</td>
+								</tr>
+
+								<tr>
+									<td colspan="4" />
+								</tr>
+
+								<tr class="ui-widget-content" role="row">
+									<td role="gridcell">
+										<span>Média Diária</span>
+									</td>
+									<td role="gridcell">
+										<div style="text-align: right;">
+											<div style="font-weight: bold">
+												<h:outputText value="#{view.e.mediaDiaria}"
+													converter="#{doubleConverterNull}" />
+											</div>
+										</div>
+									</td>
+									<td role="gridcell">
+										<div style="text-align: right;">
+											<div style="font-weight: bold">
+												<h:outputText value="#{view.e.mediaDiariaVendedores}"
+													converter="#{doubleConverterNull}" />
+											</div>
+										</div>
+									</td>
+									<td role="gridcell">
+										<div style="text-align: right;">
+											<div style="font-weight: bold">
+												<h:outputText value="#{view.e.mediaDiariaExternos}"
+													converter="#{doubleConverterNull}" />
+											</div>
+										</div>
+									</td>
+								</tr>
+
+								<tr class="ui-widget-content" role="row">
+									<td role="gridcell">
+										<span>Média Diária At Hist</span>
+									</td>
+									<td role="gridcell">
+										<div style="text-align: right;">
+											<div style="font-weight: bold">
+												<h:outputText value="#{view.e.mediaDiariaAtingirHistorico}"
+													converter="#{doubleConverterNull}" />
+											</div>
+										</div>
+									</td>
+									<td role="gridcell">
+										<div style="text-align: right;">
+											<div style="font-weight: bold">
+												<h:outputText
+													value="#{view.e.mediaDiariaAtingirHistoricoVendedores}"
+													converter="#{doubleConverterNull}" />
+											</div>
+										</div>
+									</td>
+									<td role="gridcell">
+										<div style="text-align: right;">
+											<div style="font-weight: bold">
+												<h:outputText
+													value="#{view.e.mediaDiariaAtingirHistoricoExternos}"
+													converter="#{doubleConverterNull}" />
+											</div>
+										</div>
+									</td>
+								</tr>
+
+								<tr class="ui-widget-content" role="row">
+									<td role="gridcell">
+										<span>Média Diária At Meta Mín</span>
+									</td>
+									<td role="gridcell">
+										<div style="text-align: right;">
+											<div style="font-weight: bold">
+												<h:outputText value="#{view.e.mediaDiariaAtingirMetaMinima}"
+													converter="#{doubleConverterNull}" />
+											</div>
+										</div>
+									</td>
+									<td role="gridcell">
+										<div style="text-align: right;">
+											<div style="font-weight: bold">
+												<h:outputText
+													value="#{view.e.mediaDiariaAtingirMetaMinimaVendedores}"
+													converter="#{doubleConverterNull}" />
+											</div>
+										</div>
+									</td>
+									<td role="gridcell">
+										<div style="text-align: right;">
+											<div style="font-weight: bold">
+												<h:outputText
+													value="#{view.e.mediaDiariaAtingirMetaMinimaExternos}"
+													converter="#{doubleConverterNull}" />
+											</div>
+										</div>
+									</td>
+								</tr>
+
+								<tr class="ui-widget-content" role="row">
+									<td role="gridcell">
+										<span>Média Diária At Meta Mín</span>
+									</td>
+									<td role="gridcell">
+										<div style="text-align: right;">
+											<div style="font-weight: bold">
+												<h:outputText
+													value="#{view.e.mediaDiariaAtingirMetaEsperada}"
+													converter="#{doubleConverterNull}" />
+											</div>
+										</div>
+									</td>
+									<td role="gridcell">
+										<div style="text-align: right;">
+											<div style="font-weight: bold">
+												<h:outputText
+													value="#{view.e.mediaDiariaAtingirMetaEsperadaVendedores}"
+													converter="#{doubleConverterNull}" />
+											</div>
+										</div>
+									</td>
+									<td role="gridcell">
+										<div style="text-align: right;">
+											<div style="font-weight: bold">
+												<h:outputText
+													value="#{view.e.mediaDiariaAtingirMetaEsperadaExternos}"
+													converter="#{doubleConverterNull}" />
+											</div>
+										</div>
+									</td>
+								</tr>
+
+
+
+
+
+							</tbody>
+						</table>
+					</div>
+				</div>
+
+
+				<p:spacer height="30px" />
+				<div style="clear: both;" />
+
+
+
+				<p:outputPanel id="opnTotaisVendedores">
+
+					<p:panel header="Totais/Vendedores" id="pnTotaisVendedores">
+
+						<p:dataTable id="dtTotaisVendedores" var="_" rowIndexVar="row"
+							value="#{view.e.itens}" editable="true" editMode="cell"
+							sortBy="#{_.posicao}">
+
+
+							<p:column headerText="Posição" sortBy="#{_.posicao}">
+								<div style="text-align: right;">
+									<h:outputText value="#{_.posicao}" />
+								</div>
+							</p:column>
+
+							<p:column headerText="Vendedor">
+								<p:commandLink
+									actionListener="#{view.updateVendasByVendedor(_.vendedor)}"
+									oncomplete="PF('dlgVendas').show()" update=":frm:opnDlgVendas">
+									<h:outputText value="#{_.vendedor.pessoa.nome}" />
+								</p:commandLink>
+							</p:column>
+
+							<p:column headerText="Total/Mês">
+								<div style="text-align: right;">
+									<h:outputText value="#{_.totalVendido}"
+										converter="#{doubleConverterNull}" />
+								</div>
+							</p:column>
+
+							<p:column headerText="Qtde Vendas" sortBy="#{_.qtdeVendas}">
+								<div style="text-align: right;">
+									<h:outputText value="#{_.qtdeVendas}" />
+								</div>
+							</p:column>
+						</p:dataTable>
+					</p:panel>
+
+				</p:outputPanel>
+
+				<p:outputPanel id="opnDiarias">
+
+					<p:panel header="Totais/Dia">
+
+						<fd:labelInput label="Entre " labelWidth="110px" breakAfter="true">
+							<p:calendar styleClass="maskData" value="#{view.dtIni}"
+								locale="pt" pages="1" pattern="dd/MM/yyyy" showOn="button"
+								size="12" showOtherMonths="false" /> e
+							<p:calendar styleClass="maskData" value="#{view.dtFim}"
+								locale="pt" pages="1" pattern="dd/MM/yyyy" showOn="button"
+								size="12" showOtherMonths="false" />
+
+							<p:commandButton actionListener="#{view.updateDiarias()}"
+								process="opnDiarias" update="opnDiarias" icon="ui-icon-search" />
+							<p:commandButton actionListener="#{view.updateDiarias()}"
+								process="opnDiarias" update="opnDiarias"
+								icon="ui-icon-autorenew" />
+
+
+						</fd:labelInput>
+
+						<p:dataTable var="_" rowIndexVar="row" value="#{view.diarias}"
+							editable="true" editMode="cell">
+
+
+							<p:column headerText="Dia">
+								<div style="text-align: center;">
+									<h:outputText value="#{_['dia']}">
+										<f:convertDateTime pattern="dd/MM (EE)" />
+									</h:outputText>
+								</div>
+							</p:column>
+
+							<p:column headerText="Vendas Internas">
+								<div style="text-align: right;">
+									<h:outputText value="#{_['total_interno']}"
+										converter="#{doubleConverterNull}" />
+								</div>
+							</p:column>
+
+							<p:column headerText="Vendas Externas">
+								<div style="text-align: right;">
+									<h:outputText value="#{_['total_externo']}"
+										converter="#{doubleConverterNull}" />
+								</div>
+							</p:column>
+
+							<p:column headerText="Total">
+								<div style="text-align: right;">
+									<h:outputText value="#{_['total_geral']}"
+										converter="#{doubleConverterNull}" />
+								</div>
+							</p:column>
+
+							<p:columnGroup type="footer">
+								<p:row>
+									<p:column />
+
+									<p:column headerText="Vendas Internas">
+										<f:facet name="footer">
+											<div style="text-align: right;">
+												<h:outputText value="#{view.getSomaDiariasBy('total_interno')}"
+													converter="#{doubleConverterNull}" />
+											</div>
+										</f:facet>
+									</p:column>
+
+									<p:column headerText="Vendas Externas">
+										<f:facet name="footer">
+											<div style="text-align: right;">
+												<h:outputText value="#{view.getSomaDiariasBy('total_externo')}"
+													converter="#{doubleConverterNull}" />
+											</div>
+										</f:facet>
+									</p:column>
+
+									<p:column headerText="Total" style="background-color: lightgrey">
+										<f:facet name="footer">
+											<div style="text-align: right;">
+												<h:outputText value="#{view.getSomaDiariasBy('total_geral')}"
+													converter="#{doubleConverterNull}" />
+											</div>
+										</f:facet>
+									</p:column>
+
+								</p:row>
+							</p:columnGroup>
+
+						</p:dataTable>
+					</p:panel>
+
+				</p:outputPanel>
+
+
+				<p:spacer height="30px" />
+				<div style="clear: both;" />
+
+
+			</p:panel>
+
+
+
+
+			<p:dialog id="dlgVendas" widgetVar="dlgVendas" position="top"
+				fitViewport="true" header="Vendas" modal="true" resizable="false"
+				closeOnEscape="true" width="800px">
+
+				<p:outputPanel id="opnDlgVendas">
+
+					<p:scrollPanel style="height:500px" mode="native">
+
+						<p:dataTable var="_" rowIndexVar="row" reflow="true"
+							emptyMessage="Nenhum registro encontrado." value="#{view.vendas}">
+
+							<p:column styleClass="noWrapSmall" headerText="#">
+								<h:outputText value="#{row + 1}" id="otRowNum" />
+							</p:column>
+
+							<p:column headerText="PV" sortBy="#{_.pv}">
+								<h:outputText value="#{_.pv}" />
+							</p:column>
+
+							<p:column headerText="Vendedor"
+								sortBy="#{_.vendedor.pessoa.nome}">
+								<h:outputText value="#{_.vendedor.pessoa.nome}" />
+							</p:column>
+
+							<p:column headerText="Dt Venda">
+								<h:outputText value="#{_.dtVenda}">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</h:outputText>
+							</p:column>
+
+							<p:column headerText="Total" sortBy="#{_.valorTotal}"
+								style="width: 80px" styleClass="noWrap">
+								<div style="text-align: right;">
+									R$
+									<h:outputText value="#{_.valorTotal}"
+										converter="#{doubleConverter}" />
+								</div>
+							</p:column>
+
+							<p:column styleClass="noWrapSmall">
+								<p:commandButton value="Itens"
+									oncomplete="PF('dlgVendaItens').show()" process="@this"
+									update=":frm:opnDlgVendaItens"
+									actionListener="#{view.updateVenda(_)}" />
+							</p:column>
+
+						</p:dataTable>
+
+					</p:scrollPanel>
+
+				</p:outputPanel>
+
+			</p:dialog>
+
+			<p:dialog id="dlgVendaItens" widgetVar="dlgVendaItens" position="top"
+				fitViewport="true" header="Itens da Venda" modal="true"
+				resizable="false" closeOnEscape="true" width="800px">
+
+				<p:outputPanel id="opnDlgVendaItens">
+
+					<p:scrollPanel style="height:500px" mode="native">
+
+						<p:dataTable var="_" rowIndexVar="row" reflow="true"
+							emptyMessage="Nenhum registro encontrado."
+							value="#{view.venda.itens}">
+
+							<p:ajax event="sort" listener="#{view.onSort}" />
+
+							<p:column styleClass="noWrapSmall" headerText="#">
+								<h:outputText value="#{_.ordem}" />
+							</p:column>
+
+							<p:column styleClass="noWrapSmall" headerText="#">
+								<h:outputText value="#{_.reduzido}" />
+							</p:column>
+
+							<p:column styleClass="noWrapSmall" headerText="#">
+								<div style="text-align: right;">
+									<h:outputText value="#{_.qtde}">
+										<f:convertNumber maxFractionDigits="2" minFractionDigits="2" />
+									</h:outputText>
+								</div>
+							</p:column>
+
+							<p:column styleClass="noWrapSmall" headerText="Descrição">
+								<h:outputText value="#{_.descricao}" />
+							</p:column>
+
+
+							<p:column headerText="Preço" style="width: 80px"
+								styleClass="noWrap">
+								<div style="text-align: right;">
+									<h:outputText value="#{_.precoVenda}"
+										converter="#{doubleConverterNull}" />
+								</div>
+							</p:column>
+
+							<p:column headerText="Total" style="width: 80px"
+								styleClass="noWrap">
+								<div style="text-align: right;">
+									<h:outputText value="#{_.totalItem}"
+										converter="#{doubleConverterNull}" />
+								</div>
+							</p:column>
+
+
+
+
+						</p:dataTable>
+
+					</p:scrollPanel>
+
+				</p:outputPanel>
+
+			</p:dialog>
+
+
+
+		</h:form>
+
+
+	</ui:define>
+
+</ui:composition>

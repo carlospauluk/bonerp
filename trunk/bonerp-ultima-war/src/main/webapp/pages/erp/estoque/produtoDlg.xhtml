@@ -1,0 +1,123 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags">
+
+
+	<ui:param name="view" value="#{produtoFormView}" />
+
+
+
+	<h:form id="frmProduto">
+
+
+
+		<p:dialog id="dlgProduto" header="Produto" widgetVar="dlgProduto"
+			position="top" resizable="false" width="1000" modal="true"
+			closable="true" closeOnEscape="true">
+
+			<p:remoteCommand name="updateOpnDlgProduto" update="opnDlg"
+				process="@none" />
+
+			<p:outputPanel id="opnDlg">
+
+				<script>
+					// Chamada no blur do campo reduzido, para ver se precisa chamar um update.
+					function checkUpdateReduzido() {
+						
+						var reduzido = '#{view.e.reduzido}';						
+						var reduzidoTela = _$('iReduzido').val().replace(/\D/g,'');						
+						//alert(reduzido);
+						//alert(reduzidoTela);
+						return (reduzidoTela != reduzido) &amp;&amp; (reduzidoTela != '');
+					}
+					
+					function checkUpdateFornecedor() {
+						
+						var fornecedor = '#{view.e.fornecedor.codigo}';						
+						var fornecedorTela = _$('iFornecedorCodigo').val().replace(/\D/g,'');						
+						//alert(reduzido);
+						//alert(reduzidoTela);
+						return (fornecedorTela != fornecedor) &amp;&amp; (fornecedorTela != '');
+					}
+				</script>
+
+				<p:outputPanel autoUpdate="true">
+					<script type="text/javascript">
+						aplicarMasks();
+					</script>
+				</p:outputPanel>
+
+				<ui:include src="produto.xhtml">
+					<ui:param name="sufix" value="Produto" />
+					<ui:param name="p" value="#{e}" />
+				</ui:include>
+
+
+				<p:spacer height="10px" />
+
+				<div style="clear: both;" />
+
+				<ui:include src="produtoPreco.xhtml" />
+
+				<p:spacer height="10px" />
+
+				<ui:include src="produtoGrade.xhtml" />
+
+				<p:spacer height="10px" />
+
+				<div style="clear: both;" />
+
+
+				<fd:labelInput noLabel="true">
+					<p:outputLabel value="*** ARTIGO DE CORTINA"
+						rendered="#{produtoFormView.produtoEhArtigoCortina(e) eq true}" />
+				</fd:labelInput>
+
+
+				<fd:labelInput alignRight="true" breakAfter="true">
+
+					<p:defaultCommand target="btnSalvar" scope="frmProduto" />
+
+					<p:commandButton id="btnSalvar"
+						update=":frmProduto:opnDlg #{update}" icon="ui-icon-save"
+						value="Salvar" style="width: 180px"
+						actionListener="#{produtoFormView[action]}"
+						oncomplete="afterFormSubmit(xhr, status, args);" />
+
+
+					<p:commandButton update=":frmProduto:opnDlg #{update}"
+						rendered="#{produtoFormView.produtoEhArtigoCortina(e) eq false}"
+						icon="ui-icon-save" value="Criar Artigo de Cortina"
+						actionListener="#{produtoFormView.criarArtigoCortina}"
+						oncomplete="afterFormSubmit(xhr, status, args);">
+						<p:confirm />
+					</p:commandButton>
+
+
+
+
+				</fd:labelInput>
+
+			</p:outputPanel>
+
+
+
+
+			<p:spacer height="10px" />
+
+			<div style="clear: both;" />
+
+		</p:dialog>
+
+	</h:form>
+
+
+
+
+
+
+</ui:composition>

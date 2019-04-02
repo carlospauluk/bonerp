@@ -1,0 +1,515 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:p="http://primefaces.org/ui" template="/templates/template.xhtml">
+
+
+	<ui:define name="headFirst">
+		<script src="#{resource['js/helpers.js']}" type="text/javascript"></script>
+	</ui:define>
+
+	<ui:param name="view" value="#{emiteFiscalSpartacusView}" />
+
+	<ui:define name="content">
+
+		<div id="_slnm_emiteFiscalSpartacusPV" />
+
+
+		<h:form id="frm">
+
+			<p:dialog id="dlgPVNaoEncontrado">
+
+			</p:dialog>
+
+			<p:panel id="panel" header="Emissão Fiscal - NFe/NFCe">
+
+				<p:outputPanel id="opnPV"
+					rendered="#{view.venda eq null or view.venda.pv eq null}">
+
+					<fd:labelInput label="PV :">
+						<p:inputText size="20" value="#{view.venda.pv}"
+							styleClass="maskIntSemPonto" id="iPV" />
+
+						<p:focus for="iPV" />
+					</fd:labelInput>
+
+					<fd:labelInput noLabel="true" breakAfter="true">
+
+						<p:defaultCommand target="btnCarregar" />
+
+						<p:commandButton id="btnCarregar" title="Carregar dados"
+							value="Carregar" update="panel" process="@this iPV"
+							icon="fa fa-fw fa-refresh" action="#{view.processarPV()}" />
+						<p:spacer width="20px" />
+
+
+
+					</fd:labelInput>
+
+				</p:outputPanel>
+
+
+				<div style="clear: both" />
+
+
+				<p:outputPanel id="opnFaturar" rendered="#{view.venda.pv ne null}">
+
+					<p:fieldset legend="Venda">
+
+						<fd:labelInput label="PV :" labelWidth="110px">
+							<p:inputText size="10" value="#{view.venda.pv}" readonly="true" />
+						</fd:labelInput>
+
+						<fd:labelInput label="Dt Venda :">
+
+							<p:inputText styleClass="maskData" value="#{view.venda.dtVenda}">
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</p:inputText>
+
+						</fd:labelInput>
+
+						<fd:labelInput label="Vendedor :" breakAfter="true"
+							alignRight="true">
+							<p:inputText size="50" value="#{view.venda.vendedor.pessoa.nome}"
+								readonly="true" />
+						</fd:labelInput>
+
+						<fd:labelInput label="Plano Pagto :" labelWidth="110px">
+							<p:inputText size="20" value="#{view.venda.planoPagto.descricao}"
+								readonly="true" />
+						</fd:labelInput>
+
+
+						<div style="float: left">
+							<fd:labelInput label="Sub-total :">
+								<p:inputText size="8" value="#{view.venda.subTotal}"
+									converter="#{doubleConverterNull}" readonly="true" />
+							</fd:labelInput>
+
+							<fd:labelInput label="Desconto Plano :">
+								<p:inputText size="8" value="#{view.venda.descontoPlano}"
+									converter="#{doubleConverterNull}" readonly="true" />
+							</fd:labelInput>
+
+							<fd:labelInput label="Desconto Especial :">
+								<p:inputText size="8" value="#{view.venda.descontoEspecial}"
+									converter="#{doubleConverterNull}" readonly="true" />
+							</fd:labelInput>
+
+							<fd:labelInput label="Valor Total :">
+								<p:inputText size="12" value="#{view.venda.valorTotal}"
+									converter="#{doubleConverterNull}" readonly="true" />
+							</fd:labelInput>
+
+						</div>
+
+						<div style="clear: both" />
+
+
+
+						<p:spacer height="20px" />
+
+
+
+						<script>
+							_$('iNCM').mask('99999999');
+						</script>
+
+						<p:dataTable var="item" value="#{view.venda.itens}"
+							rowIndexVar="row" rowKey="#{item}" editable="true">
+
+							<f:facet name="header">Itens</f:facet>
+
+
+							<p:ajax event="rowEdit" listener="#{view.onRowEditVendaItem}" />
+
+							<p:column style="width: 1px" headerText="#">
+								<h:outputText value="#{row + 1}" />
+							</p:column>
+
+							<p:column headerText="Reduzido">
+								<h:outputText value="#{item.reduzido}" />
+							</p:column>
+
+							<p:column headerText="Descrição">
+								<h:outputText value="#{item.descricao}" />
+							</p:column>
+
+							<p:column headerText="NCM">
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{item.ncm}" />
+										<p:outputPanel style="float: right">
+											<p:commandButton process="@this" update=":frm:opnFaturar" icon="ui-icon-adjust"
+												rendered="#{item.ncmExistente eq false}"
+												actionListener="#{view.setNCMGenerico(item)}" title="Corrigir para NCM genérico">
+												<p:confirm />
+											</p:commandButton>
+										</p:outputPanel>
+									</f:facet>
+									<f:facet name="input">
+										<p:inputText size="10" value="#{item.ncm}" id="iNCM"
+											onfocus="" />
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+
+							<p:column headerText="Qtde">
+								<div style="text-align: right">
+									<h:outputText value="#{item.qtde}"
+										converter="#{doubleConverterNull}" />
+								</div>
+							</p:column>
+
+							<p:column headerText="Valor Unit">
+								<div style="text-align: right">
+									<h:outputText value="#{item.precoVenda}"
+										converter="#{doubleConverterNull}" />
+								</div>
+							</p:column>
+							<p:column headerText="Total">
+								<div style="text-align: right">
+									<h:outputText value="#{item.totalItem}"
+										converter="#{doubleConverterNull}" />
+								</div>
+							</p:column>
+
+							<p:column style="width:32px">
+								<p:rowEditor />
+							</p:column>
+
+
+						</p:dataTable>
+
+
+					</p:fieldset>
+
+					<p:spacer height="30px" />
+
+					<p:fieldset legend="Emissão Fiscal">
+
+
+						<fd:labelInput label="Tipo Nota :" labelWidth="110px">
+							<p:selectOneRadio value="#{view.tipoNota}" id="iTipoNota"
+								widgetVar="iTipoNota"
+								disabled="#{!view.permiteFaturamento(view.venda)}"
+								style="font-family: Tahoma, Verdana, sans-serif; font-size: 12px; font-weight: bold;">
+								<p:ajax event="change" update="opnFaturar" process="@this" />
+								<f:selectItems value="#{view.tipoNota.values()}" var="_"
+									itemLabel="#{_}" itemValue="#{_}" />
+							</p:selectOneRadio>
+						</fd:labelInput>
+						
+						
+						<p:outputPanel rendered="#{view.venda.notaFiscal ne null}">
+
+							<fd:labelInput label="Nota:" alignRight="true">
+
+								<h:outputText value="#{view.venda.notaFiscal.numero} " />
+								<h:outputText
+									value=" (Spartacus Id: #{view.venda.notaFiscal.spartacusId}) (Id: #{view.venda.notaFiscal.id}) (Mod: #{view.venda.notaFiscal.tipoNotaFiscal.modelo}) (#{view.venda.notaFiscal.ambiente})" />
+								<h:outputText
+									value=" (Status: #{view.venda.notaFiscal.spartacusStatus} - #{view.venda.notaFiscal.spartacusMensRetornoReceita})" />
+							</fd:labelInput>
+						
+						</p:outputPanel>
+
+
+
+						<fd:labelInput noLabel="true" breakAfter="true" />
+
+						<fd:labelInput labelWidth="110px" noLabel="true" breakAfter="true">
+							<p:selectOneRadio value="#{view.venda.cliente.pessoa.tipoPessoa}"
+								id="selTipoPessoa"
+								disabled="#{!view.permiteFaturamento(view.venda)}"
+								style="font-family: Tahoma, Verdana, sans-serif; font-size: 12px; font-weight: bold;">
+								<p:ajax event="change" update=":frm:opnFaturar" process="@this"
+									listener="#{view.limparPessoaDestinatario}" />
+								<f:selectItems value="#{lmBase.tipoPessoaValues}" var="_"
+									itemLabel="#{_.label}" itemValue="#{_}" />
+							</p:selectOneRadio>
+						</fd:labelInput>
+
+
+
+
+
+						<p:outputPanel id="opnDocNome">
+
+							<f:validateBean disabled="true">
+
+								<p:outputPanel
+									rendered="#{view.venda.cliente.pessoa.tipoPessoa.inicial == 'J'}">
+
+									<fd:labelInput label="CNPJ :" labelWidth="110px">
+										<p:inputMask size="20" id="iCnpj"
+											disabled="#{!view.permiteFaturamento(view.venda)}"
+											required="#{view.tipoNota eq 'NFE'}"
+											value="#{view.venda.cliente.pessoa.documento}"
+											requiredMessage="É necessário informar o CNPJ"
+											mask="99.999.999/9999-99" converter="#{docConverter}">
+											<p:ajax event="blur" listener="#{view.updateDoc}"
+												global="false" update="opnFaturar" />
+										</p:inputMask>
+									</fd:labelInput>
+
+									<fd:labelInput label="Razão Social :" breakAfter="true">
+										<p:inputText size="70" required="#{view.tipoNota eq 'NFE'}"
+											disabled="#{!view.permiteFaturamento(view.venda)}"
+											value="#{view.venda.cliente.pessoa.nome}" id="iNomePJ" />
+									</fd:labelInput>
+
+
+								</p:outputPanel>
+
+								<p:outputPanel
+									rendered="#{view.venda.cliente.pessoa.tipoPessoa.inicial == 'F'}">
+
+									<fd:labelInput label="CPF :" labelWidth="110px">
+										<p:inputMask size="16" id="iCPF" widgetVar="iCPF"
+											disabled="#{!view.permiteFaturamento(view.venda)}"
+											required="#{view.tipoNota eq 'NFE'}"
+											value="#{view.venda.cliente.pessoa.documento}"
+											requiredMessage="É necessário informar o CPF"
+											mask="999.999.999-99" converter="#{docConverter}">
+											<p:ajax event="blur" listener="#{view.updateDoc}"
+												global="false" update="opnFaturar" />
+										</p:inputMask>
+									</fd:labelInput>
+
+									<fd:labelInput label="Nome :" breakAfter="true">
+										<p:inputText size="50" required="#{view.tipoNota eq 'NFE'}"
+											disabled="#{!view.permiteFaturamento(view.venda)}"
+											value="#{view.venda.cliente.pessoa.nome}" id="iNomePF" />
+									</fd:labelInput>
+
+
+
+								</p:outputPanel>
+
+							</f:validateBean>
+
+						</p:outputPanel>
+
+						<p:outputPanel id="opnNFE" rendered="#{view.tipoNota eq 'NFE'}">
+
+							<p:outputPanel
+								rendered="#{view.venda.cliente.pessoa.tipoPessoa.inicial == 'J'}">
+
+								<fd:labelInput label="Nome Fantasia :" labelWidth="110px">
+									<p:inputText size="60"
+										disabled="#{!view.permiteFaturamento(view.venda)}"
+										value="#{view.venda.cliente.pessoa.nomeFantasia}"
+										id="iNomeFantasia" />
+								</fd:labelInput>
+
+								<fd:labelInput label="Inscr Est :" breakAfter="true"
+									alignRight="true">
+									<p:inputText size="15" id="iInscrEst" required="true"
+										disabled="#{!view.permiteFaturamento(view.venda)}"
+										requiredMessage="É necessário informar a Inscr Est"
+										value="#{view.venda.cliente.inscricaoEstadual}" />
+								</fd:labelInput>
+
+
+							</p:outputPanel>
+
+							<fd:labelInput label="Fone :" labelWidth="110px">
+								<p:inputMask size="20" value="#{view.venda.cliente.fone1}"
+									disabled="#{!view.permiteFaturamento(view.venda)}" id="iFone1"
+									mask="(99) 9999-9999?9" required="true"
+									requiredMessage="É necessário informar o Fone" />
+							</fd:labelInput>
+
+
+							<fd:labelInput label="E-mail :" alignRight="true"
+								breakAfter="true">
+								<p:inputText size="50" value="#{view.venda.cliente.email}"
+									disabled="#{!view.permiteFaturamento(view.venda)}" id="iEmail"
+									style="text-transform: lowercase;" />
+							</fd:labelInput>
+
+							<p:outputPanel id="opnEndereco">
+
+								<fd:labelInput label="CEP :" labelWidth="110px"
+									breakAfter="true">
+									<p:inputMask mask="99999-999" size="10" id="iCep"
+										disabled="#{!view.permiteFaturamento(view.venda)}"
+										value="#{view.venda.cliente.endereco.cep}" required="true"
+										requiredMessage="É necessário informar o CEP" />
+									<p:commandButton icon="ui-icon-search" update="opnEndereco"
+										rendered="#{view.permiteFaturamento(view.venda)}"
+										process="@this iCep"
+										actionListener="#{viaCEP2Endereco.convert(view.venda.cliente.endereco)}" />
+								</fd:labelInput>
+
+								<div style="clear: both;" />
+
+								<fd:labelInput label="Logradouro :" labelWidth="110px">
+									<p:inputText size="50" required="true"
+										disabled="#{!view.permiteFaturamento(view.venda)}"
+										requiredMessage="É necessário informar o Logradouro"
+										value="#{view.venda.cliente.endereco.logradouro}"
+										id="logradouro" />
+								</fd:labelInput>
+
+								<fd:labelInput label="Número :">
+									<p:inputText size="5" required="true"
+										disabled="#{!view.permiteFaturamento(view.venda)}"
+										requiredMessage="É necessário informar o Número"
+										value="#{view.venda.cliente.endereco.numero}" id="numero" />
+								</fd:labelInput>
+
+								<fd:labelInput label="Complemento :" alignRight="true"
+									breakAfter="true">
+									<p:inputText size="13"
+										disabled="#{!view.permiteFaturamento(view.venda)}"
+										value="#{view.venda.cliente.endereco.complemento}"
+										id="complemento" />
+								</fd:labelInput>
+
+								<fd:labelInput label="Bairro :" labelWidth="110px"
+									breakAfter="true">
+									<p:inputText size="40" required="true"
+										disabled="#{!view.permiteFaturamento(view.venda)}"
+										requiredMessage="É necessário informar o Bairro"
+										value="#{view.venda.cliente.endereco.bairro}" id="bairro" />
+								</fd:labelInput>
+
+								<fd:labelInput label="Cidade :" labelWidth="110px">
+									<p:inputText size="40" required="true"
+										disabled="#{!view.permiteFaturamento(view.venda)}"
+										requiredMessage="É necessário informar a Cidade"
+										value="#{view.venda.cliente.endereco.cidade}" id="cidade" />
+								</fd:labelInput>
+
+								<fd:labelInput label="Estado :" breakAfter="true">
+									<p:selectOneMenu value="#{view.venda.cliente.endereco.estado}"
+										disabled="#{!view.permiteFaturamento(view.venda)}" id="uf"
+										style="width: 180px" required="true"
+										requiredMessage="É necessário informar o Estado">
+										<f:selectItem itemValue="" itemLabel="Selecione" />
+										<f:selectItems value="#{lmBase.ufValues}" var="uf"
+											itemLabel="#{uf.sigla}" itemValue="#{uf}" />
+									</p:selectOneMenu>
+								</fd:labelInput>
+
+							</p:outputPanel>
+
+
+
+
+							<div style="clear: both;" />
+
+						</p:outputPanel>
+
+						<div style="clear: both;" />
+
+
+						<!-- BOTÃO SALVAR -->
+						<fd:labelInput noLabel="true" alignRight="true" breakAfter="true">
+
+							<!-- FATURAR: SÓ EXIBE SE AINDA NÃO FOI FATURADO -->
+							<p:commandButton title="Faturar" id="btnFaturar"
+								rendered="#{view.permiteFaturamento(view.venda)}"
+								icon="ui-icon-print" value="Faturar" process="opnFaturar"
+								style="width: 200px" actionListener="#{view.faturarPV(false)}"
+								update="frm:panel">
+								<p:confirm header="Faturamento" />
+							</p:commandButton>
+
+
+
+							<!-- REIMPRIMIR: SÓ EXIBE SE O STATUS FOR '100' -->
+							<p:commandButton actionListener="#{view.reimprimir(view.venda)}"
+								rendered="#{view.permiteReimpressao(view.venda)}"
+								process="@this" title="Reimprime venda" value="Reimprime venda"
+								update=":frm" icon="ui-icon-print">
+								<p:confirm header="Reimpressão" />
+							</p:commandButton>
+
+							<!-- CANCELAR: SÓ EXIBE SE O STATUS FOR '100' -->
+							<p:commandButton
+								rendered="#{view.venda.notaFiscal.spartacusStatus eq '100'}"
+								process="@this" title="Cancelar faturamento" value="Cancelar"
+								update=":frm" icon="ui-icon-print"
+								oncomplete="PF('dlgCancelar').show()" />
+
+							<p:hotkey bind="ctrl+up" actionListener="#{view.updateVenda(null)}" process="@none" />
+
+							<!-- EXIBE SEMPRE, É SÓ PARA RECARREGAR A TELA -->
+							<p:commandButton id="btnLimpar" title="Limpar" value="Limpar"
+								update="panel" process="@this" icon="ui-icon-document" immediate="true"
+								action="#{view.updateVenda(null)}" />
+
+						</fd:labelInput>
+
+					</p:fieldset>
+
+
+				</p:outputPanel>
+
+			</p:panel>
+			
+			<p:dialog id="dlgCancelar" widgetVar="dlgCancelar" position="top"
+				fitViewport="true" header="Cancelamento" modal="true"
+				resizable="false" closeOnEscape="true" width="900" dynamic="true">
+
+				<p:outputPanel id="opnDlgCancelar">
+				
+					<p:focus for="iMotivo" />
+
+					<fd:labelInput label="PV :" labelWidth="110px">
+						<p:inputText size="10" value="#{view.venda.pv}" readonly="true">
+							<f:convertNumber integerOnly="true" />
+						</p:inputText>
+					</fd:labelInput>
+
+					<fd:labelInput label="Dt Venda :">
+						<p:inputText size="10" value="#{view.venda.dtVenda}"
+							readonly="true">
+							<f:convertDateTime pattern="dd/MM/yy" />
+						</p:inputText>
+					</fd:labelInput>
+
+					<fd:labelInput label="Valor Total :" alignRight="true"
+						breakAfter="true">
+						<p:inputText size="10" value="#{view.venda.valorTotal}"
+							style="text-align: right;" readonly="true">
+							<fd:bigDecimalConverter onlyAbs="true" />
+						</p:inputText>
+					</fd:labelInput>
+
+					<fd:labelInput label="Motivo :" labelWidth="110px"
+						breakAfter="true">
+						<p:inputTextarea rows="8" cols="55" id="iMotivo"
+							value="#{view.venda.notaFiscal.motivoCancelamento}" />
+					</fd:labelInput>
+
+					<!-- BOTÃO SALVAR -->
+					<fd:labelInput noLabel="true" alignRight="true" breakAfter="true">
+						<p:commandButton title="Cancelar" id="btnCancelar"
+							icon="ui-icon-cancel" value="Cancelar" process="opnDlgCancelar"
+							style="width: 110px" actionListener="#{view.cancelar}"
+							update=":frm" oncomplete="afterFormSubmit(xhr, status, args);">
+							<p:confirm header="Cancelamento" />
+						</p:commandButton>
+					</fd:labelInput>
+
+
+				</p:outputPanel>
+
+			</p:dialog>
+
+
+		</h:form>
+
+
+
+
+	</ui:define>
+</ui:composition>

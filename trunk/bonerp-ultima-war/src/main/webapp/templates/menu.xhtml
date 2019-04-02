@@ -1,0 +1,504 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:pu="http://primefaces.org/ultima">
+
+	<h:form id="menuform">
+		<div class="layout-menu layout-menu-dark">
+			<div class="nano">
+				<div class="nano-content menu-scroll-content">
+
+					<pu:menu widgetVar="me">
+						<sec:authorize ifAnyGranted="ROLE_CRM">
+
+							<p:submenu id="submenuCRM" label="CRM"
+								icon="perm_contact_calendar">
+
+								<p:menuitem value="Clientes" id="miClienteList"
+									url="/pages/erp/crm/clienteList.jsf" />
+
+								<p:separator />
+
+								<p:submenu label="Promoções" icon="settings"
+									id="submenuPromocoes">
+
+									<p:menuitem value="Campanhas Promocionais"
+										id="miCampanhasPromocionais"
+										url="/pages/erp/crm/promocoes/campanhaPromoFormList.jsf" />
+									<p:menuitem value="Cupons" id="miCupons"
+										url="/pages/erp/crm/promocoes/cupomList.jsf" />
+									<p:menuitem value="Vincular Cupom a Cliente"
+										id="miVincularCupom"
+										url="/pages/erp/crm/promocoes/vincularCupom.jsf" />
+									<p:menuitem value="Utilizar Cupom" id="miUtilizarCupom"
+										url="/pages/erp/crm/promocoes/utilizarCupom.jsf" />
+
+								</p:submenu>
+
+								<p:separator />
+								<p:separator />
+
+							</p:submenu>
+
+						</sec:authorize>
+
+
+						<sec:authorize ifAnyGranted="ROLE_FINANCEIRO">
+
+							<p:submenu label="Financeiro" icon="attach_money"
+								id="submenuFinanceiro">
+
+								<sec:authorize ifAnyGranted="ROLE_FINANCEIRO_ADMIN">
+
+									<p:submenu label="Cadastros" icon="settings"
+										id="submenuFinanceiro_Cadastros">
+
+										<p:menuitem value="Carteiras" id="miCarteiraFormList"
+											url="/pages/erp/financeiro/carteiraFormList.jsf" />
+
+										<p:menuitem value="Centros de Custos"
+											id="miCentroCustoFormList"
+											url="/pages/erp/financeiro/centroCustoFormList.jsf" />
+
+										<p:menuitem value="Modos de Movimentação" id="miModoFormList"
+											url="/pages/erp/financeiro/modoFormList.jsf" />
+
+										<p:menuitem value="Bandeiras de Cartões"
+											id="miBandeiraCartaoFormList"
+											url="/pages/erp/financeiro/bandeiraCartaoFormList.jsf" />
+
+										<p:menuitem value="Operadoras de Cartões"
+											id="miOperadoraCartaoFormList"
+											url="/pages/erp/financeiro/operadoraCartaoFormList.jsf" />
+
+										<p:menuitem value="Categorias" id="miCategoriaFormList"
+											url="/pages/erp/financeiro/categoriaTreeForm.jsf" />
+
+										<p:menuitem value="Bancos" id="miBancoFormList"
+											url="/pages/erp/financeiro/bancoFormList.jsf" />
+
+										<p:menuitem value="Grupos" id="miGrupoFormList"
+											url="/pages/erp/financeiro/grupoFormList.jsf" />
+
+
+										<p:separator />
+
+
+										<p:menuitem value="Regras Importação Linhas"
+											id="miRegraImportacaoLinhaFormList"
+											url="/pages/erp/financeiro/regraImportacaoLinhaFormList.jsf" />
+
+										<p:separator />
+
+										<p:menuitem value="Registros Conferências"
+											id="miRegistrosParaConferencias" icon="check_circle"
+											url="/pages/erp/financeiro/registroConferenciaFormList.jsf" />
+
+
+									</p:submenu>
+
+									<p:separator />
+
+								</sec:authorize>
+
+								<sec:authorize ifAnyGranted="ROLE_FINANCEIRO_LANCTOS">
+
+									<p:menuitem value="Importar Movimentações"
+										id="miMovimentacaoImporterForm"
+										url="/pages/erp/financeiro/movimentacaoImporterForm.jsf" />
+
+									<p:separator />
+
+									<p:menuitem value="Contas a Pagar/Receber"
+										id="miMovimentacaoList_aPagarReceber"
+										url="/pages/erp/financeiro/movimentacaoList_aPagarReceber.jsf" />
+
+									<p:menuitem value="Extrato - Grupos de Movimentações"
+										id="miMovimentacaoListExtratoGrupo"
+										url="/pages/erp/financeiro/movimentacaoList_extratoGrupo.jsf" />
+
+									<sec:authorize ifAnyGranted="ROLE_FINANCEIRO_PAGTOS">
+
+										<p:menuitem value="Extrato - Movimentações"
+											id="miMovimentacaoListExtrato"
+											url="/pages/erp/financeiro/movimentacaoList_extrato.jsf" />
+
+									</sec:authorize>
+
+									<p:menuitem value="Listagem - Movimentações"
+										id="miMovimentacaoListListagem"
+										url="/pages/erp/financeiro/movimentacaoList_listagem.jsf" />
+
+									<p:menuitem value="Movimentações Recorrentes"
+										id="miMovimentacaoListRecorrencia"
+										url="/pages/erp/financeiro/movimentacaoList_recorrencia.jsf" />
+
+									<p:menuitem value="Caixa - Movimentações Diárias"
+										id="miMovimentacaoFormList_lanctosCaixa"
+										url="/pages/erp/financeiro/movimentacaoFormList_lanctosCaixa.jsf" />
+
+									<p:separator />
+
+								</sec:authorize>
+
+								<sec:authorize ifAnyGranted="ROLE_FINANCEIRO_PAGTOS">
+
+									<p:menuitem value="Conferência Financeiro"
+										id="miResumoConferenciaGeral" icon="playlist_add_check"
+										url="/pages/erp/financeiro/resumoConferenciaGeral.jsf" />
+
+									<p:menuitem value="Conferência Estoque"
+										id="miConferenciaImportacoesEstoque" icon="check_circle"
+										url="/pages/erp/estoque/relatorios/conferenciaImportacoesEstoque.jsf" />
+
+									<p:separator />
+
+								</sec:authorize>
+
+								<sec:authorize ifAnyGranted="ROLE_FINANCEIRO_PROPRIET">
+
+									<p:menuitem value="Relatório por Categorias"
+										id="miRelatorioPorCategorias"
+										url="/pages/erp/financeiro/relatorioPorCategorias.jsf" />
+
+								</sec:authorize>
+
+								<p:separator />
+								<p:separator />
+
+							</p:submenu>
+
+						</sec:authorize>
+
+
+						<sec:authorize
+							ifAnyGranted="ROLE_ESTOQUE_ADMIN,ROLE_ESTOQUE,ROLE_CORTINAS,ROLA_CORTINAS_ADMIN">
+
+							<p:submenu label="Estoque" icon="move_to_inbox"
+								id="submenuEstoque">
+
+
+								<p:menuitem value="Fornecedores" id="miFornecedorList"
+									url="/pages/erp/estoque/fornecedorList.jsf" />
+
+								<p:separator />
+
+								<p:menuitem value="Deptos/Subdeptos" id="miDeptoSubdeptoForm"
+									url="/pages/erp/estoque/depto-subdepto-Form.jsf" />
+								<p:menuitem value="Grades" id="miGradeForm"
+									url="/pages/erp/estoque/gradeForm.jsf" />
+								<p:menuitem value="Unidade Produtos" id="miUnidadeProdutoForm"
+									url="/pages/erp/estoque/unidadeProdutoFormList.jsf" />
+								<p:separator />
+
+								<p:submenu label="Cálculos" id="submenuEstoque_calculos"
+									icon="dialpad">
+									<p:menuitem value="Cálculo de Preços" id="miCalculoPrecoForm"
+										url="/pages/erp/estoque/calculoPrecoForm.jsf" />
+
+									<p:menuitem value="Cálculo de Margem" id="miCalculoMargemForm"
+										url="/pages/erp/estoque/calculoMargemForm.jsf" />
+								</p:submenu>
+
+								<p:separator />
+
+								<p:menuitem value="Produtos" id="miProdutoList"
+									url="/pages/erp/estoque/produtoList.jsf" />
+
+								<sec:authorize ifAnyGranted="ROLE_CORTINAS_ADMIN">
+
+									<p:menuitem value="Artigos de Cortinas" id="miArtigosCortina"
+										url="/pages/erp/cortinas/artigoCortinaList.jsf" />
+
+									<p:menuitem value="Produtos prováveis Artigos de Cortinas"
+										id="miProdutosProvaveisArtigosCortina"
+										url="/pages/erp/cortinas/produtosProvaveisArtigosCortinaList.jsf" />
+
+									<p:separator />
+
+								</sec:authorize>
+
+
+								<sec:authorize ifAnyGranted="ROLE_ESTOQUE_ADMIN">
+
+
+									<p:menuitem value="Notas Fiscais de Entrada"
+										id="miNotasFiscaisEntrada"
+										url="/pages/erp/fiscal/notaFiscalEntradaList.jsf" />
+
+
+									<p:separator />
+
+									<p:submenu label="Relatórios" icon="settings"
+										id="submenuEstoque_relatorios">
+
+										<p:menuitem value="Entradas/Saídas Mensal"
+											id="miRel_EntradasSaidas"
+											url="/pages/erp/estoque/relatorios/entradasSaidasMensal.jsf" />
+
+										<p:menuitem value="Posição Estoque (Previsão de Compra)"
+											id="miRel_PrevisaoCompra"
+											url="/pages/erp/estoque/relatorios/previsaoCompra2.jsf" />
+
+
+									</p:submenu>
+
+								</sec:authorize>
+
+								<p:separator />
+								<p:separator />
+
+							</p:submenu>
+						</sec:authorize>
+
+
+						<sec:authorize ifAnyGranted="ROLE_CORTINAS,ROLE_ORCAMENTOS">
+
+							<p:submenu label="Orçamentos" icon="reorder"
+								id="submenuOrcamentos">
+
+								<sec:authorize ifAnyGranted="ROLE_CORTINAS">
+									<p:menuitem value="Orçamentos de Cortinas"
+										id="miOrcamentoCortinaList"
+										url="/pages/erp/orcamentos/orcamentoCortinaList.jsf" />
+
+									<p:menuitem value="Novo Orçamento de Cortinas"
+										id="miOrcamentoCortinaForm"
+										url="/pages/erp/orcamentos/orcamentoCortinaForm.jsf" />
+
+
+									<p:separator />
+
+								</sec:authorize>
+
+								<sec:authorize ifAnyGranted="ROLE_ORCAMENTOS">
+
+									<p:menuitem value="Orçamentos de Confecções"
+										id="miOrcamentoConfeccaoList"
+										url="/pages/erp/orcamentos/orcamentoConfeccaoList.jsf" />
+
+									<p:menuitem value="Novo Orçamento de Confecções"
+										id="miOrcamentoConfeccaoForm"
+										url="/pages/erp/orcamentos/orcamentoConfeccaoForm.jsf" />
+
+								</sec:authorize>
+
+								<p:separator />
+								<p:separator />
+
+							</p:submenu>
+						</sec:authorize>
+
+
+						<sec:authorize ifAnyGranted="ROLE_CREDIARIO">
+
+							<p:submenu label="Crediário" id="submenuCrediario"
+								icon="playlist_add_check">
+
+								<p:menuitem value="Recebimentos - Servipa"
+									id="miConsultaRecebimento"
+									url="/pages/erp/crediario/consultaRecebimentos.jsf" />
+
+
+								<p:separator />
+								<p:separator />
+
+							</p:submenu>
+
+						</sec:authorize>
+
+
+						<sec:authorize ifAnyGranted="ROLE_PRODUCAO">
+
+							<p:submenu label="Produção" icon="gesture" id="submenuProducao">
+
+								<sec:authorize ifAnyGranted="ROLE_PRODUCAO_ADMIN">
+
+									<p:menuitem value="Tipos de Artigos" id="miTipoArtigoFormList"
+										url="/pages/erp/producao/tipoArtigoFormList.jsf" />
+
+									<p:menuitem value="Tipos de Insumos" id="miTipoInsumoFormList"
+										url="/pages/erp/producao/tipoInsumoFormList.jsf" />
+
+									<p:separator />
+
+									<p:menuitem value="Catálogos" id="miCatalogoFormList"
+										url="/pages/erp/producao/catalogo/catalogoFormList.jsf" />
+
+								</sec:authorize>
+
+								<p:menuitem value="Insumos" id="miInsumoFormList"
+									url="/pages/erp/producao/insumoFormList.jsf" />
+
+								<p:separator />
+
+								<p:menuitem value="Instituições" id="miInstituicaoFormList"
+									url="/pages/erp/producao/instituicaoFormList.jsf" />
+
+								<p:separator />
+
+								<p:menuitem value="Confecções" id="miConfeccaoList"
+									url="/pages/erp/producao/confeccaoList.jsf" />
+
+								<p:menuitem value="Montar Planilha de Confecção"
+									id="miConfeccaoBuilderView"
+									url="/pages/erp/producao/confeccaoBuilderView.jsf" />
+
+								<p:menuitem value="Lotes de Confecção" id="miLoteConfeccaoList"
+									url="/pages/erp/producao/loteConfeccaoList.jsf" />
+
+								<p:separator />
+
+								<p:menuitem value="Atualização de Preços em Lote"
+									id="miAtualizacaoPrecosLote"
+									url="/pages/erp/producao/atualizacaoPrecosLote.jsf" />
+
+								<p:separator />
+								<p:separator />
+
+							</p:submenu>
+						</sec:authorize>
+
+
+						<sec:authorize ifAnyGranted="ROLE_RH">
+
+							<p:submenu label="R.H." icon="people" id="submenuRH">
+
+								<sec:authorize ifAnyGranted="ROLE_RH_ADMIN">
+
+									<p:menuitem value="Cargos" id="miCargoFormList"
+										url="/pages/erp/rh/cargoFormList.jsf" />
+
+								</sec:authorize>
+
+								<p:menuitem value="Funcionários" id="miFuncionarioList"
+									url="/pages/erp/rh/funcionarioList.jsf" />
+
+
+								<sec:authorize ifAnyGranted="ROLE_RH_ADMIN">
+
+									<p:separator />
+
+									<p:menuitem value="Avaliações de Vendas - Cadastro"
+										id="miAvaliacaoVendaFormList"
+										url="/pages/erp/rh/avaliacaoVendaFormList.jsf" />
+
+
+								</sec:authorize>
+
+								<p:separator />
+								<p:separator />
+
+							</p:submenu>
+
+						</sec:authorize>
+
+
+						<sec:authorize ifAnyGranted="ROLE_VENDAS,ROLE_VENDAS_ADMIN">
+
+							<p:submenu label="Vendas" icon="shopping_cart" id="submenuVendas">
+
+
+								<p:menuitem value="Emissão NFe/NFCe - PV"
+									id="miEmiteFiscalSpartacusPV"
+									url="/pages/erp/fiscal/emiteFiscalSpartacusPV.jsf" />
+
+								<p:separator />
+
+								<p:menuitem value="Emissão NFe (sem PV)" id="miNotaFiscalSaida"
+									url="/pages/erp/fiscal/notaFiscalSaidaForm.jsf" />
+
+								<p:menuitem value="NFe de Saída - Listagem"
+									id="miNotaFiscalSaidaList"
+									url="/pages/erp/fiscal/notaFiscalSaidaList.jsf" />
+
+								<p:menuitem value="Download Arquivos" id="miDownloadZipFiscal"
+									url="/pages/erp/fiscal/downloadZipFiscal.jsf" />
+
+								<p:separator />
+
+								<sec:authorize ifAnyGranted="ROLE_VENDAS_ADMIN">
+
+									<p:menuitem value="Mês/Vendas" id="miMesVendaList"
+										url="/pages/erp/venda/mesVenda.jsf" />
+
+									<p:menuitem value="Total Diário (Analítico)"
+										id="miTotalDiaAnaliticoImporter"
+										url="/pages/erp/venda/totalDiaAnaliticoImporter.jsf" />
+
+									<p:separator />
+
+									<p:menuitem value="Resultado Vendedor - Vendas/Posições"
+										id="miResultVendedorVendasPosicoes"
+										url="/pages/erp/rh/resultVendedorVendasPosicoes.jsf" />
+
+									<p:menuitem value="Resultado Vendedor (Pessoal)"
+										title="Tela para vendedores consultarem seus resultados"
+										id="miResultVendedor" url="/pages/erp/rh/resultVendedor.jsf" />
+
+								</sec:authorize>
+
+								<p:separator />
+								<p:separator />
+
+
+							</p:submenu>
+						</sec:authorize>
+
+
+						<sec:authorize ifAnyGranted="ROLE_ADMIN">
+
+							<p:submenu label="Configurações" id="submenuConfiguracoes"
+								icon="settings">
+
+								<p:menuitem value="Dias Úteis" id="miDiaUtilFormList"
+									url="/pages/config/diaUtilFormList.jsf" />
+
+								<p:menuitem value="Parâmetros" id="miConfigFormList"
+									url="/pages/config/configFormList.jsf" />
+
+								<p:menuitem value="Cachês" id="miCachesConfig"
+									url="/pages/config/cachesConfig.jsf" />
+
+								<p:separator />
+								<p:separator />
+
+							</p:submenu>
+
+						</sec:authorize>
+
+
+						<sec:authorize ifAnyGranted="ROLE_ADMIN">
+
+							<p:submenu label="Segurança" id="submenuSeguranca"
+								icon="security">
+
+								<p:menuitem value="Usuários" id="miUserForm"
+									url="/pages/security/userForm.jsf" />
+
+								<p:menuitem value="Grupos" id="miGroupForm"
+									url="/pages/security/groupForm.jsf" />
+
+								<p:separator />
+								<p:separator />
+
+							</p:submenu>
+
+						</sec:authorize>
+
+
+						<f:facet name="options">
+
+
+
+						</f:facet>
+
+					</pu:menu>
+				</div>
+			</div>
+		</div>
+	</h:form>
+</ui:composition>

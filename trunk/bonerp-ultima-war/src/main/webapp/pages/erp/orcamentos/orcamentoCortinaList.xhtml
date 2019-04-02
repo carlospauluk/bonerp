@@ -1,0 +1,79 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:param name="view" value="#{orcamentoCortinaListView}" />
+
+	<div id="_slnm_orcamentoCortinaList" />
+
+	<ui:decorate template="/templates/list.xhtml">
+
+		<ui:param name="role" value="CORTINAS" />
+
+		<ui:param name="titulo" value="Orçamentos de Cortinas" />
+		<ui:param name="viewForm" value="#{orcamentoCortinaFormView}" />
+
+		<ui:param name="formOutcome"
+			value="/pages/erp/orcamentos/orcamentoCortinaForm.jsf" />
+
+
+
+		<ui:define name="cols">
+
+			<p:column headerText="Id" sortBy="#{_.id}" style="width: 1px">
+				<h:outputText value="#{stringUtils.zerofill(_.id, 6)}" />
+			</p:column>
+
+			<p:column headerText="Dt Preenchimento" sortBy="#{_.dtPreenchimento}"
+				style="width: 1px">
+				<div style="text-align: center;">
+					<h:outputText value="#{_.dtPreenchimento}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</div>
+			</p:column>
+
+			<p:column headerText="Cabeçalho" sortBy="#{_.cabecalho}">
+				<div style="float: left">
+					<h:outputText value="#{_.cabecalho}" />
+				</div>
+				<div style="text-align: right;">
+					Preenchido por:
+					<h:outputText value="#{_.preenchidoPor}" />
+				</div>
+			</p:column>
+
+			<p:column headerText="Status" sortBy="#{_.status.label}">
+				<h:outputText value="#{_.status.label}" />
+			</p:column>
+
+			<p:column headerText="Dt Validade" sortBy="#{_.dtValidade}"
+				style="width: 1px">
+				<div style="text-align: center;">
+					<h:outputText value="#{_.dtValidade}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</div>
+			</p:column>
+
+			<p:column headerText="Valor Total" sortBy="#{_.total}"
+				style="width: 80px" styleClass="noWrap">
+				<div style="text-align: right;">
+					R$
+					<h:outputText value="#{_.total}" converter="#{doubleConverterNull}" />
+				</div>
+			</p:column>
+
+
+		</ui:define>
+	</ui:decorate>
+
+
+	<ui:include src="orcamentoCortinaList_dlgPesquisa.xhtml" />
+
+
+</ui:composition>

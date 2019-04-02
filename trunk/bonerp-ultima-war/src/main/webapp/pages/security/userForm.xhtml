@@ -1,0 +1,239 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	template="/templates/template.xhtml">
+
+	<ui:define name="content">
+
+		<div id="_slnm_userForm" />
+
+		<sec:authorize ifAnyGranted="ROLE_ADMIN">
+
+			<ui:param name="view" value="#{userFormView}" />
+
+			<h:form id="frm">
+
+				<!-- MÉTODO DE ENTRADA NA TELA -->
+				<p:remoteCommand actionListener="#{view.loadList}"
+					autoRun="true" process="@this"
+					name="loadList" update="opnDtList opnToolbar" />
+
+
+				<p:panel id="panel" header="Usuários"
+					style="width: 1000px; margin: 0 auto;">
+
+
+					<p:outputPanel id="opnToolbar">
+
+						<p:toolbar>
+							<f:facet name="left">
+
+								<p:commandButton id="btnNovo" icon="ui-icon-document"
+									actionListener="#{view.novo}" title="Novo registro (N)"
+									oncomplete="PF('dlgForm').show()" update=":frm:opnDlg"
+									process="@this" />
+
+								<p:commandButton id="btnAtualizar" title="Atualizar dados (A)"
+									update=":frm:dtList" process="@this" icon="ui-icon-refresh"
+									actionListener="#{view.limparFiltrosECarregar}" />
+
+							</f:facet>
+
+
+
+						</p:toolbar>
+
+					</p:outputPanel>
+
+					<p:spacer height="10" />
+
+					<p:outputPanel id="opnDtList">
+
+						<p:dataTable id="dtList" var="_" rowIndexVar="row"
+							emptyMessage="Nenhum registro encontrado." value="#{view.list}">
+
+							<p:column headerText="#" style="width: 20px">
+								<h:outputText value="#{row + 1}" />
+							</p:column>
+
+							<p:column headerText="Usuário" sortBy="#{_.usuario}">
+								<h:outputText value="#{_.usuario}" />
+							</p:column>
+
+							<p:column headerText="Nome" sortBy="#{_.nome}">
+								<h:outputText value="#{_.nome}" />
+							</p:column>
+
+							<p:column headerText="E-mail" sortBy="#{_.email}">
+								<h:outputText value="#{_.email}" />
+							</p:column>
+
+							<p:column headerText="Grupo" sortBy="#{_.group.nome}">
+								<h:outputText value="#{_.group.nome}" />
+							</p:column>
+
+							<p:column headerText="Ativo" sortBy="#{_.ativo}"
+								style="width: 120px">
+								<h:outputText
+									style="font-family: Tahoma, Verdana, sans-serif; font-size: 12px;"
+									value="#{_.ativo ? 'SIM' : 'NÃO'}" />
+							</p:column>
+
+
+							<p:column styleClass="noWrapColBtns">
+								<p:commandButton title="Editar registro" icon="ui-icon-build"
+									id="btnEditar" actionListener="#{view.setE(_)}"
+									update=":frm:opnDlg" process="@this"
+									onclick="PF('dlgForm').show();" />
+
+								<p:commandButton title="Excluir registro" icon="ui-icon-trash"
+									actionListener="#{view.deletar(_)}" update=":frm:panel"
+									process="@this" styleClass="red-btn">
+									<p:confirm />
+								</p:commandButton>
+
+							</p:column>
+						</p:dataTable>
+
+					</p:outputPanel>
+
+					<p:spacer height="15" />
+
+				</p:panel>
+
+
+				<p:dialog id="dlgForm" widgetVar="dlgForm" header="Usuário"
+					modal="true" width="750" resizable="false" position="top">
+
+					<p:outputPanel id="opnDlg">
+
+						<fd:labelInput label="Usuário *:" labelWidth="120px">
+							<p:inputText size="50" value="#{view.e.usuario}" id="iUsuario"
+								style="text-transform: lowercase" />
+						</fd:labelInput>
+
+						<fd:labelInput label="Ativo *:" breakAfter="true"
+							alignRight="true">
+							<h:selectOneRadio value="#{view.e.ativo}"
+								style="font-family: Tahoma, Verdana, sans-serif; font-size: 12px;">
+								<f:selectItem itemValue="true" itemLabel="SIM" />
+								<f:selectItem itemValue="false" itemLabel="NÃO" />
+							</h:selectOneRadio>
+						</fd:labelInput>
+
+
+						<fd:labelInput label="Alterar senha :" labelWidth="120px"
+							breakAfter="true">
+							<p:selectBooleanButton value="#{view.alterandoSenha}"
+								onLabel="Sim" offLabel="Não" style="width:160px">
+								<p:ajax update="opnSenhas" process="@this" />
+							</p:selectBooleanButton>
+						</fd:labelInput>
+
+						<p:outputPanel id="opnSenhas">
+							<p:fieldset legend="Senhas" rendered="#{view.alterandoSenha}">
+
+								<fd:labelInput label="Senha *:" breakAfter="true"
+									labelWidth="120px">
+									<p:password redisplay="false" size="30" feedback="true"
+										goodLabel="Boa" strongLabel="Forte" weakLabel="Fraca"
+										promptLabel="Digite a senha..." autocomplete="false"
+										value="#{view.senha}" id="iSenha" match="iSenhaConfirm"
+										validatorMessage="Senhas não conferem">
+									</p:password>
+								</fd:labelInput>
+
+								<fd:labelInput label="Senha (Confirm) *:" breakAfter="true"
+									labelWidth="120px">
+									<p:password feedback="false" redisplay="true" size="30"
+										autocomplete="false" value="#{view.senhaConfirm}"
+										id="iSenhaConfirm">
+									</p:password>
+								</fd:labelInput>
+
+							</p:fieldset>
+						</p:outputPanel>
+
+						<p:spacer height="20px" />
+
+						<div style="clear: both;" />
+
+
+						<fd:labelInput label="Nome *:" breakAfter="true"
+							labelWidth="120px">
+							<p:inputText size="50" value="#{view.e.nome}" id="iNome" />
+						</fd:labelInput>
+
+						<fd:labelInput label="E-mail *:" breakAfter="true"
+							labelWidth="120px">
+							<p:inputText size="60" value="#{view.e.email}" id="iEmail"
+								style="text-transform: lowercase" />
+						</fd:labelInput>
+
+
+						<fd:labelInput label="Grupo :" labelWidth="120px">
+							<p:selectOneMenu value="#{view.e.group}" id="iGrupo"
+								converter="#{entityIdConverter}">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems value="#{lmSecurity.groupValues}" var="g"
+									itemLabel="#{g.nome}" itemValue="#{g}" />
+							</p:selectOneMenu>
+						</fd:labelInput>
+
+						<fd:labelInput noLabel="true" breakAfter="true">
+							<p:commandButton value="Recarregar permissões"
+								actionListener="#{view.recarregarPermissoes}"
+								process="@this iGrupo" update="opnPermissoes" />
+						</fd:labelInput>
+
+						<p:spacer height="20" />
+
+						<p:outputPanel id="opnPermissoes">
+
+							<p:scrollPanel style="border-width: 0px ; height:350px"
+								mode="native">
+
+								<p:fieldset legend="Permissões">
+									<p:selectManyCheckbox id="iRoles" value="#{view.e.roles}"
+										layout="pageDirection" converter="#{entityIdConverter}">
+										<f:attribute name="collectionType" value="java.util.ArrayList" />
+										<f:selectItems value="#{lmSecurity.roleValues}" var="r"
+											itemLabel="#{r.descricao}" itemValue="#{r}"
+											itemDescription="#{r.descricao}" />
+									</p:selectManyCheckbox>
+								</p:fieldset>
+
+							</p:scrollPanel>
+
+						</p:outputPanel>
+						<p:spacer height="20" />
+
+						<!-- BUTTONS -->
+						<div style="text-align: right;">
+
+							<p:commandButton title="Salvar o registro atual"
+								oncomplete="afterFormSubmit(xhr, status, args)"
+								update=":frm:panel" icon="ui-icon-save" value="Salvar"
+								style="width: 110px" process="opnDlg"
+								actionListener="#{view.save}" />
+
+							<p:spacer width="20" />
+
+						</div>
+
+					</p:outputPanel>
+				</p:dialog>
+
+
+			</h:form>
+
+
+		</sec:authorize>
+
+	</ui:define>
+
+</ui:composition>

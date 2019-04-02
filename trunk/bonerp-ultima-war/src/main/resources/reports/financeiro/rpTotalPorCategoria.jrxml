@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.0.1.final using JasperReports Library version 6.0.0  -->
+<!-- 2015-11-13T15:37:58 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rpTotalPorCategoria" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="174b962a-1e2d-46cd-afd7-4ae2d6376ae2">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="bonerp_dev"/>
+	<parameter name="dtIni" class="java.util.Date"/>
+	<parameter name="dtFim" class="java.util.Date"/>
+	<queryString language="SQL">
+		<![CDATA[CALL fin_rel_por_categoria( $P{dtIni} , $P{dtFim} );]]>
+	</queryString>
+	<field name="categ_id" class="java.lang.Long"/>
+	<field name="categ_codigo" class="java.lang.Long"/>
+	<field name="categ_descricao" class="java.lang.String"/>
+	<field name="categ_total" class="java.lang.Double"/>
+	<field name="categ_descricao_montada" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="72" splitType="Stretch">
+			<image>
+				<reportElement x="0" y="0" width="251" height="55" uuid="b2b18a2c-96eb-4de7-a0ad-237491903400"/>
+				<imageExpression><![CDATA["../LOGO_COMPLETO_400px.jpg"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="253" y="0" width="302" height="34" uuid="3f523327-c6c0-4c84-a133-3e877cfd2d71"/>
+				<box topPadding="5" leftPadding="5" bottomPadding="5" rightPadding="5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="15" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Relatório por Categorias]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="254" y="34" width="301" height="38" uuid="7021af95-8e34-4976-ae63-7f5596f82fae"/>
+				<textElement textAlignment="Right">
+					<font fontName="Lucida Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Período: " + new SimpleDateFormat("dd/MM/yyyy").format($P{dtIni}) + " - " + new SimpleDateFormat("dd/MM/yyyy").format($P{dtFim}) 
++ "\n"
++ "Impresso em: " + new SimpleDateFormat("dd/MM/yyyy").format(new Date())]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="22">
+			<staticText>
+				<reportElement x="0" y="0" width="436" height="22" uuid="5ecc0779-f39c-4638-8687-e13e2690baf6">
+					<property name="local_mesure_unitheight" value="cm"/>
+				</reportElement>
+				<box padding="2">
+					<topPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Categoria]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="437" y="0" width="118" height="22" uuid="229ba047-4103-41f7-b87f-f2ac4eeecaff">
+					<property name="local_mesure_unitheight" value="cm"/>
+					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
+				</reportElement>
+				<box padding="2">
+					<topPen lineWidth="0.1"/>
+					<leftPen lineWidth="0.1"/>
+					<bottomPen lineWidth="0.1"/>
+					<rightPen lineWidth="0.1"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Lucida Sans" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="42">
+			<property name="local_mesure_unitheight" value="pixel"/>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<textField>
+				<reportElement mode="Opaque" x="0" y="0" width="436" height="15" backcolor="#CCCCCC" uuid="26d46304-3582-40b3-ac68-7c48da11791c">
+					<property name="local_mesure_unitheight" value="pixel"/>
+				</reportElement>
+				<box padding="2">
+					<topPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="Lucida Sans" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{categ_descricao_montada}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="false">
+				<reportElement mode="Opaque" x="437" y="0" width="118" height="15" backcolor="#CCCCCC" uuid="94d38900-de47-4c77-b76c-318fbc58ad87">
+					<property name="local_mesure_unitwidth" value="pixel"/>
+				</reportElement>
+				<box padding="2">
+					<topPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.1" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{categ_total}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="0" y="15" width="555" height="27" isRemoveLineWhenBlank="true" uuid="a748c731-41fb-4544-800e-8e7b9236d8e2">
+					<property name="local_mesure_unity" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<subreportParameter name="categ_id">
+					<subreportParameterExpression><![CDATA[$F{categ_id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="dtIni">
+					<subreportParameterExpression><![CDATA[$P{dtIni}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="dtFim">
+					<subreportParameterExpression><![CDATA[$P{dtFim}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA["rpTotalPorCategoria_moviments.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<summary>
+		<band height="44" splitType="Stretch"/>
+	</summary>
+</jasperReport>

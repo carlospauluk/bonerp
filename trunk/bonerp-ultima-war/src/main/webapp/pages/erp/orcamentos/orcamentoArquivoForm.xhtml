@@ -1,0 +1,135 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags">
+
+
+
+	<ui:param name="view" value="#{orcamentoArquivoFormView}" />
+
+	<h:form id="frmArquivoOrcamento">
+
+		<p:panel id="panel" header="Arquivos do Orçamento"
+			style="width: 100%; margin: 0 auto;">
+
+			<p:toolbar>
+				<f:facet name="left">
+
+					<p:commandButton id="btnNovoArquivoOrcamento"
+						icon="ui-icon-document" actionListener="#{view.novo}"
+						title="Novo registro (N)" process="@this"
+						oncomplete="PF('dlgArquivoOrcamento').show()"
+						update=":frmArquivoOrcamento:opnDlg" />
+
+				</f:facet>
+
+			</p:toolbar>
+
+			<p:spacer height="10" />
+
+
+			<p:dataTable id="dtList" var="_" rowIndexVar="row"
+				emptyMessage="Nenhum registro encontrado." value="#{view.dataList}">
+
+				<p:column headerText="#" style="width: 20px">
+					<h:outputText value="#{row + 1}" />
+				</p:column>
+
+				<p:column headerText="Data" sortBy="#{_.iudt.updated}">
+					<h:outputText value="#{_.iudt.updated}">
+						<f:convertDateTime pattern="dd/MM/yy HH:mm" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Descrição" sortBy="#{_.descricao}">
+					<h:outputText value="#{_.descricao}" />
+				</p:column>
+
+				<p:column headerText="Arquivo" sortBy="#{_.nomeArquivo}">
+					<h:outputText value="#{_.nomeArquivo}" />
+				</p:column>
+
+				<p:column style="width: 1px;" styleClass="noWrap">
+
+					<p:commandButton id="downloadLink" value="Download"
+						rendered="#{view.verificarArquivo(_)}"
+						onclick="PrimeFaces.monitorDownload(start, stop)"
+						icon="ui-icon-arrowthichk-s" process="@this">
+						<p:fileDownload value="#{view.downloadFile(_)}" />
+					</p:commandButton>
+
+					<p:outputLabel value="Arquivo não encontrado"
+						rendered="#{!view.verificarArquivo(_)}" />
+
+				</p:column>
+				<p:column styleClass="noWrapColBtns">
+
+					<p:commandButton title="Editar registro" icon="ui-icon-build"
+						id="btnEditar" actionListener="#{view.setE(_)}"
+						update=":frmArquivoOrcamento:opnDlg" process="@this"
+						onclick="PF('dlgArquivoOrcamento').show();" />
+
+					<p:commandButton title="Excluir registro" icon="ui-icon-trash"
+						id="btnExcluir" actionListener="#{view.deletar(_)}" styleClass="red-btn"
+						update=":mainGrowl, :frmArquivoOrcamento:panel" process="@this">
+						<p:confirm />
+					</p:commandButton>
+
+				</p:column>
+			</p:dataTable>
+
+
+			<p:spacer height="15" />
+
+		</p:panel>
+
+
+		<p:dialog id="dlgArquivoOrcamento" widgetVar="dlgArquivoOrcamento"
+			header="Arquivo" modal="true" width="950" resizable="false"
+			position="top" closeOnEscape="true">
+			<p:outputPanel id="opnDlg">
+
+				<p:defaultCommand target="btnSalvar" />
+
+				<p:focus for="iDescricao" />
+
+				<fd:labelInput label="Descrição :" labelWidth="100px"
+					breakAfter="true">
+					<p:inputTextarea cols="70" rows="6" value="#{view.e.descricao}"
+						id="iDescricao" />
+				</fd:labelInput>
+
+				<fd:labelInput label="Arquivo :" labelWidth="100px"
+					breakAfter="true">
+					<p:fileUpload fileUploadListener="#{view.uploadArquivoOrcamento}"
+						update=":mainGrowl" dragDropSupport="true" auto="true"
+						cancelLabel="Cancelar" label="Selecionar arquivo..." />
+				</fd:labelInput>
+
+				<p:spacer width="20" />
+
+				<!-- BUTTONS -->
+				<div style="text-align: right;">
+
+					<p:commandButton title="Salvar o registro atual" id="btnSalvar"
+						oncomplete="afterFormSubmit(xhr, status, args);"
+						update=":mainGrowl :frmArquivoOrcamento:panel" icon="ui-icon-save"
+						value="Salvar" style="width: 110px"
+						actionListener="#{view.saveUpload}" />
+
+					<p:spacer width="20" />
+
+				</div>
+
+			</p:outputPanel>
+		</p:dialog>
+
+	</h:form>
+
+
+
+
+</ui:composition>

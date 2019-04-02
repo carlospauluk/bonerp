@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd">
+
+	<diskStore path="${mvn.ehcache.path}" />
+
+	<!-- reconfigurei para praticamente nem usar -->
+	<defaultCache 
+		timeToLiveSeconds="1"
+		overflowToDisk="false"
+		diskPersistent="false"
+		maxElementsInMemory="1"
+		maxElementsOnDisk="1"
+		diskSpoolBufferSizeMB="1"
+		diskExpiryThreadIntervalSeconds="1"
+		memoryStoreEvictionPolicy="LRU" /> 
+		
+	<cache name="listMaker"		
+		timeToLiveSeconds="1"
+		overflowToDisk="false"
+		diskPersistent="false"
+		maxElementsInMemory="1"
+		maxElementsOnDisk="1"
+		diskSpoolBufferSizeMB="1"
+		diskExpiryThreadIntervalSeconds="1"
+		memoryStoreEvictionPolicy="LRU" /> 
+		
+	<cache name="methodsCache"
+		timeToLiveSeconds="1"
+		overflowToDisk="false"
+		diskPersistent="false"
+		maxElementsInMemory="1"
+		maxElementsOnDisk="1"
+		diskSpoolBufferSizeMB="1"
+		diskExpiryThreadIntervalSeconds="1"
+		memoryStoreEvictionPolicy="LRU" /> 
+
+
+	
+
+</ehcache>

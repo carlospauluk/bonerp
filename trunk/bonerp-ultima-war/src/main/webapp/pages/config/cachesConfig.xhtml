@@ -1,0 +1,107 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	template="/templates/template.xhtml">
+
+	<ui:define name="content">
+
+		<div id="_slnm_cachesConfig" />
+
+		<sec:authorize ifAnyGranted="ROLE_ADMIN">
+
+			<ui:param name="view" value="#{cachesConfigView}" />
+
+			<h:form id="frm">
+
+
+				<p:panel id="panel" header="Parâmetros de Configurações"
+					style="width: 1000px; margin: 0 auto;">
+
+
+					<p:outputPanel id="opnToolbar">
+
+						<p:toolbar>
+							<f:facet name="left">
+								<p:commandButton id="btnApagarTodos"
+									value="Apagar todos os cachês" update="@form" process="@this"
+									icon="ui-icon-trash" partialSubmit="true"
+									actionListener="#{cachesConfigView.apagarCaches}"
+									styleClass="red-btn">
+									<p:confirm />
+								</p:commandButton>
+
+								<p:spacer width="10px" />
+
+								<p:commandButton value="Apagar todos os datatables"
+									update="@form" process="@this" icon="ui-icon-trash"
+									styleClass="red-btn" actionListener="#{view.apagarDatatables}">
+									<p:confirm />
+								</p:commandButton>
+								
+								<p:spacer width="10px" />
+
+								<p:commandButton value="Apagar todos os viewinfos"
+									update="@form" process="@this" icon="ui-icon-trash"
+									styleClass="red-btn" actionListener="#{view.apagarViewInfos}">
+									<p:confirm />
+								</p:commandButton>
+							</f:facet>
+						</p:toolbar>
+
+					</p:outputPanel>
+
+					<p:spacer height="10" />
+
+					<p:outputPanel id="opnDtList">
+
+						<p:dataTable id="dtList" var="_" rowIndexVar="row"
+							emptyMessage="Nenhum registro encontrado."
+							value="#{view.cachesList}">
+
+							<p:column style="width: 20px" headerText="#">
+								<h:outputText value="#{row + 1}" />
+							</p:column>
+
+							<p:column sortBy="#{_}" headerText="Nome">
+								<h:outputText value="#{_.name}" />
+							</p:column>
+
+							<p:column sortBy="#{_}" headerText="Qtde Elementos">
+								<h:outputText value="#{_.size}" />
+							</p:column>
+
+							<p:column sortBy="#{_}" headerText="Status">
+								<h:outputText value="#{_.status}" />
+							</p:column>
+
+
+							<p:column styleClass="noWrapColBtns" headerText="">
+								<p:commandButton title="Apagar" icon="ui-icon-trash"
+									styleClass="red-btn"
+									actionListener="#{view.apagarCache(_.name)}" process="@this"
+									update="@form">
+									<p:confirm />
+								</p:commandButton>
+
+							</p:column>
+						</p:dataTable>
+
+					</p:outputPanel>
+
+					<p:spacer height="15" />
+
+				</p:panel>
+
+
+			</h:form>
+
+
+		</sec:authorize>
+
+	</ui:define>
+
+</ui:composition>

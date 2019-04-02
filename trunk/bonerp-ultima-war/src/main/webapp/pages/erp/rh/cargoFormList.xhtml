@@ -1,0 +1,65 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:p="http://primefaces.org/ui">
+
+
+	<div id="_slnm_cargoFormList" />
+
+	<ui:decorate template="/templates/formList.xhtml">
+
+
+		<ui:param name="role" value="RH" />
+
+		<ui:param name="view" value="#{cargoFormListView}" />
+		<ui:param name="titulo" value="Cargos" />
+		<ui:param name="tituloDlg" value="Cargo" />
+
+		<ui:param name="exibirPesquisar" value="false" />
+
+		<ui:define name="cols">
+
+			<p:column sortBy="#{_.descricao}">
+				<f:facet name="header">Descrição</f:facet>
+				<h:outputText value="#{_.descricao}" />
+			</p:column>
+
+			<p:column sortBy="#{_.comissaoPorVendas}"
+				headerText="Comissão por Vendas" style="width: 110px">
+				<h:outputText value="#{_.comissaoPorVendas ? 'SIM' : 'NÃO'}" />
+			</p:column>
+
+		</ui:define>
+
+
+
+		<ui:define name="campos">
+
+
+			<fd:labelInput label="Descrição *:" breakAfter="true"
+				labelWidth="140px">
+				<p:inputText size="50" value="#{view.e.descricao}" id="iDescricao" />
+				<div style="float: right;">
+					<p:message for="iDescricao" display="icon" />
+				</div>
+			</fd:labelInput>
+
+			<fd:labelInput label="Comissão por Vendas *:" breakAfter="true"
+				labelWidth="140px">
+				<p:selectOneRadio value="#{view.e.comissaoPorVendas}">
+					<f:selectItem itemValue="true" itemLabel="SIM" />
+					<f:selectItem itemValue="false" itemLabel="NÃO" />
+				</p:selectOneRadio>
+			</fd:labelInput>
+
+		</ui:define>
+
+	</ui:decorate>
+
+
+
+</ui:composition>

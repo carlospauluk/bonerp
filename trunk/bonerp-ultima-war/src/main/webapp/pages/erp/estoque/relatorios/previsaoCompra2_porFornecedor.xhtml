@@ -1,0 +1,242 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags">
+
+	<style>
+	
+.tabelaPrevisao {
+	border-spacing: 0px;
+}
+
+.tabelaPrevisao td {
+	padding: 0px;
+}
+	
+.col_SaldoAtual {
+	width: 10%;
+}
+
+.col_QtdeEmPedidos {
+	width: 10%;
+}
+
+.col_SaldoNaSituacao {
+	width: 10%;
+}
+
+.col_Ano {
+	width: 5%;
+}
+
+.col_MesAno {
+	width: 5%;
+}
+
+.col_Total {
+	width: 5%;
+}
+
+.col_SubTable {
+	width: 70%;
+}
+</style>
+
+	<!-- TABELA ROOT -->
+	<table class="tabelaPrevisao" border="1" 
+		style="width: 100%; border: 0px solid black; padding: 2px">
+		<thead>
+			<tr>
+				<th class="col_SaldoAtual">Saldo Atual</th>
+				<th class="col_QtdeEmPedidos">Qtde em Pedidos</th>
+				<th class="col_SaldoNaSituacao">Saldo Situação</th>
+				<th class="col_Ano"></th>
+				<p:repeat var="mesano" value="#{view.mesesAnosPrevisao}">
+					<th class="col_MesAno">
+						<div style="text-align: center; text-transform: uppercase">
+							<h:outputText value="#{mesano}">
+								<f:convertDateTime pattern="MMM" />
+							</h:outputText>
+						</div>
+					</th>
+				</p:repeat>
+				<th class="col_Total">Total</th>
+			</tr>
+		</thead>
+
+		<tbody>
+			<tr>
+				<td colspan="18">
+					<p:repeat var="forn" value="#{view.listHPC.fornecedores}">
+
+						<!-- TABELA FORNECEDOR -->
+						<table border="0"
+							style="width: 100%; width: 100%; border: 0px solid black; padding: 0px">
+							<thead>
+								<tr>
+									<th>
+										<div style="text-align: center; text-transform: uppercase">
+											<h:outputText
+												value="#{forn.codigo} - #{forn.pessoa.nomeFantasia}" />
+										</div>
+									</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>
+										<!-- *********************************** -->
+										<!-- *********************************** -->
+										<!-- *********************************** -->
+										<p:repeat var="hpc"
+											value="#{view.listHPC.mapByFornecedor[forn]}">
+											<!-- TABELA SUBDEPTO -->
+											<table border="1"
+												style="width: 100%; width: 100%; border: 0px solid black; padding: 0x">
+												<thead>
+													<tr>
+														<th colspan="18">
+															<h:outputText
+																value="#{hpc.subdepto.codigo} - #{hpc.subdepto.nome}" />
+														</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr>
+														<td class="col_SaldoAtual">
+															<div style="text-align: right;">
+																<h:outputText value="#{hpc.saldoAtual}">
+																	<fd:bigDecimalConverter zeroToNull="true" />
+																</h:outputText>
+															</div>
+														</td>
+														<td class="col_QtdeEmPedidos">
+															<div style="text-align: right;">
+																<h:outputText value="#{hpc.qtdeEmPedidos}">
+																	<fd:bigDecimalConverter zeroToNull="true" />
+																</h:outputText>
+															</div>
+														</td>
+														<td class="col_SaldoNaSituacao">-SNS-</td>
+														<td class="col_SubTable">
+															<table border="1"
+																style="width: 100%; border: 0px solid black; padding: 0px">
+																<tbody>
+																	<p:repeat var="ano"
+																		value="#{view.anosAnterioresConsiderar}" varStatus="s">
+																		<tr>
+																			<td class="col_Ano">
+																				#{ano}/#{ano+1}
+																			</td>
+
+																			<td class="col_MesAno">#{view.listHPC.returnBy(hpc, ano, 1)}</td>
+																			<td class="col_MesAno">#{view.listHPC.returnBy(hpc, ano, 2)}</td>
+																			<td class="col_MesAno">#{view.listHPC.returnBy(hpc, ano, 3)}</td>
+																			<td class="col_MesAno">#{view.listHPC.returnBy(hpc, ano, 4)}</td>
+																			<td class="col_MesAno">#{view.listHPC.returnBy(hpc, ano, 5)}</td>
+																			<td class="col_MesAno">#{view.listHPC.returnBy(hpc, ano, 6)}</td>
+																			<td class="col_MesAno">#{view.listHPC.returnBy(hpc, ano, 7)}</td>
+																			<td class="col_MesAno">#{view.listHPC.returnBy(hpc, ano, 8)}</td>
+																			<td class="col_MesAno">#{view.listHPC.returnBy(hpc, ano, 9)}</td>
+																			<td class="col_MesAno">#{view.listHPC.returnBy(hpc, ano, 10)}</td>
+																			<td class="col_MesAno">#{view.listHPC.returnBy(hpc, ano, 11)}</td>
+																			<td class="col_MesAno">#{view.listHPC.returnBy(hpc, ano, 12)}</td>
+
+																			<td class="col_Total"></td>
+
+																		</tr>
+																		
+																	</p:repeat>
+																	<tr>
+																			<td class="col_Ano">
+																				Média
+																			</td>
+
+																			<td class="col_MesAno">#{hpc.mediaMes1}</td>
+																			<td class="col_MesAno">#{hpc.mediaMes2}</td>
+																			<td class="col_MesAno">#{hpc.mediaMes3}</td>
+																			<td class="col_MesAno">#{hpc.mediaMes4}</td>
+																			<td class="col_MesAno">#{hpc.mediaMes5}</td>
+																			<td class="col_MesAno">#{hpc.mediaMes6}</td>
+																			<td class="col_MesAno">#{hpc.mediaMes7}</td>
+																			<td class="col_MesAno">#{hpc.mediaMes8}</td>
+																			<td class="col_MesAno">#{hpc.mediaMes9}</td>
+																			<td class="col_MesAno">#{hpc.mediaMes10}</td>
+																			<td class="col_MesAno">#{hpc.mediaMes11}</td>
+																			<td class="col_MesAno">#{hpc.mediaMes12}</td>
+																			
+
+																			<td class="col_Total"></td>
+
+																		</tr>
+																		
+																	
+																</tbody>
+															</table>
+														</td>
+													</tr>
+												</tbody>
+											</table>
+										</p:repeat>
+
+									</td>
+								</tr>
+							</tbody>
+						</table>
+
+
+
+
+
+
+
+
+
+
+						<p:column>
+
+						</p:column>
+
+						<p:column styleClass="noWrapSmall">
+
+						</p:column>
+						<p:column styleClass="noWrapSmall">
+
+						</p:column>
+
+						<p:column styleClass="noWrapSmall">
+							<div style="text-align: right;">
+								<h:outputText value="#{hpc.ano1mes1}" />
+								<br />
+								<h:outputText value="#{hpc.ano2mes1}" />
+								<br />
+								<h:outputText value="#{hpc.ano3mes1}" />
+								<br />
+								<h:outputText value="#{hpc.ano4mes1}" />
+								<br />
+								<h:outputText value="#{hpc.ano5mes1}" />
+								<br />
+								<hr />
+								<h:outputText value="#{hpc.mediaMes1}" />
+								<hr />
+								<h:outputText value="#{hpc.saldoMes1}" />
+							</div>
+						</p:column>
+
+
+
+
+
+					</p:repeat>
+				</td>
+			</tr>
+		</tbody>
+
+	</table>
+
+
+
+</ui:composition>

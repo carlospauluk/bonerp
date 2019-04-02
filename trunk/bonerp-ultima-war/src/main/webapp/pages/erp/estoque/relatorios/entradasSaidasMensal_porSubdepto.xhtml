@@ -1,0 +1,293 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fd="http://ocabit.com.br/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags">
+
+
+	<p:dataTable var="sd" value="#{view.orderedKeys}">
+
+		<p:subTable var="es" value="#{view.mapListSubdepto[sd]}">
+			<p:columnGroup type="header">
+				<p:row>
+					<p:column headerText="Subdepto" style="background-color: #ebedf0" />
+					<p:column headerText="JAN" style="text-align: center; background-color: #ebedf0" />
+					<p:column headerText="FEV" style="text-align: center; background-color: #ebedf0" />
+					<p:column headerText="MAR" style="text-align: center; background-color: #ebedf0" />
+					<p:column headerText="ABR" style="text-align: center; background-color: #ebedf0" />
+					<p:column headerText="MAI" style="text-align: center; background-color: #ebedf0" />
+					<p:column headerText="JUN" style="text-align: center; background-color: #ebedf0" />
+					<p:column headerText="JUL" style="text-align: center; background-color: #ebedf0" />
+					<p:column headerText="AGO" style="text-align: center; background-color: #ebedf0" />
+					<p:column headerText="SET" style="text-align: center; background-color: #ebedf0" />
+					<p:column headerText="OUT" style="text-align: center; background-color: #ebedf0" />
+					<p:column headerText="NOV" style="text-align: center; background-color: #ebedf0" />
+					<p:column headerText="DEZ" style="text-align: center; background-color: #ebedf0" />
+					<p:column headerText="Total" style="text-align: center; background-color: #ebedf0" />
+					<p:column headerText="Saldo Atual" style="text-align: center; background-color: #ebedf0" />
+					<p:column headerText="% Vda" style="text-align: center; background-color: #ebedf0" />
+				</p:row>
+				<p:row>
+					<p:column colspan="16"
+						headerText="#{sd.codigo} - #{sd.nome}"
+						style="font-weight: bold" />
+				</p:row>
+			</p:columnGroup>
+			<p:column style="background-color: blue">
+				<h:outputText value="#{es.fornecedor.codigo} - #{es.fornecedor.pessoa.nomeExibicao}" />
+			</p:column>
+			<p:column styleClass="noWrapSmall">
+				<div style="text-align: right;">
+					<h:outputText value="#{es.totaisVendasMeses[0]}">
+						<fd:bigDecimalConverter zeroToNull="true" />
+					</h:outputText>
+				</div>
+			</p:column>
+			<p:column styleClass="noWrapSmall">
+				<div style="text-align: right;">
+					<h:outputText value="#{es.totaisVendasMeses[1]}">
+						<fd:bigDecimalConverter zeroToNull="true" />
+					</h:outputText>
+				</div>
+			</p:column>
+			<p:column styleClass="noWrapSmall">
+				<div style="text-align: right;">
+					<h:outputText value="#{es.totaisVendasMeses[2]}">
+						<fd:bigDecimalConverter zeroToNull="true" />
+					</h:outputText>
+				</div>
+			</p:column>
+			<p:column styleClass="noWrapSmall">
+				<div style="text-align: right;">
+					<h:outputText value="#{es.totaisVendasMeses[3]}">
+						<fd:bigDecimalConverter zeroToNull="true" />
+					</h:outputText>
+				</div>
+			</p:column>
+			<p:column styleClass="noWrapSmall">
+				<div style="text-align: right;">
+					<h:outputText value="#{es.totaisVendasMeses[4]}">
+						<fd:bigDecimalConverter zeroToNull="true" />
+					</h:outputText>
+				</div>
+			</p:column>
+			<p:column styleClass="noWrapSmall">
+				<div style="text-align: right;">
+					<h:outputText value="#{es.totaisVendasMeses[5]}">
+						<fd:bigDecimalConverter zeroToNull="true" />
+					</h:outputText>
+				</div>
+			</p:column>
+			<p:column styleClass="noWrapSmall">
+				<div style="text-align: right;">
+					<h:outputText value="#{es.totaisVendasMeses[6]}">
+						<fd:bigDecimalConverter zeroToNull="true" />
+					</h:outputText>
+				</div>
+			</p:column>
+			<p:column styleClass="noWrapSmall">
+				<div style="text-align: right;">
+					<h:outputText value="#{es.totaisVendasMeses[7]}">
+						<fd:bigDecimalConverter zeroToNull="true" />
+					</h:outputText>
+				</div>
+			</p:column>
+			<p:column styleClass="noWrapSmall">
+				<div style="text-align: right;">
+					<h:outputText value="#{es.totaisVendasMeses[8]}">
+						<fd:bigDecimalConverter zeroToNull="true" />
+					</h:outputText>
+				</div>
+			</p:column>
+			<p:column styleClass="noWrapSmall">
+				<div style="text-align: right;">
+					<h:outputText value="#{es.totaisVendasMeses[9]}">
+						<fd:bigDecimalConverter zeroToNull="true" />
+					</h:outputText>
+				</div>
+			</p:column>
+			<p:column styleClass="noWrapSmall">
+				<div style="text-align: right;">
+					<h:outputText value="#{es.totaisVendasMeses[10]}">
+						<fd:bigDecimalConverter zeroToNull="true" />
+					</h:outputText>
+				</div>
+			</p:column>
+			<p:column styleClass="noWrapSmall">
+				<div style="text-align: right;">
+					<h:outputText value="#{es.totaisVendasMeses[11]}">
+						<fd:bigDecimalConverter zeroToNull="true" />
+					</h:outputText>
+				</div>
+			</p:column>
+			<p:column styleClass="noWrapSmall">
+				<div style="text-align: right;">
+					<h:outputText value="#{es.getTotal()}">
+						<fd:bigDecimalConverter zeroToNull="true" />
+					</h:outputText>
+				</div>
+			</p:column>
+			<p:column styleClass="noWrapSmall">
+				<div style="text-align: right;">
+					<h:outputText value="#{es.totalSaldosAtuais}">
+						<fd:bigDecimalConverter zeroToNull="true" />
+					</h:outputText>
+				</div>
+			</p:column>
+			<p:column styleClass="noWrapSmall">
+				<div style="text-align: right;">
+					<h:outputText value="#{es.porcentVendas}"
+						converter="#{bigDecimalConverter}" />
+					%
+				</div>
+			</p:column>
+
+
+			<p:columnGroup type="footer">
+				<p:row>
+					<p:column footerText="Totais: "
+						style="text-align:right; font-weight: bold" />
+					<p:column>
+						<f:facet name="footer">
+							<div style="text-align: right; font-weight: bold">
+								<h:outputText
+									value="#{view.subTotalPorSubdepto[es.subdepto].totaisVendasMeses[0]}"
+									converter="#{bigDecimalConverter}" />
+							</div>
+						</f:facet>
+					</p:column>
+					<p:column>
+						<f:facet name="footer">
+							<div style="text-align: right; font-weight: bold">
+								<h:outputText
+									value="#{view.subTotalPorSubdepto[es.subdepto].totaisVendasMeses[1]}"
+									converter="#{bigDecimalConverter}" />
+							</div>
+						</f:facet>
+					</p:column>
+					<p:column>
+						<f:facet name="footer">
+							<div style="text-align: right; font-weight: bold">
+								<h:outputText
+									value="#{view.subTotalPorSubdepto[es.subdepto].totaisVendasMeses[2]}"
+									converter="#{bigDecimalConverter}" />
+							</div>
+						</f:facet>
+					</p:column>
+					<p:column>
+						<f:facet name="footer">
+							<div style="text-align: right; font-weight: bold">
+								<h:outputText
+									value="#{view.subTotalPorSubdepto[es.subdepto].totaisVendasMeses[3]}"
+									converter="#{bigDecimalConverter}" />
+							</div>
+						</f:facet>
+					</p:column>
+					<p:column>
+						<f:facet name="footer">
+							<div style="text-align: right; font-weight: bold">
+								<h:outputText
+									value="#{view.subTotalPorSubdepto[es.subdepto].totaisVendasMeses[4]}"
+									converter="#{bigDecimalConverter}" />
+							</div>
+						</f:facet>
+					</p:column>
+					<p:column>
+						<f:facet name="footer">
+							<div style="text-align: right; font-weight: bold">
+								<h:outputText
+									value="#{view.subTotalPorSubdepto[es.subdepto].totaisVendasMeses[5]}"
+									converter="#{bigDecimalConverter}" />
+							</div>
+						</f:facet>
+					</p:column>
+					<p:column>
+						<f:facet name="footer">
+							<div style="text-align: right; font-weight: bold">
+								<h:outputText
+									value="#{view.subTotalPorSubdepto[es.subdepto].totaisVendasMeses[6]}"
+									converter="#{bigDecimalConverter}" />
+							</div>
+						</f:facet>
+					</p:column>
+					<p:column>
+						<f:facet name="footer">
+							<div style="text-align: right; font-weight: bold">
+								<h:outputText
+									value="#{view.subTotalPorSubdepto[es.subdepto].totaisVendasMeses[7]}"
+									converter="#{bigDecimalConverter}" />
+							</div>
+						</f:facet>
+					</p:column>
+					<p:column>
+						<f:facet name="footer">
+							<div style="text-align: right; font-weight: bold">
+								<h:outputText
+									value="#{view.subTotalPorSubdepto[es.subdepto].totaisVendasMeses[8]}"
+									converter="#{bigDecimalConverter}" />
+							</div>
+						</f:facet>
+					</p:column>
+					<p:column>
+						<f:facet name="footer">
+							<div style="text-align: right; font-weight: bold">
+								<h:outputText
+									value="#{view.subTotalPorSubdepto[es.subdepto].totaisVendasMeses[9]}"
+									converter="#{bigDecimalConverter}" />
+							</div>
+						</f:facet>
+					</p:column>
+					<p:column>
+						<f:facet name="footer">
+							<div style="text-align: right; font-weight: bold">
+								<h:outputText
+									value="#{view.subTotalPorSubdepto[es.subdepto].totaisVendasMeses[10]}"
+									converter="#{bigDecimalConverter}" />
+							</div>
+						</f:facet>
+					</p:column>
+					<p:column>
+						<f:facet name="footer">
+							<div style="text-align: right; font-weight: bold">
+								<h:outputText
+									value="#{view.subTotalPorSubdepto[es.subdepto].totaisVendasMeses[11]}"
+									converter="#{bigDecimalConverter}" />
+							</div>
+						</f:facet>
+					</p:column>
+					<p:column>
+						<f:facet name="footer">
+							<div style="text-align: right; font-weight: bold">
+								<h:outputText
+									value="#{view.subTotalPorSubdepto[es.subdepto].totalMeses}"
+									converter="#{bigDecimalConverter}" />
+							</div>
+						</f:facet>
+					</p:column>
+					<p:column>
+						<f:facet name="footer">
+							<div style="text-align: right; font-weight: bold">
+								<h:outputText
+									value="#{view.subTotalPorSubdepto[es.subdepto].totalSaldosAtuais}"
+									converter="#{bigDecimalConverter}" />
+							</div>
+						</f:facet>
+					</p:column>
+					<p:column>
+						<f:facet name="footer">
+							<div style="text-align: right; font-weight: bold">
+								<h:outputText
+									value="#{view.subTotalPorSubdepto[es.subdepto].porcentVendas}"
+									converter="#{bigDecimalConverter}" />
+								%
+							</div>
+						</f:facet>
+					</p:column>
+				</p:row>
+			</p:columnGroup>
+		</p:subTable>
+	</p:dataTable>
+
+</ui:composition>
